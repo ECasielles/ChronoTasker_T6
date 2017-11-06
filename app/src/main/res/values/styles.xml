@@ -1,0 +1,22 @@
+<resources>
+
+    <!--Tema de color:
+    https://material.io/color/#!/?view.left=0&view.right=0&primary.color=3F51B5&secondary.color=64B5F6-->
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+
+    <!--https://material.io/guidelines/style/typography.html-->
+    <style name="Custom.Title" parent="AppTheme">
+        <dimen name="textTitle">20sp</dimen>
+        <item name="android:textAppearance">@style/Base.TextAppearance.AppCompat.Medium</item>
+        <item name="android:textSize">@dimen/textTitle</item>
+    </style>
+
+</resources>
