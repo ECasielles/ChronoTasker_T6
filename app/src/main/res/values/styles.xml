@@ -14,7 +14,6 @@
 
     <!--https://material.io/guidelines/style/typography.html-->
     <style name="Custom.Title" parent="AppTheme">
-        <dimen name="textTitle">20sp</dimen>
         <item name="android:textAppearance">@style/Base.TextAppearance.AppCompat.Medium</item>
         <item name="android:textSize">@dimen/textTitle</item>
     </style>
