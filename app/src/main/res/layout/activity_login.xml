@@ -62,48 +62,48 @@
     </android.support.design.widget.TextInputLayout>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/txvAbout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="TextView"
-        app:layout_constraintBaseline_toBaselineOf="@+id/checkBox"
-        app:layout_constraintEnd_toEndOf="@+id/button"
+        tools:text="TextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/chkRemember"
+        app:layout_constraintEnd_toEndOf="@+id/btnSignIn"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/checkBox"
+        app:layout_constraintStart_toEndOf="@+id/chkRemember"
         />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/chkRemember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
         android:layout_marginTop="32dp"
-        android:text="CheckBox"
+        android:text="@string/chkRemember"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilPassword"
         />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="64dp"
         android:layout_marginTop="42dp"
         android:layout_weight="1"
-        android:text="Button"
+        android:text="@string/btnSignIn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/txvAbout"
         />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btnSignUp"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="@+id/button"
-        app:layout_constraintStart_toStartOf="@+id/checkBox"
-        app:layout_constraintTop_toTopOf="@+id/button"
+        android:text="@string/btnSignUp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSignIn"
+        app:layout_constraintStart_toStartOf="@+id/chkRemember"
+        app:layout_constraintTop_toTopOf="@+id/btnSignIn"
         />
 </android.support.constraint.ConstraintLayout>

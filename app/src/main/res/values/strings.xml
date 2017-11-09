@@ -3,4 +3,7 @@
     <string name="login">Credenciales</string>
     <string name="tilUserHint">Nombre de usuario o email</string>
     <string name="tilPasswordHint">Contraseña</string>
+    <string name="chkRemember">Recordarme</string>
+    <string name="btnSignIn">Entrar</string>
+    <string name="btnSignUp">Registro</string>
 </resources>
