@@ -3,7 +3,16 @@
     <string name="login">Credenciales</string>
     <string name="tilUserHint">Nombre de usuario o email</string>
     <string name="tilPasswordHint">Contraseña</string>
-    <string name="chkRemember">Recordarme</string>
+    <string name="chkRemember"><u>Recordarme</u></string>
     <string name="btnSignIn">Entrar</string>
     <string name="btnSignUp">Registro</string>
+    <string name="txvSignup">No tienes cuenta? <b>Regístrate</b>!</string>
+    <string name="signup">Registro</string>
+    <string name="tilUsernameHint">Nombre de usuario</string>
+    <string name="tilEmailHint">Correo electrónico</string>
+    <string name="textAbout"><u>Más sobre Chronotasker</u></string>
+    <string name="contentAbout">Somos una empresa malagueña joven y dinámica. Puedes encontrarnos <a href="http://www.mercacortex.hol.es/">aquí</a>.</string>
+    <string name="textGeneralSettings">Ajustes de la aplicación</string>
+    <string name="textAccountSettings">Ajustes del usuario</string>
+    <string name="splashWelcome">¡Bienvenid@!</string>
 </resources>

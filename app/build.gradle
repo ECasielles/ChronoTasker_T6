@@ -28,4 +28,5 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
     implementation 'com.android.support:design:25.4.0'
 
+    compile 'com.github.medyo:android-about-page:1.2.1'
 }

@@ -1,4 +1,4 @@
-package com.example.usuario.chronotasker.pojo;
+package com.example.usuario.chronotasker.data.db.model;
 
 /**
  * Iconos que usa la aplicación. Incluye banderas para los idiomas

@@ -1,4 +1,4 @@
-package com.example.usuario.chronotasker.pojo;
+package com.example.usuario.chronotasker.data.db.model;
 
 /**
  * Representa los idiomas implementados por la aplicación

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="textTitle">20sp</dimen>
+    <dimen name="textSubTitle">14sp</dimen>
 </resources>
