@@ -11,9 +11,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.repository.UserRepository;
+import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
+import com.example.usuario.chronotasker.ui.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
 import com.example.usuario.chronotasker.ui.task.TaskActivity;
 
@@ -29,6 +32,7 @@ public class SignupActivity extends AppCompatActivity {
     TextInputEditText edtUser, edtEmail, edtPassword;
     Button btnSignup;
 
+    //TODO: Clase About debe estar mejor
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +44,6 @@ public class SignupActivity extends AppCompatActivity {
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Faltaría presenter, adapter, repository, interactor, etc.
                 if(UserRepository.getInstance().addUser(
                         edtUser.getText().toString(), edtPassword.getText().toString(),
                         edtEmail.getText().toString()))
@@ -50,22 +53,14 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
-    /**
-     * Infla el menú de la esquina superior derecha
-     * @param menu
-     * @return
-     */
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_activities_start, menu);
         return super.onCreateOptionsMenu(menu);
     }
-    /**
-     * Muestra las opciones del menú y su comportamiento
-     * @param item
-     * @return
-     */
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -78,6 +73,16 @@ public class SignupActivity extends AppCompatActivity {
 
     private void navigateToHome(){
         startActivity(new Intent(SignupActivity.this, TaskActivity.class));
+        showPreferences();
         finish();
     }
+
+    private void showPreferences() {
+        PreferencesHelper preferencesHelper =
+                ((ChronoTaskerApplication) getApplicationContext()).getPreferencesHelper();
+        preferencesHelper.setCurrentUserName(edtUser.getText().toString());
+        String message = "Tu usuario de sesión es: " + preferencesHelper.getCurrentUserName();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
 }

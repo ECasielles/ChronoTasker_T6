@@ -60,4 +60,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         }
 
     }
+
+    public void clear() {
+        tasks.clear();
+    }
+
+    public void addAll(ArrayList<Task> newTasks) {
+        tasks.addAll(newTasks);
+    }
 }

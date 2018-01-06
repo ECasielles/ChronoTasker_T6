@@ -40,21 +40,18 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-        if(UserPreferences.getUserPreferencesHolder(getApplicationContext()).isRememberUserData())
-            navigateToHome();
-        */
+
+        //TODO: Shapes y personalizar vistas
         setContentView(R.layout.activity_login);
         edtUserData = (TextInputEditText) ((TextInputLayout) findViewById(R.id.tilUser)).getEditText();
         edtPassword = (TextInputEditText) ((TextInputLayout) findViewById(R.id.tilPassword)).getEditText();
-        chbRemember = (CheckBox) findViewById(R.id.chbRemember);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        txvSignup = (TextView) findViewById(R.id.txvSignup);
+        chbRemember = findViewById(R.id.chbRemember);
+        btnLogin = findViewById(R.id.btnLogin);
+        txvSignup = findViewById(R.id.txvSignup);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Faltaría presenter, adapter, repository, interactor, etc.
                 if(UserRepository.getInstance().validateCredentials(
                         edtUserData.getText().toString(), edtPassword.getText().toString()))
                     navigateToHome();
@@ -75,6 +72,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+
     /**
      * Infla el menú de la esquina superior derecha
      * @param menu
