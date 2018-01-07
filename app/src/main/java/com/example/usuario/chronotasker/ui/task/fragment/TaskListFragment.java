@@ -116,7 +116,6 @@ public class TaskListFragment extends Fragment implements TaskListContract.View 
             case R.id.action_menu_account_settings:
                 break;
             case R.id.action_menu_about:
-                //TODO: Navigation to About/Improve AboutActivity
                 break;
         }
         return super.onOptionsItemSelected(item);

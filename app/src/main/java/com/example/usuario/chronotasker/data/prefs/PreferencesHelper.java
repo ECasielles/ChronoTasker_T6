@@ -3,7 +3,6 @@ package com.example.usuario.chronotasker.data.prefs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.example.usuario.chronotasker.ui.ChronoTaskerApplication;
 
@@ -13,20 +12,13 @@ public class PreferencesHelper implements AccountPreferencesHelper {
 
     private final SharedPreferences preferences;
     private static PreferencesHelper helper;
-    private SharedPreferences.OnSharedPreferenceChangeListener prefListener;
 
 
     private PreferencesHelper() {
         preferences = ChronoTaskerApplication.getContext().getSharedPreferences(ChronoTaskerApplication.PREF_NAME, Context.MODE_PRIVATE);
-        prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                Log.i(TAG, "onSharedPreferenceChanged: Se ha cambiado la clave: " + key);
-            }
-        };
     }
 
-    public PreferencesHelper getInstance() {
+    public static PreferencesHelper getInstance() {
         if (helper == null)
             helper = new PreferencesHelper();
         return helper;
@@ -48,8 +40,8 @@ public class PreferencesHelper implements AccountPreferencesHelper {
         preferences.edit().putString(PREF_KEY_CURRENT_USER_PASSWORD, password).apply();
     }
 
-    public String getCurrentUserRemember() {
-        return preferences.getString(PREF_KEY_CURRENT_USER_REMEMBER, null);
+    public Boolean getCurrentUserRemember() {
+        return preferences.getBoolean(PREF_KEY_CURRENT_USER_REMEMBER, false);
     }
 
     public void setCurrentUserRemember(Boolean remember) {

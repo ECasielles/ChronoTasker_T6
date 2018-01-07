@@ -14,14 +14,14 @@
         android:layout_marginTop="32dp"
         android:text="@string/signup"
         android:textAppearance="@style/Custom.Title"
-        app:layout_constraintBottom_toTopOf="@+id/tilUser"
+        app:layout_constraintBottom_toTopOf="@+id/tilName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilUser"
+        android:id="@+id/tilName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -50,7 +50,8 @@
         android:background="@drawable/shape_edt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilUser">
+        app:layout_constraintTop_toBottomOf="@+id/tilName"
+        >
 
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"

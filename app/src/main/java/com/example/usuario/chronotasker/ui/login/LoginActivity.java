@@ -10,15 +10,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.TextView;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.repository.UserRepository;
+import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
+import com.example.usuario.chronotasker.ui.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
-import com.example.usuario.chronotasker.ui.task.TaskActivity;
 
 /**
  * Clase Activity de la vista principal, Login, desde la que
@@ -29,67 +28,85 @@ import com.example.usuario.chronotasker.ui.task.TaskActivity;
  * @version 1.0
  * @see android.support.v7.app.AppCompatActivity
  */
-public class LoginActivity extends AppCompatActivity {
-
-    TextInputEditText edtUserData, edtPassword;
-    TextView txvSignup;
-    CheckBox chbRemember;
-    Button btnLogin;
-    boolean rememberUser;
+public class LoginActivity extends AppCompatActivity implements LoginContract.View {
+    private static final int REQUEST_CODE_OK = 0;
+    private static final int RESULT_CODE_LOGIN = 1;
+    private static final int RESULT_CODE_CANCEL = 2;
+    private TextInputEditText edtName, edtPassword;
+    private CheckBox chbRemember;
+    private Button btnLogin, btnSignup;
+    private ViewGroup parent;
+    private LoginContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //TODO: Shapes y personalizar vistas
         setContentView(R.layout.activity_login);
-        edtUserData = (TextInputEditText) ((TextInputLayout) findViewById(R.id.tilUser)).getEditText();
+
+        //Guarda vista para Snackbar
+        parent = findViewById(android.R.id.content);
+
+        //Inicializa Presenter y lo asigna
+        presenter = new LoginPresenter(this);
+
+        //Inicializa vistas
+        edtName = (TextInputEditText) ((TextInputLayout) findViewById(R.id.tilName)).getEditText();
         edtPassword = (TextInputEditText) ((TextInputLayout) findViewById(R.id.tilPassword)).getEditText();
         chbRemember = findViewById(R.id.chbRemember);
         btnLogin = findViewById(R.id.btnLogin);
-        txvSignup = findViewById(R.id.txvSignup);
+        btnSignup = findViewById(R.id.txvSignup);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(UserRepository.getInstance().validateCredentials(
-                        edtUserData.getText().toString(), edtPassword.getText().toString()))
-                    navigateToHome();
-                else
-                    Snackbar.make(findViewById(R.id.btnLogin), "Credenciales no válidos", Snackbar.LENGTH_SHORT).show();
+                presenter.validate(edtName.getText().toString(), edtPassword.getText().toString(), chbRemember.isChecked());
             }
         });
-        chbRemember.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                rememberUser = b;
-            }
-        });
-        txvSignup.setOnClickListener(new View.OnClickListener() {
+        btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this, SignupActivity.class));
+                startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE_OK);
             }
         });
     }
 
+    //TODO: onActivityResult de SignupActivity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_OK)
+            switch (resultCode) {
+                case RESULT_CODE_LOGIN:
+                    break;
+                case RESULT_CODE_CANCEL:
+                    break;
+            }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //Comprueba que si hay una sesión guardada anterior para iniciar la aplicación
+        if (ChronoTaskerApplication.getContext()
+                .getPreferencesHelper().getCurrentUserRemember())
+            navigateToHome();
+    }
 
     /**
-     * Infla el menú de la esquina superior derecha
-     * @param menu
-     * @return
+     * Arranca la ActivityPrincipal, TaskActivity, y finaliza.
      */
+    public void navigateToHome() {
+        //startActivity(new Intent(LoginActivity.this, TaskActivity.class));
+        //finish();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_activities_start, menu);
         return super.onCreateOptionsMenu(menu);
     }
-    /**
-     * Muestra las opciones del menú y su comportamiento
-     * @param item
-     * @return
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -100,8 +117,34 @@ public class LoginActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void navigateToHome(){
-        startActivity(new Intent(LoginActivity.this, TaskActivity.class));
-        finish();
+
+    //COMUNICACION CON LOGINPRESENTER
+    @Override
+    public void emptyFieldError() {
+        Snackbar.make(parent, getResources().getString(R.string.error_name_empty), Snackbar.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void nameLengthInvalidError() {
+        Snackbar.make(parent, getResources().getString(R.string.error_name_length_invalid), Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void passwordLengthInvalidError() {
+        Snackbar.make(parent, getResources().getString(R.string.error_password_length_invalid), Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void passwordFormatInvalidError() {
+        Snackbar.make(parent, getResources().getString(R.string.error_password_format_invalid), Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void addUserPreferences(String name, String password, Boolean remember) {
+        PreferencesHelper helper = ChronoTaskerApplication.getContext().getPreferencesHelper();
+        helper.setCurrentUserName(name);
+        helper.setCurrentUserPassword(password);
+        helper.setCurrentUserRemember(remember);
+    }
+
 }

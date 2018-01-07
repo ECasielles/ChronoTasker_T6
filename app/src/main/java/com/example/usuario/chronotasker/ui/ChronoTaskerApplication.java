@@ -18,7 +18,7 @@ public class ChronoTaskerApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        preferencesHelper = preferencesHelper.getInstance();
+        preferencesHelper = PreferencesHelper.getInstance();
     }
 
     public PreferencesHelper getPreferencesHelper() {
