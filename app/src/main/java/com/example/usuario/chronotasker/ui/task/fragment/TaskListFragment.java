@@ -92,8 +92,6 @@ public class TaskListFragment extends Fragment implements TaskListContract.View 
 
         //Toolbar
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-
     }
 
     //OVERFLOW MENU

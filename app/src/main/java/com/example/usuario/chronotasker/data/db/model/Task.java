@@ -1,5 +1,8 @@
 package com.example.usuario.chronotasker.data.db.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
 /**
@@ -8,7 +11,9 @@ import java.util.Date;
  * @author Enrique Casielles Lapeira
  * @version 1.0
  */
-public class Task {
+public class Task implements Parcelable {
+
+    public static final String TAG = "Task";
     int id;
     String title;
     int iconId;
@@ -21,6 +26,54 @@ public class Task {
     int alarmId;
     Date repeat;
     String reminder;
+
+    public Task(String title, Date startDate, Date endDate, String description, String location) {
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+        this.location = location;
+    }
+
+    protected Task(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        iconId = in.readInt();
+        ownerId = in.readInt();
+        description = in.readString();
+        location = in.readString();
+        alarmId = in.readInt();
+        reminder = in.readString();
+    }
+
+    public static final Creator<Task> CREATOR = new Creator<Task>() {
+        @Override
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
+        }
+
+        @Override
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(title);
+        parcel.writeInt(iconId);
+        parcel.writeInt(ownerId);
+        parcel.writeString(description);
+        parcel.writeString(location);
+        parcel.writeInt(alarmId);
+        parcel.writeString(reminder);
+    }
 
     public int getId() {
         return id;
