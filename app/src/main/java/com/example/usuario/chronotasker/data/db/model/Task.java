@@ -2,7 +2,12 @@ package com.example.usuario.chronotasker.data.db.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.example.usuario.chronotasker.R;
+
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -11,30 +16,73 @@ import java.util.Date;
  * @author Enrique Casielles Lapeira
  * @version 1.0
  */
-public class Task implements Parcelable {
+public class Task implements Parcelable, Comparable {
 
+    //CONSTANTES
     public static final String TAG = "Task";
-    int id;
-    String title;
-    int iconId;
-    int ownerId;
-    Date startDate;
+
+    /**
+     * Comparator que devuelve la tarea más prioritaria
+     */
+    public static final Comparator<Category> CATEGORY_COMPARATOR = new Comparator<Category>() {
+        @Override
+        public int compare(Category category, Category otherCategory) {
+            return category.getPriority() - otherCategory.getPriority();
+        }
+    };
+    /**
+     * Comparator que devuelve las tarea más inminente
+     */
+    public static final Comparator<Date> START_DATE_COMPARATOR = new Comparator<Date>() {
+        @Override
+        public int compare(Date date, Date otherDate) {
+            return date.compareTo(otherDate);
+        }
+    };
+
+    //PARAMETROS
+    private int id;
+    private String title;
+    private int ownerId;
+    private int iconId;
+    private Date startDate;
+    private @Nullable
     Date endDate;
-    Category categoryFlags;
-    String description;
+    private Category categoryFlags;
+    private String description;
+    private @Nullable
     String location;
-    int alarmId;
+    private int alarmId;
+    private @Nullable
     Date repeat;
+    private @Nullable
     String reminder;
 
-    public Task(String title, Date startDate, Date endDate, String description, String location) {
+    //CONSTRUCTOR
+    public Task(int id, String title, int ownerId, int iconId, @Nullable Date startDate,
+                @Nullable Date endDate, Category categoryFlags, @Nullable String description,
+                @Nullable String location, int alarmId, @Nullable Date repeat,
+                @Nullable String reminder) {
+        this.id = id;
+        this.ownerId = ownerId;
+        //TODO: Add multiple task icons
+        this.iconId = R.drawable.icon_add_task_default;
         this.title = title;
-        this.startDate = startDate;
+        if (startDate == null)
+            this.startDate = new Date();
+        else
+            this.startDate = startDate;
         this.endDate = endDate;
+        this.categoryFlags = categoryFlags;
         this.description = description;
         this.location = location;
+        //TODO: Add multiple alarms
+        this.alarmId = -1;
+        this.repeat = repeat;
+        this.reminder = reminder;
     }
 
+    //IMPLEMENTACION DE PARCELABLE
     protected Task(Parcel in) {
         id = in.readInt();
         title = in.readString();
@@ -75,6 +123,7 @@ public class Task implements Parcelable {
         parcel.writeString(reminder);
     }
 
+    //GETTERS Y SETTERS
     public int getId() {
         return id;
     }
@@ -146,6 +195,39 @@ public class Task implements Parcelable {
     }
     public void setReminder(String reminder) {
         this.reminder = reminder;
+    }
+
+    /**
+     * Implementación de la interfaz Comparable.
+     *
+     * @param other Tarea con la que se compara
+     * @return Devuelve negativo si el parámetro
+     * es una tarea creada posteriormente en la base de datos
+     * y viceversa.
+     */
+    @Override
+    public int compareTo(@NonNull Object other) {
+        return this.getId() - ((Task) other).getId();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Task task = (Task) o;
+
+        return id == task.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return title;
     }
 
 }

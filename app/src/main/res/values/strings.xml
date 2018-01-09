@@ -14,8 +14,9 @@
     <string name="contentAbout">Somos una empresa malagueña joven y dinámica. Puedes encontrarnos <a href="http://www.mercacortex.hol.es/">aquí</a>.</string>
     <string name="textGeneralSettings">Ajustes de la aplicación</string>
     <string name="textAccountSettings">Ajustes del usuario</string>
-    <string name="error_name_empty">Campo vacío</string>
-    <string name="error_name_length_invalid">Longitud de nombre no válida</string>
-    <string name="error_password_length_invalid">Longitud entre 6 y 20 caracteres</string>
-    <string name="error_password_format_invalid">Debe contener minúsculas, mayúsculas y cifras</string>
+    <string name="action_menu_logout">Cerrar sesión</string>
+    <string name="category_default">Normal</string>
+    <string name="category_important">Importante</string>
+    <string name="category_urgent">Urgente</string>
+    <string name="category_informal">Informal</string>
 </resources>

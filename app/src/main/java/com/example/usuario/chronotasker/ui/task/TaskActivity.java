@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.ui.task.fragment.TaskCreationFragment;
@@ -58,5 +60,40 @@ public class TaskActivity extends AppCompatActivity implements TaskListFragment.
     public void reloadTasks() {
         getSupportFragmentManager().popBackStack();
     }
+
+
+    //OVERFLOW MENU
+
+    /**
+     * Infla el menú de la esquina superior derecha. Común a toda la aplicación.
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activities_start, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * Muestra las opciones del menú y su comportamiento
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_menu_general_settings:
+                //TODO: launch GeneralSettingsActivity, change theme and language
+                break;
+            case R.id.action_menu_account_settings:
+                //TODO: launch AccountSettingsActivity, change profile settings, remember credentials
+                break;
+            case R.id.action_menu_about:
+                //TODO: launch AboutActivity
+                break;
+            case R.id.action_menu_logout:
+                //TODO: end session, launch LoginActivity
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }

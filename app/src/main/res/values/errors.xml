@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Errores de parámetros de entrada de UI-->
+    <string name="error_name_empty">Campo vacío</string>
+    <string name="error_name_length_invalid">Longitud de nombre no válida</string>
+    <string name="error_password_length_invalid">Longitud entre 6 y 20 caracteres</string>
+    <string name="error_password_format_invalid">Debe contener minúsculas, mayúsculas y cifras</string>
+
+    <!--Excepciones-->
+    <string name="error_category_argument" type="id">No existe el valor recurso para la categoría</string>
+</resources>

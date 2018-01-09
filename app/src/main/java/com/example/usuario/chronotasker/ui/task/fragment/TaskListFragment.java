@@ -9,9 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -92,31 +89,6 @@ public class TaskListFragment extends Fragment implements TaskListContract.View 
 
         //Toolbar
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-    }
-
-    //OVERFLOW MENU
-    /**
-     * Infla el menú de la esquina superior derecha
-     */
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_activities_start, menu);
-    }
-    /**
-     * Muestra las opciones del menú y su comportamiento
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_menu_general_settings:
-                break;
-            case R.id.action_menu_account_settings:
-                break;
-            case R.id.action_menu_about:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     //CONTEXT MENU

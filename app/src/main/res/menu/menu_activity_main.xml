@@ -5,20 +5,21 @@
     <item
         android:id="@+id/action_menu_general_settings"
         app:showAsAction="never"
-        android:icon="@drawable/ic_menu_display"
         android:title="@string/textGeneralSettings"
         />
     <item
         android:id="@+id/action_menu_account_settings"
         app:showAsAction="never"
-        android:icon="@drawable/ic_menu_display"
         android:title="@string/textAccountSettings"
         />
     <item
         android:id="@+id/action_menu_about"
         app:showAsAction="never"
-        android:icon="@drawable/ic_menu_display"
         android:title="@string/textAbout"
         />
+    <item
+        android:id="@+id/action_menu_logout"
+        app:showAsAction="never"
+        android:title="@string/action_menu_logout" />
 
 </menu>
