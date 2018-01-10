@@ -49,11 +49,8 @@ public class Category {
      *              i = 13  ->  1 + 2 + 8 = (1,1,0,1,0)
      *              tempFlag = FLAG_ARRAY[0]|FLAG_ARRAY[2]|FLAG_ARRAY[4];
      *
-     * Este algoritmo es necesario para poder admitir distintas combinaciones de flags.
-     * Al precalcularlo de esta forma se ahorra tiempo en comprobaciones y el cálculo se
-     * convierte en comprobar si un elemento existe en una lista, lo que, en función del
-     * rendimiento final, puede limitar el número de categorías disponibles a un número
-     * que estimo es cercano a 10 (2^10 = 1024 elementos en una lista).
+     * No es la solución definitiva.
+     * TODO: Crear listado y guardarlo para ahorrar tiempo de ejecución.
      */
     static {
         allowedFlags = new ArrayList<>();

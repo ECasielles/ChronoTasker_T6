@@ -46,17 +46,13 @@ public class Task implements Parcelable, Comparable {
     private int ownerId;
     private int iconId;
     private Date startDate;
-    private @Nullable
-    Date endDate;
+    private Date endDate;
     private Category categoryFlags;
     private String description;
-    private @Nullable
-    String location;
+    private String location;
     private int alarmId;
-    private @Nullable
-    Date repeat;
-    private @Nullable
-    String reminder;
+    private Date repeat;
+    private String reminder;
 
     //CONSTRUCTOR
     public Task(int id, String title, int ownerId, int iconId, @Nullable Date startDate,

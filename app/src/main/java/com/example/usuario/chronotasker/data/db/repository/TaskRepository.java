@@ -1,14 +1,21 @@
 package com.example.usuario.chronotasker.data.db.repository;
 
+import android.support.annotation.Nullable;
+
+import com.example.usuario.chronotasker.data.db.model.Category;
 import com.example.usuario.chronotasker.data.db.model.Task;
-import com.example.usuario.chronotasker.data.db.model.User;
 import com.example.usuario.chronotasker.ui.ChronoTaskerApplication;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Contiene los elementos de la lista de tareas.
+ *
+ * @author Enrique Casielles Lapeira
+ * @version 1.0
+ * @see Task
  */
 
 public class TaskRepository {
@@ -30,49 +37,50 @@ public class TaskRepository {
         return taskRepository;
     }
 
-    //TODO: Add, Edit, Delete Tasks
-    public static boolean addTask(String title, Date startDate, Date endDate, String email, String password) {
+    public static boolean addTask(int id, String title, int ownerId, int iconId, @Nullable Date startDate,
+                                  @Nullable Date endDate, Category categoryFlags, @Nullable String description,
+                                  @Nullable String location, int alarmId, @Nullable Date repeat,
+                                  @Nullable String reminder) {
         boolean newTask = true;
         for (Task temp : tasks) {
-            if (temp.getName().equals(name) || temp.getEmail().equals(email)) {
+            if (temp.getId() == id) {
                 newTask = false;
                 break;
             }
         }
         if (newTask) {
-            Task task = new Task(
-                    tasks.size(),
+            tasks.add(new Task(tasks.size(), title,
                     UserRepository.getUserId(ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserName()),
-                    title,
-                    startDate,;
+                    -1, startDate, null, categoryFlags, null, null,
+                    -1, null, null)
+            );
         }
-        users.add(new User(users.size(), name, email, password));
         return newTask;
     }
 
-    public static boolean editTask(String name, String email, String password) {
-        boolean isNewUser = true;
-        for (User temp : users) {
-            if (temp.getName().equals(name) || temp.getEmail().equals(email)) {
-                isNewUser = false;
+    //TODO: Add more fields for edition
+    public static void editTask(Task task, String title) {
+        Iterator<Task> iterator = tasks.iterator();
+        while (iterator.hasNext()) {
+            Task oldTask = iterator.next();
+            if (oldTask.getId() == task.getId()) {
+                oldTask.setTitle(title);
                 break;
             }
         }
-        if (isNewUser)
-            users.add(new User(users.size(), name, email, password));
-        return isNewUser;
     }
 
-    public static boolean deleteTask(String name, String email, String password) {
-        boolean isNewUser = true;
-        for (User temp : users) {
-            if (temp.getName().equals(name) || temp.getEmail().equals(email)) {
-                isNewUser = false;
+    public static boolean deleteTask(Task task) {
+        boolean taskDeleted = false;
+        Iterator<Task> iterator = tasks.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getId() == task.getId()) {
+                iterator.remove();
+                taskDeleted = true;
                 break;
             }
         }
-        if (isNewUser)
-            users.add(new User(users.size(), name, email, password));
-        return isNewUser;
+        return taskDeleted;
     }
+
 }

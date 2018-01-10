@@ -4,6 +4,12 @@ package com.example.usuario.chronotasker.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Clase que maneja herramientas de uso general.
+ *
+ * @author Enrique Casielles Lapeira
+ * @version 1.0
+ */
 public class CommonUtils {
 
     /**

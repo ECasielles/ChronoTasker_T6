@@ -1,7 +1,5 @@
 package com.example.usuario.chronotasker.data.db.repository;
 
-import android.support.annotation.Nullable;
-
 import com.example.usuario.chronotasker.data.db.model.User;
 
 import java.util.ArrayList;
@@ -48,8 +46,7 @@ public class UserRepository {
         return users.get(index);
     }
 
-    public static @Nullable
-    User getUser(String name) {
+    public static User getUser(String name) {
         User user = null;
         for (User temp : users) {
             if (temp.getName().equals(name)) {
