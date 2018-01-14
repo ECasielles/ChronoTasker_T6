@@ -81,4 +81,14 @@ public class UserRepository {
         return id;
     }
 
+    public boolean exists(String name, String password) {
+        boolean result = false;
+        for (User temp : users) {
+            if (temp.getName().equals(name) && temp.getPassword().equals(password)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
 }

@@ -2,12 +2,12 @@ package com.example.usuario.chronotasker.data.db.model;
 
 import android.content.res.Resources;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 
 import com.example.usuario.chronotasker.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 
 /**
  * Representa las categorías que caracterizan las tareas.
@@ -21,58 +21,44 @@ import java.util.ArrayList;
  * @author Enrique Casielles Lapeira
  * @version 1.0
  */
-public class Category {
+public class Category implements Comparable {
 
-    @IntDef(flag = true, value = {
-            CATEGORY_INFORMAL, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT
-    })
+    //CONSTANTES
+    @IntDef(flag = true,
+            value = {CATEGORY_NONE, CATEGORY_INFORMAL, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface DisplayOptions {
     }
 
-    public static final int CATEGORY_INFORMAL = R.string.category_informal;
-    public static final int CATEGORY_DEFAULT = R.string.category_default;
-    public static final int CATEGORY_IMPORTANT = R.string.category_important;
-    public static final int CATEGORY_URGENT = R.string.category_urgent;
-
-    static final int[] FLAG_ARRAY = {
-            CATEGORY_IMPORTANT, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT
-    };
-    private static final ArrayList<Integer> allowedFlags;
-
+    public static final int NONE_NAME = R.string.category_none;
+    public static final int INFORMAL_NAME = R.string.category_informal;
+    public static final int DEFAULT_NAME = R.string.category_default;
+    public static final int IMPORTANT_NAME = R.string.category_important;
+    public static final int URGENT_NAME = R.string.category_urgent;
+    public static final int CATEGORY_NONE = 0;
+    public static final int CATEGORY_INFORMAL = 1;
+    public static final int CATEGORY_DEFAULT = 2;
+    public static final int CATEGORY_IMPORTANT = 4;
+    public static final int CATEGORY_URGENT = 8;
     /**
-     * Calcula las combinaciones posibles de flags usando operaciones de control de bit.
-     * Hay 2^n combinaciones donde n es el número de flags disponibles, como se indica
-     * en el bucle inicial.
-     * El bucle interno convierte a binario el número de cada combinación y añade al flag
-     * el valor de cada 1 obtenido. Por ejemplo:
-     *              i = 13  ->  1 + 2 + 8 = (1,1,0,1,0)
-     *              tempFlag = FLAG_ARRAY[0]|FLAG_ARRAY[2]|FLAG_ARRAY[4];
-     *
-     * No es la solución definitiva.
-     * TODO: Crear listado y guardarlo para ahorrar tiempo de ejecución.
+     * La unión de todos los flags es 2^5 - 1
      */
-    static {
-        allowedFlags = new ArrayList<>();
-        int combinations = (int) (Math.pow(2, FLAG_ARRAY.length) - 1);
-        for (int i = 1; i <= combinations; i++) {
-            int tempFlag = 0;
-            for (int j = 0; j < FLAG_ARRAY.length; j *= 2) {
-                if ((i & j) != 0)
-                    tempFlag |= FLAG_ARRAY[j];
-            }
-            allowedFlags.add(tempFlag);
-        }
-    }
+    public static final int MAX_FLAGS = 31;
 
+    //PARAMETROS
     /**
      * Combinación de categorías en forma de flags.
      */
-    int flags;
-    int priority;
+    private int flags;
+    private int priority;
 
-    public Category(int flag) {
-        if (!allowedFlags.contains(flag))
+    /**
+     * Pide las opciones que se han declarado arriba
+     *
+     * @param flag Unión de múltiples flags para categoría compuesta
+     */
+    public Category(@DisplayOptions int flag) {
+        if (flag > MAX_FLAGS)
             throw new IllegalArgumentException(Resources.getSystem().getString(R.string.error_category_argument));
         this.flags = flag;
         setPriority();
@@ -82,6 +68,10 @@ public class Category {
         return priority;
     }
 
+    public int getFlags() {
+        return flags;
+    }
+
     /**
      * Las categorías permiten ordenar por prioridad. Cada categoría tiene una
      * prioridad propia, múltiplo de 2, de forma que cada combinación de categorías
@@ -89,67 +79,63 @@ public class Category {
      *
      * @return Prioridad combinada de las categorías.
      */
-    void setPriority() {
-        int priority = -1;
+    private void setPriority() {
+        int priority = 0;
         if (isInformal())
-            priority = 0;
+            priority = 1;
         if (isDefault())
-            priority += 1;
-        if (isImportant())
             priority += 2;
-        if (isUrgent())
+        if (isImportant())
             priority += 4;
+        if (isUrgent())
+            priority += 8;
         this.priority = priority;
     }
 
     /**
-     * Devuelven true si contiene la categoría por la que pregunta
-     *
-     * @return
+     * Devuelven booleano en función de si la categoría contiene
+     * o no el flag por el que se pregunta
      */
+    public boolean isNone() {
+        return CATEGORY_NONE == flags;
+    }
     public boolean isInformal() {
         return (flags | CATEGORY_INFORMAL) == flags;
     }
-
     public boolean isDefault() {
         return (flags | CATEGORY_DEFAULT) == flags;
     }
-
     public boolean isImportant() {
         return (flags | CATEGORY_IMPORTANT) == flags;
     }
-
     public boolean isUrgent() {
-        return (flags | CATEGORY_DEFAULT) == flags;
+        return (flags | CATEGORY_URGENT) == flags;
     }
 
     /**
      * Permiten editar los flags de la categoría.
      */
+    public void setNone() {
+        flags = CATEGORY_NONE;
+    }
     public void setInformal() {
         flags = flags | CATEGORY_INFORMAL;
     }
-
     public void setDefault() {
         flags = flags | CATEGORY_DEFAULT;
     }
-
     public void setImportant() {
         flags = flags | CATEGORY_IMPORTANT;
     }
-
     public void setUrgent() {
         flags = flags | CATEGORY_DEFAULT;
     }
-
     public void unSetInformal() {
         flags = flags ^ CATEGORY_INFORMAL;
     }
-
     public void unSetDefault() {
         flags = flags ^ CATEGORY_DEFAULT;
     }
-
     public void unSetImportant() {
         flags = flags ^ CATEGORY_IMPORTANT;
     }
@@ -158,6 +144,41 @@ public class Category {
         flags = flags ^ CATEGORY_DEFAULT;
     }
 
+    /**
+     * Devuelve el nombre de la categoría más característica
+     *
+     * @return
+     */
+    public int getCategoryNameId() {
+        if (this.isUrgent())
+            return URGENT_NAME;
+        else if (this.isImportant())
+            return IMPORTANT_NAME;
+        else if (this.isDefault())
+            return DEFAULT_NAME;
+        else if (this.isInformal())
+            return INFORMAL_NAME;
+        else return NONE_NAME;
+    }
 
+    /**
+     * Permiten editar los valores de texto cuando se cambia el idioma
+     */
+
+    /**
+     * Implementación de la interfaz Comparable
+     *
+     * @param other Categoría con la que compara
+     * @return Devuelve positivo si esta categoría es más prioritaria,
+     * negativo si el parámetro lo es, y 0 si son de igual prioridad.
+     */
+    @Override
+    public int compareTo(@NonNull Object other) {
+        try {
+            return ((Category) other).getPriority() - this.getPriority();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Parameter must be of Task class");
+        }
+    }
 
 }

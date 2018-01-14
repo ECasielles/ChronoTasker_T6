@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/action_menu_task_sort_default"
+        android:title="@string/action_menu_task_sort_default"
+        app:showAsAction="collapseActionView"
+        />
+    <item
+        android:id="@+id/action_menu_task_sort_priority"
+        android:title="@string/action_task_sort_priority"
+        app:showAsAction="collapseActionView"
+        />
+    <item
+        android:id="@+id/action_menu_task_sort_start_date"
+        android:title="@string/action_menu_task_sort_start_date"
+        app:showAsAction="collapseActionView"
+        />
+    <item
+        android:id="@+id/action_menu_task_sort_urgent"
+        android:title="@string/action_menu_task_sort_urgent"
+        app:showAsAction="collapseActionView"
+        />
+    <item
+        android:id="@+id/action_menu_task_sort_important"
+        android:title="@string/action_menu_task_sort_important"
+        app:showAsAction="collapseActionView"
+        />
+
+</menu>

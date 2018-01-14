@@ -15,8 +15,8 @@ import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.repository.UserRepository;
+import com.example.usuario.chronotasker.data.prefs.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
-import com.example.usuario.chronotasker.ui.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
 import com.example.usuario.chronotasker.ui.task.TaskActivity;
 
@@ -57,7 +57,7 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_activities_start, menu);
+        menuInflater.inflate(R.menu.menu_activity_start, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

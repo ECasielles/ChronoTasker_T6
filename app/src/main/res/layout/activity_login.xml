@@ -55,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/tilUserHint"
                 android:inputType="text"
+                android:text="Enrique"
                 />
 
         </android.support.design.widget.TextInputLayout>
@@ -75,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/tilPasswordHint"
                 android:inputType="textPassword"
+                android:text="Pwd123"
                 />
 
         </android.support.design.widget.TextInputLayout>

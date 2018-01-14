@@ -1,6 +1,10 @@
 package com.example.usuario.chronotasker.data.db.model;
 
-import java.util.Date;
+import android.os.Parcel;
+import android.support.annotation.Nullable;
+
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 /**
  * Representa una tarea importada por el usuario
@@ -14,11 +18,21 @@ public class ProjectTask extends Task {
     int id;
     String title;
     int iconId;
-    Date startDate;
-    Date endDate;
+    DateTime startDate;
+    DateTime endDate;
     String description;
     String location;
     int alarmId;
-    Date repeat;
+    Interval repetitionInterval;
     String reminder;
+
+    public ProjectTask(int id, String title, int ownerId, int iconId, @Nullable DateTime startDate,
+                       @Nullable DateTime endDate, Category categoryFlags, @Nullable String description,
+                       @Nullable String location, int alarmId, @Nullable Interval repetitionInterval, @Nullable String reminder) {
+        super(id, title, ownerId, iconId, startDate, endDate, categoryFlags, description, location, alarmId, repetitionInterval, reminder);
+    }
+
+    protected ProjectTask(Parcel in) {
+        super(in);
+    }
 }

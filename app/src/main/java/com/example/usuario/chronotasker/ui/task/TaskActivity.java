@@ -1,30 +1,48 @@
 package com.example.usuario.chronotasker.ui.task;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 
 import com.example.usuario.chronotasker.R;
+import com.example.usuario.chronotasker.ui.base.BaseActivity;
 import com.example.usuario.chronotasker.ui.task.fragment.TaskCreationFragment;
 import com.example.usuario.chronotasker.ui.task.fragment.TaskListFragment;
 import com.example.usuario.chronotasker.ui.task.presenter.TaskCreationPresenter;
 import com.example.usuario.chronotasker.ui.task.presenter.TaskListPresenter;
 
-public class TaskActivity extends AppCompatActivity implements TaskListFragment.TaskListListener,
+/**
+ * Activity que maneja el uso de la lista de tareas
+ *
+ * @author Enrique Casielles Lapeira
+ * @see BaseActivity
+ */
+public class TaskActivity extends BaseActivity implements TaskListFragment.TaskListListener,
         TaskCreationFragment.TaskCreationListener {
 
-    TaskListFragment taskListFragment;
-    TaskListPresenter taskListPresenter;
-    TaskCreationFragment taskCreationFragment;
-    TaskCreationPresenter taskCreationPresenter;
+    private Toolbar toolbar;
+    //Es público para que los Fragment lo puedan acceder y modificar
+    public FloatingActionButton floatingActionButton;
+
+    private TaskListFragment taskListFragment;
+    private TaskListPresenter taskListPresenter;
+    private TaskCreationFragment taskCreationFragment;
+    private TaskCreationPresenter taskCreationPresenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+
+        //Toolbar
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        //FloatingActionButton
+        floatingActionButton = findViewById(R.id.floationActionButton);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         taskListFragment = (TaskListFragment) fragmentManager.findFragmentByTag(TaskListFragment.TAG);
@@ -32,7 +50,7 @@ public class TaskActivity extends AppCompatActivity implements TaskListFragment.
         if (taskListFragment == null) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             taskListFragment = TaskListFragment.newInstance();
-            fragmentTransaction.add(android.R.id.content, taskListFragment, TaskListFragment.TAG);
+            fragmentTransaction.add(R.id.frame_content, taskListFragment, TaskListFragment.TAG);
             fragmentTransaction.commit();
         }
 
@@ -48,7 +66,8 @@ public class TaskActivity extends AppCompatActivity implements TaskListFragment.
         if (taskCreationFragment == null) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             taskCreationFragment = TaskCreationFragment.getInstance(bundle);
-            fragmentTransaction.replace(android.R.id.content, taskCreationFragment, TaskCreationFragment.TAG);
+            fragmentTransaction.addToBackStack(TaskCreationFragment.TAG);
+            fragmentTransaction.replace(R.id.frame_content, taskCreationFragment, TaskCreationFragment.TAG);
             fragmentTransaction.commit();
         }
 
@@ -61,39 +80,15 @@ public class TaskActivity extends AppCompatActivity implements TaskListFragment.
         getSupportFragmentManager().popBackStack();
     }
 
-
-    //OVERFLOW MENU
-
     /**
-     * Infla el menú de la esquina superior derecha. Común a toda la aplicación.
+     * Cierra el último fragment añadido al BackStack
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_activities_start, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
-     * Muestra las opciones del menú y su comportamiento
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_menu_general_settings:
-                //TODO: launch GeneralSettingsActivity, change theme and language
-                break;
-            case R.id.action_menu_account_settings:
-                //TODO: launch AccountSettingsActivity, change profile settings, remember credentials
-                break;
-            case R.id.action_menu_about:
-                //TODO: launch AboutActivity
-                break;
-            case R.id.action_menu_logout:
-                //TODO: end session, launch LoginActivity
-                break;
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
         }
-        return super.onOptionsItemSelected(item);
     }
-
-
 }

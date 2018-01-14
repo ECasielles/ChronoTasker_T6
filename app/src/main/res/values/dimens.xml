@@ -6,4 +6,7 @@
     <dimen name="fab_pressed_translation_z">8dp</dimen>
     <dimen name="margin_medium">16dp</dimen>
     <dimen name="fab_elevation">4dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="card_corner_radius">4dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
 </resources>

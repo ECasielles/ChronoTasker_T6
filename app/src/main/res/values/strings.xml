@@ -15,8 +15,25 @@
     <string name="textGeneralSettings">Ajustes de la aplicación</string>
     <string name="textAccountSettings">Ajustes del usuario</string>
     <string name="action_menu_logout">Cerrar sesión</string>
+
+    <string name="category_none"></string>
     <string name="category_default">Normal</string>
     <string name="category_important">Importante</string>
     <string name="category_urgent">Urgente</string>
     <string name="category_informal">Informal</string>
+
+    <string name="action_task_sort_priority">Ver prioritarias</string>
+    <string name="action_menu_task_sort_urgent">Ver urgentes</string>
+    <string name="action_menu_task_sort_start_date">Ver próximas</string>
+    <string name="action_menu_task_sort_important">Ver importantes</string>
+    <string name="action_menu_task_sort_default">Ver por fecha de creación</string>
+    <string name="undo">Deshacer</string>
+    <string name="info_task_deleted">eliminada con éxito</string>
+    <string name="info_task_restored">restaurada</string>
+    <string name="edt_title">Título</string>
+    <string name="edt_description">Descripción</string>
+    <string name="ckbInformal">Informal</string>
+    <string name="ckbDefault">Normal</string>
+    <string name="ckbImportant">Importante</string>
+    <string name="ckbUrgent">Urgente</string>
 </resources>

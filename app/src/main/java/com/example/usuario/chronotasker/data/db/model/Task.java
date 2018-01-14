@@ -7,8 +7,10 @@ import android.support.annotation.Nullable;
 
 import com.example.usuario.chronotasker.R;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+
 import java.util.Comparator;
-import java.util.Date;
 
 /**
  * Representa una tarea creada por el usuario
@@ -20,23 +22,76 @@ public class Task implements Parcelable, Comparable {
 
     //CONSTANTES
     public static final String TAG = "Task";
-
     /**
-     * Comparator que devuelve la tarea más prioritaria
+     * Comparator que devuelve la tarea más antigua
      */
-    public static final Comparator<Category> CATEGORY_COMPARATOR = new Comparator<Category>() {
+    public static final Comparator<Task> COMPARATOR_ID = new Comparator<Task>() {
         @Override
-        public int compare(Category category, Category otherCategory) {
-            return category.getPriority() - otherCategory.getPriority();
+        public int compare(Task task, Task otherTask) {
+            return task.compareTo(otherTask);
         }
     };
     /**
-     * Comparator que devuelve las tarea más inminente
+     * Comparator que devuelve la tarea más prioritaria
      */
-    public static final Comparator<Date> START_DATE_COMPARATOR = new Comparator<Date>() {
+    public static final Comparator<Task> COMPARATOR_PRIORITY = new Comparator<Task>() {
         @Override
-        public int compare(Date date, Date otherDate) {
-            return date.compareTo(otherDate);
+        public int compare(Task task, Task otherTask) {
+            int res = task.getCategoryFlags().compareTo(otherTask.getCategoryFlags());
+            if (res == 0)
+                res = task.compareTo(otherTask);
+            return res;
+        }
+    };
+    /**
+     * Comparator que devuelve las tarea más próxima. Si empatan, la que termine antes.
+     * Si empatan, la que tenga menor id.
+     */
+    public static final Comparator<Task> COMPARATOR_START_DATE = new Comparator<Task>() {
+        @Override
+        public int compare(Task task, Task otherTask) {
+            int res = task.getStartDate().compareTo(otherTask.getStartDate());
+            if (res == 0)
+                res = task.compareTo(otherTask);
+            return res;
+        }
+    };
+    /**
+     * Comparator que devuelve la tarea más urgente.
+     * Si empatan, la más próxima. Si empatan, la de id inferior.
+     */
+    public static final Comparator<Task> COMPARATOR_URGENT = new Comparator<Task>() {
+        @Override
+        public int compare(Task task, Task otherTask) {
+            if (task.getCategoryFlags().isUrgent() && !otherTask.getCategoryFlags().isUrgent())
+                return -1;
+            else if (!task.getCategoryFlags().isUrgent() && otherTask.getCategoryFlags().isUrgent())
+                return 1;
+            else {
+                int res = task.getStartDate().compareTo(otherTask.getStartDate());
+                if (res == 0)
+                    res = task.compareTo(otherTask);
+                return res;
+            }
+        }
+    };
+    /**
+     * Comparator que devuelve la tarea más importante.
+     * Si empatan, la más próxima. Si empatan, la de id inferior.
+     */
+    public static final Comparator<Task> COMPARATOR_IMPORTANT = new Comparator<Task>() {
+        @Override
+        public int compare(Task task, Task otherTask) {
+            if (task.getCategoryFlags().isImportant() && !otherTask.getCategoryFlags().isImportant())
+                return -1;
+            else if (!task.getCategoryFlags().isImportant() && otherTask.getCategoryFlags().isImportant())
+                return 1;
+            else {
+                int res = task.getStartDate().compareTo(otherTask.getStartDate());
+                if (res == 0)
+                    res = task.compareTo(otherTask);
+                return res;
+            }
         }
     };
 
@@ -45,27 +100,27 @@ public class Task implements Parcelable, Comparable {
     private String title;
     private int ownerId;
     private int iconId;
-    private Date startDate;
-    private Date endDate;
+    private DateTime startDate;
+    private DateTime endDate;
     private Category categoryFlags;
     private String description;
     private String location;
     private int alarmId;
-    private Date repeat;
+    private Interval repetitionInterval;
     private String reminder;
 
     //CONSTRUCTOR
-    public Task(int id, String title, int ownerId, int iconId, @Nullable Date startDate,
-                @Nullable Date endDate, Category categoryFlags, @Nullable String description,
-                @Nullable String location, int alarmId, @Nullable Date repeat,
+    public Task(int id, String title, int ownerId, int iconId, @Nullable DateTime startDate,
+                @Nullable DateTime endDate, Category categoryFlags, @Nullable String description,
+                @Nullable String location, int alarmId, @Nullable Interval repetitionInterval,
                 @Nullable String reminder) {
         this.id = id;
         this.ownerId = ownerId;
         //TODO: Add multiple task icons
-        this.iconId = R.drawable.icon_add_task_default;
+        this.iconId = R.drawable.ic_add_task_default;
         this.title = title;
         if (startDate == null)
-            this.startDate = new Date();
+            this.startDate = new DateTime();
         else
             this.startDate = startDate;
         this.endDate = endDate;
@@ -74,7 +129,7 @@ public class Task implements Parcelable, Comparable {
         this.location = location;
         //TODO: Add multiple alarms
         this.alarmId = -1;
-        this.repeat = repeat;
+        this.repetitionInterval = repetitionInterval;
         this.reminder = reminder;
     }
 
@@ -89,7 +144,6 @@ public class Task implements Parcelable, Comparable {
         alarmId = in.readInt();
         reminder = in.readString();
     }
-
     public static final Creator<Task> CREATOR = new Creator<Task>() {
         @Override
         public Task createFromParcel(Parcel in) {
@@ -101,12 +155,10 @@ public class Task implements Parcelable, Comparable {
             return new Task[size];
         }
     };
-
     @Override
     public int describeContents() {
         return 0;
     }
-
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
@@ -144,16 +196,20 @@ public class Task implements Parcelable, Comparable {
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
     }
-    public Date getStartDate() {
+
+    public DateTime getStartDate() {
         return startDate;
     }
-    public void setStartDate(Date startDate) {
+
+    public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
-    public Date getEndDate() {
+
+    public DateTime getEndDate() {
         return endDate;
     }
-    public void setEndDate(Date endDate) {
+
+    public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
     public Category getCategoryFlags() {
@@ -180,11 +236,13 @@ public class Task implements Parcelable, Comparable {
     public void setAlarmId(int alarmId) {
         this.alarmId = alarmId;
     }
-    public Date getRepeat() {
-        return repeat;
+
+    public Interval getRepetitionInterval() {
+        return repetitionInterval;
     }
-    public void setRepeat(Date repeat) {
-        this.repeat = repeat;
+
+    public void setRepetitionInterval(Interval repetitionInterval) {
+        this.repetitionInterval = repetitionInterval;
     }
     public String getReminder() {
         return reminder;
@@ -195,24 +253,30 @@ public class Task implements Parcelable, Comparable {
 
     /**
      * Implementación de la interfaz Comparable.
-     *
      * @param other Tarea con la que se compara
-     * @return Devuelve negativo si el parámetro
-     * es una tarea creada posteriormente en la base de datos
-     * y viceversa.
+     * @return Devuelve positivo si el parámetro es una tarea creada posteriormente
+     * en la base de datos y viceversa. Una tarea anterior es mayor que una posterior.
      */
     @Override
     public int compareTo(@NonNull Object other) {
-        return this.getId() - ((Task) other).getId();
+        try {
+            return this.getId() - ((Task) other).getId();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Parameter must be of Task class");
+        }
     }
 
+    /**
+     * Dos tareas son iguales si tienen el mismo id.
+     *
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Task task = (Task) o;
-
         return id == task.id;
     }
 

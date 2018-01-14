@@ -1,8 +1,6 @@
-package com.example.usuario.chronotasker.ui;
+package com.example.usuario.chronotasker.data.prefs;
 
 import android.app.Application;
-
-import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 
 /**
  * Clase que hereda de Application y que mantiene el contexto

@@ -1,31 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:scrollbars="vertical"
     android:orientation="vertical"
     >
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:titleTextColor="@android:color/white"
-        />
+        >
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floationActionButton"
-        android:layout_width="wrap_content"
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/edt_title"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tilDescription"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/margin_medium"
-        android:layout_marginEnd="@dimen/margin_medium"
-        android:elevation="@dimen/fab_elevation"
-        app:pressedTranslationZ="@dimen/fab_pressed_translation_z"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtDescription"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/edt_description"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <CheckBox
+        android:id="@+id/ckbInformal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ckbInformal"
         />
 
+    <CheckBox
+        android:id="@+id/ckbDefault"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ckbDefault"
+        />
+
+    <CheckBox
+        android:id="@+id/ckbImportant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ckbImportant"
+        />
+
+    <CheckBox
+        android:id="@+id/ckbUrgent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ckbUrgent"
+        />
+
+    <TextView
+        android:id="@+id/txvDateTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="11:11 11/11/2011"
+        />
 
 </LinearLayout>

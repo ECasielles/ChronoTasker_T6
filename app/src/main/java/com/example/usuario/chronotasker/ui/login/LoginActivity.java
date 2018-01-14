@@ -7,7 +7,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.example.usuario.chronotasker.R;
+import com.example.usuario.chronotasker.data.prefs.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
-import com.example.usuario.chronotasker.ui.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
+import com.example.usuario.chronotasker.ui.task.TaskActivity;
 
 /**
  * Clase Activity de la vista principal, Login, desde la que
@@ -60,6 +60,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
             @Override
             public void onClick(View view) {
                 presenter.validate(edtName.getText().toString(), edtPassword.getText().toString(), chbRemember.isChecked());
+                navigateToHome();
             }
         });
         btnSignup.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +87,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     @Override
     protected void onStart() {
         super.onStart();
-
         //Comprueba que si hay una sesión guardada anterior para iniciar la aplicación
         if (ChronoTaskerApplication.getContext()
                 .getPreferencesHelper().getCurrentUserRemember())
@@ -97,45 +97,40 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
      * Arranca la ActivityPrincipal, TaskActivity, y finaliza.
      */
     public void navigateToHome() {
-        //startActivity(new Intent(LoginActivity.this, TaskActivity.class));
-        //finish();
+        startActivity(new Intent(this, TaskActivity.class));
+        finish();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_activities_start, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_start, menu);
         return super.onCreateOptionsMenu(menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_menu_about:
-                startActivity(new Intent(LoginActivity.this, AboutActivity.class));
+                startActivity(new Intent(this, AboutActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-
     //COMUNICACION CON LOGINPRESENTER
     @Override
-    public void emptyFieldError() {
+    public void errorEmptyField() {
         Snackbar.make(parent, getResources().getString(R.string.error_name_empty), Snackbar.LENGTH_SHORT).show();
     }
-
     @Override
-    public void nameLengthInvalidError() {
+    public void errorNameLengthInvalid() {
         Snackbar.make(parent, getResources().getString(R.string.error_name_length_invalid), Snackbar.LENGTH_SHORT).show();
     }
-
     @Override
-    public void passwordLengthInvalidError() {
+    public void errorPasswordLengthInvalid() {
         Snackbar.make(parent, getResources().getString(R.string.error_password_length_invalid), Snackbar.LENGTH_SHORT).show();
     }
-
     @Override
-    public void passwordFormatInvalidError() {
+    public void errorPasswordFormatInvalid() {
         Snackbar.make(parent, getResources().getString(R.string.error_password_format_invalid), Snackbar.LENGTH_SHORT).show();
     }
 
