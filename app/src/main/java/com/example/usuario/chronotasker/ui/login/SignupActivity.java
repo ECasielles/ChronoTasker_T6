@@ -14,8 +14,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
+import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.repository.UserRepository;
-import com.example.usuario.chronotasker.data.prefs.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
 import com.example.usuario.chronotasker.ui.task.TaskActivity;

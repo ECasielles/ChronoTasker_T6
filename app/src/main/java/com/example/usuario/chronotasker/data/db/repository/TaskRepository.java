@@ -2,9 +2,9 @@ package com.example.usuario.chronotasker.data.db.repository;
 
 import android.support.annotation.Nullable;
 
+import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.model.Category;
 import com.example.usuario.chronotasker.data.db.model.Task;
-import com.example.usuario.chronotasker.data.prefs.ChronoTaskerApplication;
 
 import org.joda.time.DateTime;
 

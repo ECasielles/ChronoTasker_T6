@@ -1,6 +1,9 @@
-package com.example.usuario.chronotasker.data.prefs;
+package com.example.usuario.chronotasker.data.db;
 
 import android.app.Application;
+
+import com.example.usuario.chronotasker.data.db.model.TaskOpenHelper;
+import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 
 /**
  * Clase que hereda de Application y que mantiene el contexto
@@ -26,6 +29,7 @@ public class ChronoTaskerApplication extends Application {
     public void onCreate() {
         super.onCreate();
         preferencesHelper = PreferencesHelper.getInstance();
+        TaskOpenHelper.getInstance().openDatabase();
     }
 
     public PreferencesHelper getPreferencesHelper() {

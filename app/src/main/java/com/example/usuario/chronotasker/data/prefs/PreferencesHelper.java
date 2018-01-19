@@ -4,6 +4,8 @@ package com.example.usuario.chronotasker.data.prefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
+
 /**
  * Clase que maneja las preferencias de usuario de la aplicación.
  *
