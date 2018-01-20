@@ -181,4 +181,9 @@ public class Category implements Comparable {
         }
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(getFlags());
+    }
+
 }
