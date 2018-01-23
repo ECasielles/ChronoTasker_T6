@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import com.example.usuario.chronotasker.R;
 
 import org.joda.time.DateTime;
-import org.joda.time.Interval;
+import org.joda.time.Period;
 
 import java.util.Comparator;
 
@@ -21,7 +21,7 @@ import java.util.Comparator;
 public class Task implements Parcelable, Comparable {
 
     //CONSTANTES
-    public static final String TAG = "Task";
+    public static final String TAG = "TaskEntries";
     /**
      * Comparator que devuelve la tarea más antigua
      */
@@ -94,7 +94,17 @@ public class Task implements Parcelable, Comparable {
             }
         }
     };
+    public static final Creator<Task> CREATOR = new Creator<Task>() {
+        @Override
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
+        }
 
+        @Override
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
     //PARAMETROS
     private int id;
     private String title;
@@ -106,13 +116,13 @@ public class Task implements Parcelable, Comparable {
     private String description;
     private String location;
     private int alarmId;
-    private Interval repetitionInterval;
+    private Period repetition;
     private String reminder;
 
     //CONSTRUCTOR
     public Task(int id, String title, int ownerId, int iconId, @Nullable DateTime startDate,
                 @Nullable DateTime endDate, Category categoryFlags, @Nullable String description,
-                @Nullable String location, int alarmId, @Nullable Interval repetitionInterval,
+                @Nullable String location, int alarmId, @Nullable Period repetition,
                 @Nullable String reminder) {
         this.id = id;
         this.ownerId = ownerId;
@@ -129,10 +139,9 @@ public class Task implements Parcelable, Comparable {
         this.location = location;
         //TODO: Add multiple alarms
         this.alarmId = -1;
-        this.repetitionInterval = repetitionInterval;
+        this.repetition = repetition;
         this.reminder = reminder;
     }
-
     //IMPLEMENTACION DE PARCELABLE
     protected Task(Parcel in) {
         id = in.readInt();
@@ -144,17 +153,7 @@ public class Task implements Parcelable, Comparable {
         alarmId = in.readInt();
         reminder = in.readString();
     }
-    public static final Creator<Task> CREATOR = new Creator<Task>() {
-        @Override
-        public Task createFromParcel(Parcel in) {
-            return new Task(in);
-        }
 
-        @Override
-        public Task[] newArray(int size) {
-            return new Task[size];
-        }
-    };
     @Override
     public int describeContents() {
         return 0;
@@ -237,12 +236,12 @@ public class Task implements Parcelable, Comparable {
         this.alarmId = alarmId;
     }
 
-    public Interval getRepetitionInterval() {
-        return repetitionInterval;
+    public Period getRepetition() {
+        return repetition;
     }
 
-    public void setRepetitionInterval(Interval repetitionInterval) {
-        this.repetitionInterval = repetitionInterval;
+    public void setRepetition(Period repetition) {
+        this.repetition = repetition;
     }
     public String getReminder() {
         return reminder;
@@ -262,7 +261,7 @@ public class Task implements Parcelable, Comparable {
         try {
             return this.getId() - ((Task) other).getId();
         } catch (ClassCastException e) {
-            throw new ClassCastException("Parameter must be of Task class");
+            throw new ClassCastException("Parameter must be of TaskEntries class");
         }
     }
 

@@ -22,7 +22,7 @@ public class TaskListPresenter implements TaskListContract.Presenter, TaskListIn
     //Modos de importación de la lista de tareas
     @Override
     public void importTasks() {
-        interactor.importTasksFromRepository();
+        interactor.importTasksSortedById();
     }
 
     @Override

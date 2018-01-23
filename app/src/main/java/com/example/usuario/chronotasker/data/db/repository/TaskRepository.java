@@ -1,17 +1,18 @@
 package com.example.usuario.chronotasker.data.db.repository;
 
+import android.database.Cursor;
 import android.support.annotation.Nullable;
 
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
+import com.example.usuario.chronotasker.data.db.dao.TaskDao;
 import com.example.usuario.chronotasker.data.db.model.Category;
 import com.example.usuario.chronotasker.data.db.model.Task;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 
 /**
  * Contiene los elementos de la lista de tareas.
@@ -22,27 +23,19 @@ import java.util.Iterator;
  */
 public class TaskRepository {
     private static TaskRepository taskRepository;
-    private static ArrayList<Task> tasks;
+    private static TaskDao taskDao;
+
+    static {
+        taskRepository = new TaskRepository();
+    }
+
+    private ArrayList<Task> tasks;
 
     private TaskRepository() {
-        init();
+        this.tasks = new ArrayList<>();
+        taskDao = new TaskDao();
     }
 
-    private void init() {
-        tasks = new ArrayList<>();
-        addTask("No perder el bus", 0, new DateTime(), null, new Category(Category.CATEGORY_IMPORTANT),
-                "Salida a las 8:05", null, 0, null, null);
-        addTask("Recoger la ropa tendida", 0, new DateTime(), null, new Category(Category.CATEGORY_URGENT | Category.CATEGORY_IMPORTANT),
-                null, null, 0, null, null);
-        addTask("Siesta después de comer", 0, new DateTime(), null, new Category(Category.CATEGORY_INFORMAL),
-                "De 26 minutos!!", null, 0, null, null);
-        addTask("Partida de Lol", 0, new DateTime(), null, new Category(Category.CATEGORY_NONE),
-                "Avisar a Rodri al móvil", null, 0, null, null);
-        addTask("Llamar a mamá", 0, new DateTime(), null, new Category(Category.CATEGORY_URGENT),
-                "Al móvil antiguo", null, 0, null, null);
-        addTask("Llamar a papá", 0, new DateTime(), null, new Category(Category.CATEGORY_URGENT),
-                null, null, 0, null, null);
-    }
 
     public static TaskRepository getInstance() {
         if (taskRepository == null)
@@ -50,21 +43,64 @@ public class TaskRepository {
         return taskRepository;
     }
 
+    public static void deleteTask(Task task) {
+
+    }
+
+    //TODO: Add more fields for edition
+    public static void editTask(Task task, String title) {
+
+    }
+
     public void addTask(String title, int iconId, @Nullable DateTime startDate,
                         @Nullable Date endDate, Category categoryFlags, @Nullable String description,
                         @Nullable String location, int alarmId, @Nullable Date repeat,
                         @Nullable String reminder) {
-        tasks.add(new Task(
-                        tasks.size(), title,
-                        UserRepository.getUserId(ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserName()),
-                        -1, startDate, null, categoryFlags, description, null,
-                        -1, null, null
-                )
-        );
+
+    }
+
+    /**
+     * Devolviendo un ArrayList.
+     */
+    public ArrayList<Task> getTasks() {
+        tasks.clear();
+        Cursor cursor = getTasksCursor();
+        //El cursor siempre se coloca antes del primer elemento.
+        if (cursor.moveToFirst())
+            do {
+                //Acceder a las columnas en el mismo orden
+                Task task = new Task(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getInt(2),
+                        cursor.getInt(3),
+                        new DateTime(cursor.getString(4)),
+                        new DateTime(cursor.getString(5)),
+                        new Category(cursor.getInt(6)),
+                        cursor.getString(7),
+                        cursor.getString(8),
+                        cursor.getInt(9),
+                        new Period(cursor.getString(10).equals("") ? null : new Period(cursor.getString(10)).toString()),
+                        cursor.getString(11)
+                );
+                tasks.add(task);
+            } while (cursor.moveToNext());
+        return tasks;
+    }
+
+    /**
+     * Devolviendo Cursor
+     *
+     * @return
+     */
+    public Cursor getTasksCursor() {
+        return taskDao.loadAll();
     }
 
     //TODO: Do not return archived Tasks
-    public ArrayList<Task> getTasks() {
+    public ArrayList<Task> getTasksOrderById() {
+        if (tasks.size() == 0)
+            tasks = getTasks();
         Collections.sort(tasks, Task.COMPARATOR_ID);
         return tasks;
     }
@@ -87,28 +123,6 @@ public class TaskRepository {
     public ArrayList<Task> getTasksOrderByImportance() {
         Collections.sort(tasks, Task.COMPARATOR_IMPORTANT);
         return tasks;
-    }
-
-    public static void deleteTask(Task task) {
-        Iterator<Task> iterator = tasks.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().getId() == task.getId()) {
-                iterator.remove();
-                break;
-            }
-        }
-    }
-
-    //TODO: Add more fields for edition
-    public static void editTask(Task task, String title) {
-        Iterator<Task> iterator = tasks.iterator();
-        while (iterator.hasNext()) {
-            Task oldTask = iterator.next();
-            if (oldTask.getId() == task.getId()) {
-                oldTask.setTitle(title);
-                break;
-            }
-        }
     }
 
 }

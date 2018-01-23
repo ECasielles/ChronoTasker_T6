@@ -23,13 +23,6 @@ import java.lang.annotation.RetentionPolicy;
  */
 public class Category implements Comparable {
 
-    //CONSTANTES
-    @IntDef(flag = true,
-            value = {CATEGORY_NONE, CATEGORY_INFORMAL, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface DisplayOptions {
-    }
-
     public static final int NONE_NAME = R.string.category_none;
     public static final int INFORMAL_NAME = R.string.category_informal;
     public static final int DEFAULT_NAME = R.string.category_default;
@@ -44,14 +37,13 @@ public class Category implements Comparable {
      * La unión de todos los flags es 2^5 - 1
      */
     public static final int MAX_FLAGS = 31;
-
-    //PARAMETROS
     /**
      * Combinación de categorías en forma de flags.
      */
     private int flags;
-    private int priority;
 
+    //PARAMETROS
+    private int priority;
     /**
      * Pide las opciones que se han declarado arriba
      *
@@ -99,15 +91,19 @@ public class Category implements Comparable {
     public boolean isNone() {
         return CATEGORY_NONE == flags;
     }
+
     public boolean isInformal() {
         return (flags | CATEGORY_INFORMAL) == flags;
     }
+
     public boolean isDefault() {
         return (flags | CATEGORY_DEFAULT) == flags;
     }
+
     public boolean isImportant() {
         return (flags | CATEGORY_IMPORTANT) == flags;
     }
+
     public boolean isUrgent() {
         return (flags | CATEGORY_URGENT) == flags;
     }
@@ -118,24 +114,31 @@ public class Category implements Comparable {
     public void setNone() {
         flags = CATEGORY_NONE;
     }
+
     public void setInformal() {
         flags = flags | CATEGORY_INFORMAL;
     }
+
     public void setDefault() {
         flags = flags | CATEGORY_DEFAULT;
     }
+
     public void setImportant() {
         flags = flags | CATEGORY_IMPORTANT;
     }
+
     public void setUrgent() {
         flags = flags | CATEGORY_DEFAULT;
     }
+
     public void unSetInformal() {
         flags = flags ^ CATEGORY_INFORMAL;
     }
+
     public void unSetDefault() {
         flags = flags ^ CATEGORY_DEFAULT;
     }
+
     public void unSetImportant() {
         flags = flags ^ CATEGORY_IMPORTANT;
     }
@@ -162,10 +165,6 @@ public class Category implements Comparable {
     }
 
     /**
-     * Permiten editar los valores de texto cuando se cambia el idioma
-     */
-
-    /**
      * Implementación de la interfaz Comparable
      *
      * @param other Categoría con la que compara
@@ -177,13 +176,24 @@ public class Category implements Comparable {
         try {
             return ((Category) other).getPriority() - this.getPriority();
         } catch (ClassCastException e) {
-            throw new ClassCastException("Parameter must be of Task class");
+            throw new ClassCastException("Parameter must be of TaskEntries class");
         }
     }
+
+    /**
+     * Permiten editar los valores de texto cuando se cambia el idioma
+     */
 
     @Override
     public String toString() {
         return String.valueOf(getFlags());
+    }
+
+    //CONSTANTES
+    @IntDef(flag = true,
+            value = {CATEGORY_NONE, CATEGORY_INFORMAL, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DisplayOptions {
     }
 
 }

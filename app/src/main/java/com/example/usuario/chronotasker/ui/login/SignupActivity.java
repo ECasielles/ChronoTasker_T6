@@ -40,12 +40,13 @@ public class SignupActivity extends AppCompatActivity {
         edtUser = (TextInputEditText) ((TextInputLayout) findViewById(R.id.tilName)).getEditText();
         edtEmail = (TextInputEditText) ((TextInputLayout) findViewById(R.id.tilEmail)).getEditText();
         edtPassword = (TextInputEditText) ((TextInputLayout) findViewById(R.id.tilPassword)).getEditText();
-        btnSignup = (Button) findViewById(R.id.btnSignUp);
+        btnSignup = findViewById(R.id.btnSignUp);
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(UserRepository.getInstance().addUser(
-                        edtUser.getText().toString(), edtPassword.getText().toString(),
+                        edtUser.getText().toString(),
+                        edtPassword.getText().toString(),
                         edtEmail.getText().toString()))
                     navigateToHome();
                 else

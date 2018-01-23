@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.support.annotation.Nullable;
 
 import org.joda.time.DateTime;
-import org.joda.time.Interval;
+import org.joda.time.Period;
 
 /**
  * Representa una tarea importada por el usuario
@@ -23,13 +23,13 @@ public class ProjectTask extends Task {
     String description;
     String location;
     int alarmId;
-    Interval repetitionInterval;
+    Period repetition;
     String reminder;
 
     public ProjectTask(int id, String title, int ownerId, int iconId, @Nullable DateTime startDate,
                        @Nullable DateTime endDate, Category categoryFlags, @Nullable String description,
-                       @Nullable String location, int alarmId, @Nullable Interval repetitionInterval, @Nullable String reminder) {
-        super(id, title, ownerId, iconId, startDate, endDate, categoryFlags, description, location, alarmId, repetitionInterval, reminder);
+                       @Nullable String location, int alarmId, @Nullable Period repetition, @Nullable String reminder) {
+        super(id, title, ownerId, iconId, startDate, endDate, categoryFlags, description, location, alarmId, repetition, reminder);
     }
 
     protected ProjectTask(Parcel in) {

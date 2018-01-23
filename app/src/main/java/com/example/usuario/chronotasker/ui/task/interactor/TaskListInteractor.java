@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public interface TaskListInteractor {
 
-    void importTasksFromRepository();
+    void importTasksSortedById();
 
     void importTasksSortedByPriority();
 

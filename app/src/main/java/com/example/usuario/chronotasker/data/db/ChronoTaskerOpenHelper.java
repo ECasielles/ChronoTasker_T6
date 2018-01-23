@@ -5,12 +5,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
- * Clase Helper que maneja la conexión a base de datos de la aplicación
+ * Clase Helper que maneja la conexión a base de datos de la aplicación.
+ * Permite que varios hilos accedan de forma concurrente a ella.
  */
 public class ChronoTaskerOpenHelper extends SQLiteOpenHelper {
 
     private static ChronoTaskerOpenHelper helper;
+    private AtomicInteger openCounter = new AtomicInteger(0);
     private SQLiteDatabase sqLiteDatabase;
 
     public ChronoTaskerOpenHelper() {
@@ -18,21 +22,28 @@ public class ChronoTaskerOpenHelper extends SQLiteOpenHelper {
                 null, ChronoTaskerContract.DATABASE_VERSION);
     }
 
+    public static synchronized ChronoTaskerOpenHelper getInstance() {
+        if (helper == null)
+            helper = new ChronoTaskerOpenHelper();
+        return helper;
+    }
+
     //CREATION OF TABLES + INITIAL POPULATION
     @Override
     public void onCreate(SQLiteDatabase db) {
         //Creo en orden directo de referencias
-        db.execSQL(ChronoTaskerContract.Task.CREATE_TABLE);
-        db.execSQL(ChronoTaskerContract.Task.INSERT_ENTRIES);
+        db.execSQL(ChronoTaskerContract.UserEntries.SQL_CREATE_TABLE);
+        db.execSQL(ChronoTaskerContract.TaskEntries.SQL_CREATE_TABLE);
+        db.execSQL(ChronoTaskerContract.UserEntries.SQL_INSERT_VALUES);
+        db.execSQL(ChronoTaskerContract.TaskEntries.SQL_INSERT_VALUES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /*if(oldVersion == 2)
-            db.execSQL(ChronoTaskerContract.VERSION_1_2_UPDATE);
-        if(oldVersion == 3)
-            db.execSQL(ChronoTaskerContract.VERSION_2_3_UPDATE);*/
-        //...
+        //Borro en orden inverso de referencias
+        db.execSQL(ChronoTaskerContract.TaskEntries.SQL_DROP_TABLE);
+        db.execSQL(ChronoTaskerContract.UserEntries.SQL_DROP_TABLE);
+        onCreate(db);
     }
 
     @Override
@@ -40,27 +51,26 @@ public class ChronoTaskerOpenHelper extends SQLiteOpenHelper {
         super.onOpen(db);
     }
 
-
     //CONFIGURACION ANTES DE CAMBIOS
     @Override
     public void onConfigure(SQLiteDatabase db) {
-        super.onConfigure(db);
         if (!db.isReadOnly()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                 db.setForeignKeyConstraintsEnabled(true);
             else
                 db.execSQL("PRAGMA foreign_keys=1");
         }
+        super.onConfigure(db);
     }
 
-    public static ChronoTaskerOpenHelper getInstance() {
-        if (helper == null)
-            helper = new ChronoTaskerOpenHelper();
-        return helper;
+    public SQLiteDatabase openDatabase() {
+        if (openCounter.incrementAndGet() == 1)
+            sqLiteDatabase = getWritableDatabase();
+        return sqLiteDatabase;
     }
 
-    public void openDatabase() {
-        sqLiteDatabase = getWritableDatabase();
+    public void closeDatabase() {
+        if (openCounter.decrementAndGet() == 0)
+            sqLiteDatabase.close();
     }
-
 }

@@ -14,8 +14,8 @@ public class TaskListsInteractorImpl implements TaskListInteractor {
     }
 
     @Override
-    public void importTasksFromRepository() {
-        listener.onTasksImported(TaskRepository.getInstance().getTasks());
+    public void importTasksSortedById() {
+        listener.onTasksImported(TaskRepository.getInstance().getTasksOrderById());
     }
 
     @Override

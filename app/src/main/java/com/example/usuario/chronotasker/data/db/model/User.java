@@ -20,10 +20,8 @@ public class User {
     Date birthDate;
     String storeDataPath;
     Image profileImg;
-    Language language;
 
-    public User(int _ID, String name, String password, String email) {
-        this._ID = _ID;
+    public User(String name, String password, String email) {
         this.name = name;
         this.password = password;
         this.email = email;
