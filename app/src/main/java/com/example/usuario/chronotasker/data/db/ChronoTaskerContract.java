@@ -35,6 +35,18 @@ public final class ChronoTaskerContract {
         public static final String[] ALL_COLUMNS = {
                 BaseColumns._ID, COLUMN_NAME, COLUMN_EMAIL, COLUMN_PASSWORD
         };
+        public static final String[] COLUMNS_USER_EXIST = {
+                BaseColumns._ID
+        };
+        public static final String WHERE_NAME = String.format(
+                "%s = ?",
+                COLUMN_NAME
+        );
+        public static final String WHERE_NAME_AND_PASSWORD = String.format(
+                "%s = ? AND %s = ?",
+                COLUMN_NAME,
+                COLUMN_PASSWORD
+        );
 
         public static final String DEFAULT_SORT = BaseColumns._ID;
 

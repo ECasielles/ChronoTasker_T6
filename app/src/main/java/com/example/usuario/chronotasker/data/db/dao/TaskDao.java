@@ -24,4 +24,7 @@ public class TaskDao {
         return cursor;
     }
 
+    //TODO: Implementar los métodos de UserRepository en Task.
+    //TODO: ¿Es necesario guardar el ID en el modelo?
+
 }

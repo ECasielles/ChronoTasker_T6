@@ -12,7 +12,7 @@ import java.util.Date;
  * @version 1.0
  */
 public class User {
-    int _ID;
+
     String name;
     String password;
     String email;
