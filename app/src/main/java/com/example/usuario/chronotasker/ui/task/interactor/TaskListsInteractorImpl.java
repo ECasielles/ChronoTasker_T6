@@ -40,7 +40,7 @@ public class TaskListsInteractorImpl implements TaskListInteractor {
 
     @Override
     public void deleteTask(Task task) {
-        TaskRepository.deleteTask(task);
+        TaskRepository.getInstance().deleteTask(task.getId());
         listener.onTaskDeletedFromRepository(task.getTitle());
     }
 

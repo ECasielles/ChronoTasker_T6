@@ -6,7 +6,7 @@ import com.example.usuario.chronotasker.data.db.model.User;
 import java.util.ArrayList;
 
 /**
- * Almacena los datos de usuario
+ * Devuelve los datos de usuario desde el origen de datos.
  *
  * @author Enrique Casielles Lapeira
  * @version 1.0
@@ -14,13 +14,13 @@ import java.util.ArrayList;
  */
 public class UserRepository {
 
-    public static UserRepository userRepository;
+    private static UserRepository userRepository;
 
     static {
         userRepository = new UserRepository();
     }
 
-    public UserDao userDao;
+    private UserDao userDao;
 
     private UserRepository() {
         userDao = new UserDao();
@@ -32,23 +32,21 @@ public class UserRepository {
         return userRepository;
     }
 
-    /**
-     * Devolviendo un ArrayList.
-     */
     public ArrayList<User> getUsers() {
         return userDao.loadAll();
     }
 
-    public long addUser(String name, String email, String password) {
-        return userDao.save(name, email, password);
+    public void addUser(String name, String email, String password) {
+        userDao.save(name, email, password);
     }
 
+    //TODO: Handle error cases
     public boolean exists(String name, String password) {
-        return userDao.exists(name, password);
+        return userDao.exists(name, password) > 0;
     }
 
-    public void deleteUser(String name) {
-        userDao.delete(name);
+    public void deleteUser(int id) {
+        userDao.delete(id);
     }
 
 }

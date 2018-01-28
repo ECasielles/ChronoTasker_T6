@@ -16,7 +16,7 @@
     <string name="textAccountSettings">Ajustes del usuario</string>
     <string name="action_menu_logout">Cerrar sesión</string>
 
-    <string name="category_none"></string>
+    <string name="category_archived">Archivada</string>
     <string name="category_default">Normal</string>
     <string name="category_important">Importante</string>
     <string name="category_urgent">Urgente</string>

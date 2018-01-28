@@ -17,18 +17,19 @@ import java.lang.annotation.RetentionPolicy;
  * Cada categoría tiene una prioridad múltiplo de 2, siendo
  * 1 la categoría por defecto. Al ser flags, la prioridad total
  * se obtiene sumando las prioridades de todas las categorías.
+ * Cuando se archiva una tarea, su categoría pasa a ser 0.
  *
  * @author Enrique Casielles Lapeira
  * @version 1.0
  */
 public class Category implements Comparable {
 
-    public static final int NONE_NAME = R.string.category_none;
+    public static final int ARCHIVED_NAME = R.string.category_archived;
     public static final int INFORMAL_NAME = R.string.category_informal;
     public static final int DEFAULT_NAME = R.string.category_default;
     public static final int IMPORTANT_NAME = R.string.category_important;
     public static final int URGENT_NAME = R.string.category_urgent;
-    public static final int CATEGORY_NONE = 0;
+    public static final int CATEGORY_ARCHIVED = 0;
     public static final int CATEGORY_INFORMAL = 1;
     public static final int CATEGORY_DEFAULT = 2;
     public static final int CATEGORY_IMPORTANT = 4;
@@ -37,13 +38,11 @@ public class Category implements Comparable {
      * La unión de todos los flags es 2^5 - 1
      */
     public static final int MAX_FLAGS = 31;
-    /**
-     * Combinación de categorías en forma de flags.
-     */
-    private int flags;
 
     //PARAMETROS
     private int priority;
+    private int flags;
+
     /**
      * Pide las opciones que se han declarado arriba
      *
@@ -59,7 +58,6 @@ public class Category implements Comparable {
     public int getPriority() {
         return priority;
     }
-
     public int getFlags() {
         return flags;
     }
@@ -88,22 +86,18 @@ public class Category implements Comparable {
      * Devuelven booleano en función de si la categoría contiene
      * o no el flag por el que se pregunta
      */
-    public boolean isNone() {
-        return CATEGORY_NONE == flags;
+    public boolean isArchived() {
+        return CATEGORY_ARCHIVED == flags;
     }
-
     public boolean isInformal() {
         return (flags | CATEGORY_INFORMAL) == flags;
     }
-
     public boolean isDefault() {
         return (flags | CATEGORY_DEFAULT) == flags;
     }
-
     public boolean isImportant() {
         return (flags | CATEGORY_IMPORTANT) == flags;
     }
-
     public boolean isUrgent() {
         return (flags | CATEGORY_URGENT) == flags;
     }
@@ -111,38 +105,30 @@ public class Category implements Comparable {
     /**
      * Permiten editar los flags de la categoría.
      */
-    public void setNone() {
-        flags = CATEGORY_NONE;
+    public void setArchived() {
+        flags = CATEGORY_ARCHIVED;
     }
-
     public void setInformal() {
         flags = flags | CATEGORY_INFORMAL;
     }
-
     public void setDefault() {
         flags = flags | CATEGORY_DEFAULT;
     }
-
     public void setImportant() {
         flags = flags | CATEGORY_IMPORTANT;
     }
-
     public void setUrgent() {
         flags = flags | CATEGORY_DEFAULT;
     }
-
     public void unSetInformal() {
         flags = flags ^ CATEGORY_INFORMAL;
     }
-
     public void unSetDefault() {
         flags = flags ^ CATEGORY_DEFAULT;
     }
-
     public void unSetImportant() {
         flags = flags ^ CATEGORY_IMPORTANT;
     }
-
     public void unSetUrgent() {
         flags = flags ^ CATEGORY_DEFAULT;
     }
@@ -161,7 +147,7 @@ public class Category implements Comparable {
             return DEFAULT_NAME;
         else if (this.isInformal())
             return INFORMAL_NAME;
-        else return NONE_NAME;
+        else return ARCHIVED_NAME;
     }
 
     /**
@@ -180,18 +166,14 @@ public class Category implements Comparable {
         }
     }
 
-    /**
-     * Permiten editar los valores de texto cuando se cambia el idioma
-     */
-
     @Override
     public String toString() {
-        return String.valueOf(getFlags());
+        return Resources.getSystem().getString(getCategoryNameId());
     }
 
     //CONSTANTES
     @IntDef(flag = true,
-            value = {CATEGORY_NONE, CATEGORY_INFORMAL, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT})
+            value = {CATEGORY_ARCHIVED, CATEGORY_INFORMAL, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface DisplayOptions {
     }

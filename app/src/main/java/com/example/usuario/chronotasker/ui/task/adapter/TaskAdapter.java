@@ -59,7 +59,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
         //Toma el valor de la categoría u oculta el campo
         Category category = tasks.get(position).getCategoryFlags();
-        if (category.isNone()) {
+        if (category.isArchived()) {
             holder.txvCategory.setVisibility(View.GONE);
         } else {
             holder.txvCategory.setVisibility(View.VISIBLE);
@@ -97,8 +97,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
     }
 
     public class TaskHolder extends RecyclerView.ViewHolder {
-        TextView txvTitle, txvStartDate, txvDescription, txvCategory;
         public CardView cardView;
+        TextView txvTitle, txvStartDate, txvDescription, txvCategory;
 
         public TaskHolder(View itemView) {
             super(itemView);

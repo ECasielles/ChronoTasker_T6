@@ -2,7 +2,6 @@ package com.example.usuario.chronotasker.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
-import com.example.usuario.chronotasker.data.db.repository.UserRepository;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
 import com.example.usuario.chronotasker.ui.task.TaskActivity;
@@ -31,6 +29,7 @@ import com.example.usuario.chronotasker.ui.task.TaskActivity;
 public class SignupActivity extends AppCompatActivity {
     TextInputEditText edtUser, edtEmail, edtPassword;
     Button btnSignup;
+    SignupPresenter presenter;
 
     //TODO: Clase About debe estar mejor
     @Override
@@ -44,13 +43,12 @@ public class SignupActivity extends AppCompatActivity {
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(UserRepository.getInstance().addUser(
+                presenter.newUser(
                         edtUser.getText().toString(),
                         edtPassword.getText().toString(),
-                        edtEmail.getText().toString()))
-                    navigateToHome();
-                else
-                    Snackbar.make(findViewById(R.id.btnLogin), "Credenciales no válidos", Snackbar.LENGTH_SHORT).show();
+                        edtEmail.getText().toString());
+                //navigateToHome();
+                //Snackbar.make(findViewById(R.id.btnLogin), "Credenciales no válidos", Snackbar.LENGTH_SHORT).show();
             }
         });
     }

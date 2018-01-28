@@ -10,9 +10,7 @@ import org.joda.time.format.ISODateTimeFormat;
 /**
  * Clase contrato necesaria para construir los comandos a Base de Datos.
  * No se puede heredar de ella ni instanciarla.
- */
 
-/**
  * CHANGELOG:
  * <p>
  * 2018/01/20 - 1: El atributo reminder de la entidad TASK pasa a guardar los objetos Alarm
@@ -38,9 +36,9 @@ public final class ChronoTaskerContract {
         public static final String[] COLUMNS_USER_EXIST = {
                 BaseColumns._ID
         };
-        public static final String WHERE_NAME = String.format(
+        public static final String WHERE_ID = String.format(
                 "%s = ?",
-                COLUMN_NAME
+                BaseColumns._ID
         );
         public static final String WHERE_NAME_AND_PASSWORD = String.format(
                 "%s = ? AND %s = ?",
@@ -82,7 +80,7 @@ public final class ChronoTaskerContract {
 
     public static class TaskEntries implements BaseColumns {
         public static final String TABLE_NAME = "task";
-        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_TITLE = "name";
         public static final String COLUMN_OWNER_ID = "ownerID";
         public static final String COLUMN_ICON_ID = "iconId";
         public static final String COLUMN_START_DATE = "startDate";
@@ -95,7 +93,7 @@ public final class ChronoTaskerContract {
         public static final String COLUMN_REMINDER = "reminder";
 
         public static final String[] ALL_COLUMNS = {
-                BaseColumns._ID, COLUMN_NAME, COLUMN_OWNER_ID, COLUMN_ICON_ID,
+                BaseColumns._ID, COLUMN_TITLE, COLUMN_OWNER_ID, COLUMN_ICON_ID,
                 COLUMN_START_DATE, COLUMN_END_DATE, COLUMN_CATEGORY_FLAGS, COLUMN_DESCRIPTION,
                 COLUMN_LOCATION, COLUMN_ALARM_ID, COLUMN_REPEAT, COLUMN_REMINDER
         };
@@ -103,6 +101,19 @@ public final class ChronoTaskerContract {
         public static final String REFERENCES_USER_ID = String.format(
                 "FOREIGN KEY (%s) REFERENCES %s(%s) ON UPDATE CASCADE ON DELETE RESTRICT",
                 COLUMN_OWNER_ID, UserEntries.TABLE_NAME, BaseColumns._ID
+        );
+
+        public static final String WHERE_ID = String.format(
+                "%s = ?",
+                BaseColumns._ID
+        );
+        public static final String WHERE_ID_AND_OWNER = String.format(
+                "%s = ? AND %s = ?",
+                BaseColumns._ID, COLUMN_OWNER_ID
+        );
+        public static final String WHERE_CATEGORY_NOT = String.format(
+                "%s != ?",
+                COLUMN_CATEGORY_FLAGS
         );
 
         public static final String DEFAULT_SORT = BaseColumns._ID;
@@ -126,7 +137,7 @@ public final class ChronoTaskerContract {
                         "%s)",
                 TABLE_NAME,
                 BaseColumns._ID,
-                COLUMN_NAME,
+                COLUMN_TITLE,
                 COLUMN_OWNER_ID,
                 COLUMN_ICON_ID,
                 COLUMN_START_DATE,
@@ -143,7 +154,7 @@ public final class ChronoTaskerContract {
         public static final String SQL_INSERT_VALUES = String.format(
                 "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ",
                 TABLE_NAME,
-                COLUMN_NAME,
+                COLUMN_TITLE,
                 COLUMN_OWNER_ID,
                 COLUMN_ICON_ID,
                 COLUMN_START_DATE,
@@ -196,7 +207,7 @@ public final class ChronoTaskerContract {
                 0,
                 new DateTime().toString(ISODateTimeFormat.dateHourMinute()),
                 new DateTime().toString(ISODateTimeFormat.dateHourMinute()),
-                new Category(Category.CATEGORY_NONE),
+                new Category(Category.CATEGORY_ARCHIVED),
                 "Avisar a Rodri al móvil",
                 "",
                 0,

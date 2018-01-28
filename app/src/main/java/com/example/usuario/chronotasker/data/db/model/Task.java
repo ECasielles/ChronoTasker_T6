@@ -5,8 +5,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.example.usuario.chronotasker.R;
-
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
@@ -105,6 +103,7 @@ public class Task implements Parcelable, Comparable {
             return new Task[size];
         }
     };
+
     //PARAMETROS
     private int id;
     private String title;
@@ -126,22 +125,18 @@ public class Task implements Parcelable, Comparable {
                 @Nullable String reminder) {
         this.id = id;
         this.ownerId = ownerId;
-        //TODO: Add multiple task icons
-        this.iconId = R.drawable.ic_add_task_default;
+        this.iconId = iconId;
         this.title = title;
-        if (startDate == null)
-            this.startDate = new DateTime();
-        else
-            this.startDate = startDate;
+        this.startDate = startDate;
         this.endDate = endDate;
         this.categoryFlags = categoryFlags;
         this.description = description;
         this.location = location;
-        //TODO: Add multiple alarms
-        this.alarmId = -1;
+        this.alarmId = alarmId;
         this.repetition = repetition;
         this.reminder = reminder;
     }
+
     //IMPLEMENTACION DE PARCELABLE
     protected Task(Parcel in) {
         id = in.readInt();
@@ -195,19 +190,15 @@ public class Task implements Parcelable, Comparable {
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
     }
-
     public DateTime getStartDate() {
         return startDate;
     }
-
     public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
-
     public DateTime getEndDate() {
         return endDate;
     }
-
     public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
@@ -235,11 +226,9 @@ public class Task implements Parcelable, Comparable {
     public void setAlarmId(int alarmId) {
         this.alarmId = alarmId;
     }
-
     public Period getRepetition() {
         return repetition;
     }
-
     public void setRepetition(Period repetition) {
         this.repetition = repetition;
     }
