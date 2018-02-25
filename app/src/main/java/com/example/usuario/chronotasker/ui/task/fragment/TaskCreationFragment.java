@@ -12,8 +12,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.ui.task.TaskActivity;
+import com.example.usuario.chronotasker.ui.home.HomeActivity;
 import com.example.usuario.chronotasker.ui.task.contract.TaskCreationContract;
+import com.example.usuario.chronotasker.ui.task.presenter.TaskCreationPresenter;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -29,11 +30,6 @@ public class TaskCreationFragment extends Fragment implements TaskCreationContra
     private TextInputLayout tilTitle, tilDescription;
     private CheckBox ckbInformal, ckbDefault, ckbImportant, ckbUrgent;
     private TextView txvDateTime;
-
-    //CONTRATO CON LA ACTIVITY
-    public interface TaskCreationListener {
-        void reloadTasks();
-    }
 
     //CONSTRUCTOR
     public static TaskCreationFragment getInstance(Bundle bundle) {
@@ -57,9 +53,10 @@ public class TaskCreationFragment extends Fragment implements TaskCreationContra
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //Mantener los datos en cambio de contexto
         setRetainInstance(true);
+        //Inicializar presenter
+        presenter = new TaskCreationPresenter(this);
     }
 
     @Nullable
@@ -85,7 +82,7 @@ public class TaskCreationFragment extends Fragment implements TaskCreationContra
 
         //TODO: Implement the rest of the features
         //FloatingActionButton
-        ((TaskActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 presenter.addTask(
@@ -111,6 +108,11 @@ public class TaskCreationFragment extends Fragment implements TaskCreationContra
     @Override
     public void reloadTaskList() {
         callback.reloadTasks();
+    }
+
+    //CONTRATO CON LA ACTIVITY
+    public interface TaskCreationListener {
+        void reloadTasks();
     }
 
 

@@ -20,10 +20,11 @@ import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.model.Task;
-import com.example.usuario.chronotasker.ui.task.TaskActivity;
+import com.example.usuario.chronotasker.ui.home.HomeActivity;
 import com.example.usuario.chronotasker.ui.task.adapter.RecyclerItemTouchHelper;
 import com.example.usuario.chronotasker.ui.task.adapter.TaskAdapter;
 import com.example.usuario.chronotasker.ui.task.contract.TaskListContract;
+import com.example.usuario.chronotasker.ui.task.presenter.TaskListPresenter;
 
 import java.util.ArrayList;
 
@@ -38,12 +39,6 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
     private TaskAdapter adapter;
     private RecyclerView recyclerView;
     private TaskListContract.Presenter presenter;
-
-
-    //CONTRATO CON LA ACTIVITY
-    public interface TaskListListener {
-        void addTask(Bundle bundle);
-    }
 
     //CONSTRUCTOR
     public static TaskListFragment newInstance() {
@@ -64,12 +59,12 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //Menu
         setHasOptionsMenu(true);
-
         //Retener fragment
         setRetainInstance(true);
+        //Inicializar presenter
+        presenter = new TaskListPresenter(this);
     }
 
     @Override
@@ -102,7 +97,7 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
         //FloatingActionButton
-        ((TaskActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 callback.addTask(null);
@@ -203,8 +198,6 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         Toast.makeText(getContext(), title + " " + getResources().getString(R.string.info_task_deleted), Toast.LENGTH_SHORT).show();
     }
 
-    //COMUNICACION CON EL RECYCLER_ITEM_TOUCH_HELPER
-
     /**
      * Método callback de la vista que elimina un elemento de la vista y envía al presenter
      * la intención de eliminarlo del repositorio.
@@ -223,6 +216,13 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
             adapter.remove(index);
             presenter.deleteTaskEvent(index, task);
         }
+    }
+
+    //COMUNICACION CON EL RECYCLER_ITEM_TOUCH_HELPER
+
+    //CONTRATO CON LA ACTIVITY
+    public interface TaskListListener {
+        void addTask(Bundle bundle);
     }
 
 }

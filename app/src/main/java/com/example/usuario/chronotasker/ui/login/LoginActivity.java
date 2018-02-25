@@ -17,7 +17,7 @@ import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
-import com.example.usuario.chronotasker.ui.task.TaskActivity;
+import com.example.usuario.chronotasker.ui.home.HomeActivity;
 
 /**
  * Clase Activity de la vista principal, Login, desde la que
@@ -94,10 +94,10 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     }
 
     /**
-     * Arranca la ActivityPrincipal, TaskActivity, y finaliza.
+     * Arranca la ActivityPrincipal, HomeActivity, y finaliza.
      */
     public void navigateToHome() {
-        startActivity(new Intent(this, TaskActivity.class));
+        startActivity(new Intent(this, HomeActivity.class));
         finish();
     }
 

@@ -168,7 +168,7 @@ public class Category implements Comparable {
 
     @Override
     public String toString() {
-        return Resources.getSystem().getString(getCategoryNameId());
+        return String.valueOf(getFlags());
     }
 
     //CONSTANTES

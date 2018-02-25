@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/header_navview"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/header_navview_height"
+    android:background="@drawable/material_background"
+    android:paddingLeft="@dimen/header_navview_padding_left"
+    >
+
+    <!--Imagen de perfil-->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:layout_marginTop="24dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/profile"
+        app:civ_border_color="#FFFFFFF0"
+        app:civ_border_width="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <!--Nombre de usuario-->
+    <TextView
+        android:id="@+id/txvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txvUserName"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Title.Inverse"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/txvEmail"
+        app:layout_constraintStart_toStartOf="@+id/profile_image"
+        app:layout_constraintTop_toBottomOf="@+id/profile_image"
+        app:layout_constraintVertical_bias="1.0"
+        />
+
+    <!--Correo del usuario-->
+    <TextView
+        android:id="@+id/txvEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/txvEmail"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/txvUserName"
+        />
+
+</android.support.constraint.ConstraintLayout>

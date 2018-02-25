@@ -16,7 +16,7 @@ import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
-import com.example.usuario.chronotasker.ui.task.TaskActivity;
+import com.example.usuario.chronotasker.ui.home.HomeActivity;
 
 /**
  * Clase Activity de la vista de registro, Signup, desde la que
@@ -71,7 +71,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void navigateToHome(){
-        startActivity(new Intent(SignupActivity.this, TaskActivity.class));
+        startActivity(new Intent(SignupActivity.this, HomeActivity.class));
         showPreferences();
         finish();
     }

@@ -12,7 +12,7 @@ import org.joda.time.format.ISODateTimeFormat;
  * No se puede heredar de ella ni instanciarla.
 
  * CHANGELOG:
- * <p>
+ *
  * 2018/01/20 - 1: El atributo reminder de la entidad TASK pasa a guardar los objetos Alarm
  * como un texto en formato JSON.
  */
@@ -31,7 +31,10 @@ public final class ChronoTaskerContract {
         public static final String COLUMN_PASSWORD = "password";
 
         public static final String[] ALL_COLUMNS = {
-                BaseColumns._ID, COLUMN_NAME, COLUMN_EMAIL, COLUMN_PASSWORD
+                BaseColumns._ID,
+                COLUMN_NAME,
+                COLUMN_EMAIL,
+                COLUMN_PASSWORD
         };
         public static final String[] COLUMNS_USER_EXIST = {
                 BaseColumns._ID
@@ -48,10 +51,10 @@ public final class ChronoTaskerContract {
 
         public static final String DEFAULT_SORT = BaseColumns._ID;
 
-        public static final String SQL_DROP_TABLE = String.format(
+        public static final String DROP_TABLE = String.format(
                 "DROP TABLE IF EXISTS %s", TABLE_NAME);
 
-        public static final String SQL_CREATE_TABLE = String.format(
+        public static final String CREATE_TABLE = String.format(
                 "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         "%s TEXT NOT NULL, " +
@@ -64,7 +67,7 @@ public final class ChronoTaskerContract {
                 COLUMN_PASSWORD
         );
 
-        public static final String SQL_INSERT_VALUES = String.format(
+        public static final String INSERT_VALUES = String.format(
                 "INSERT INTO %s (%s, %s, %s) VALUES ",
                 TABLE_NAME,
                 COLUMN_NAME,
@@ -118,9 +121,12 @@ public final class ChronoTaskerContract {
 
         public static final String DEFAULT_SORT = BaseColumns._ID;
 
-        public static final String SQL_DROP_TABLE = String.format("DROP TABLE IF EXISTS %s", TABLE_NAME);
+        public static final String DROP_TABLE = String.format(
+                "DROP TABLE IF EXISTS %s",
+                TABLE_NAME
+        );
 
-        public static final String SQL_CREATE_TABLE = String.format(
+        public static final String CREATE_TABLE = String.format(
                 "CREATE TABLE IF NOT EXISTS %s (" +
                         "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         "%s TEXT NOT NULL, " +
@@ -151,7 +157,7 @@ public final class ChronoTaskerContract {
                 REFERENCES_USER_ID
         );
 
-        public static final String SQL_INSERT_VALUES = String.format(
+        public static final String INSERT_VALUES = String.format(
                 "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES ",
                 TABLE_NAME,
                 COLUMN_TITLE,

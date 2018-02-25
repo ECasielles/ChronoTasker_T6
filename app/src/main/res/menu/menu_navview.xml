@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--Garantiza que sólo una opción puede estar seleccionada-->
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_home"
+            android:icon="@drawable/ic_action_home"
+            android:title="@string/action_home"
+            />
+        <item
+            android:id="@+id/action_alarm"
+            android:icon="@drawable/ic_action_alarm"
+            android:title="@string/action_alarm"
+            />
+    </group>
+
+    <!--Submenú-->
+    <item
+        android:id="@+id/navview_subheader"
+        android:title="@string/navview_subheader"
+        >
+        <menu>
+            <item
+                android:id="@+id/action_help"
+                android:icon="@drawable/ic_action_help"
+                android:title="@string/action_help"
+                />
+            <item
+                android:id="@+id/action_settings"
+                android:icon="@drawable/ic_action_settings"
+                android:title="@string/action_config"
+                />
+        </menu>
+    </item>
+
+</menu>
