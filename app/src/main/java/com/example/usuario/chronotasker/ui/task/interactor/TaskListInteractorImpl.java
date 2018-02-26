@@ -2,15 +2,14 @@ package com.example.usuario.chronotasker.ui.task.interactor;
 
 import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.data.db.repository.TaskRepository;
-import com.example.usuario.chronotasker.data.db.repository.TaskRepositoryCallback;
 
 /**
  * Interactor de TaskListPresenter.
  */
-public class TaskListsInteractorImpl implements TaskListInteractor, TaskRepositoryCallback {
+public class TaskListInteractorImpl implements TaskListInteractor {
     private TaskListInteractor.OnImportFinishedListener listener;
 
-    public TaskListsInteractorImpl(TaskListInteractor.OnImportFinishedListener listener) {
+    public TaskListInteractorImpl(TaskListInteractor.OnImportFinishedListener listener) {
         this.listener = listener;
     }
 

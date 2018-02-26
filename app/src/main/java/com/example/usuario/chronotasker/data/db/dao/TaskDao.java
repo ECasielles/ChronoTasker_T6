@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
+import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.ChronoTaskerContract;
 import com.example.usuario.chronotasker.data.db.ChronoTaskerOpenHelper;
 import com.example.usuario.chronotasker.data.db.model.Category;
@@ -21,47 +22,22 @@ import java.util.ArrayList;
  */
 public class TaskDao {
 
-    public ArrayList<Task> loadAll() {
-        ArrayList<Task> tasks = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        Cursor cursor = sqLiteDatabase.query(ChronoTaskerContract.TaskEntries.TABLE_NAME,
-                ChronoTaskerContract.TaskEntries.ALL_COLUMNS,
-                null, null, null, null,
-                ChronoTaskerContract.TaskEntries.DEFAULT_SORT, null
-        );
-        if (cursor.moveToFirst()) {
-            do {
-                tasks.add(new Task(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getInt(2),
-                        cursor.getInt(3),
-                        new DateTime(cursor.getString(4)),
-                        new DateTime(cursor.getString(5)),
-                        new Category(cursor.getInt(6)),
-                        cursor.getString(7),
-                        cursor.getString(8),
-                        cursor.getInt(9),
-                        new Period(cursor.getString(10).equals("") ? null : new Period(cursor.getString(10)).toString()),
-                        cursor.getString(11)
-                ));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return tasks;
-    }
-
     public ArrayList<Task> loadAllActive() {
         ArrayList<Task> tasks = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        Cursor cursor = sqLiteDatabase.query(ChronoTaskerContract.TaskEntries.TABLE_NAME,
+        String whereClause = ChronoTaskerContract.TaskEntries.WHERE_USER_AND_CATEGORY_NOT;
+        String[] whereArgs = new String[]{
+                String.valueOf(ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserId()),
+                String.valueOf(Category.CATEGORY_ARCHIVED)
+        };
+        Cursor cursor = sqLiteDatabase.query(
+                ChronoTaskerContract.TaskEntries.TABLE_NAME,
                 ChronoTaskerContract.TaskEntries.ALL_COLUMNS,
-                ChronoTaskerContract.TaskEntries.WHERE_CATEGORY_NOT,
-                new String[]{String.valueOf(Category.CATEGORY_ARCHIVED)},
+                whereClause,
+                whereArgs,
                 null,
                 null,
-                ChronoTaskerContract.TaskEntries.DEFAULT_SORT,
+                ChronoTaskerContract.TaskEntries.ORDER_BY_ID,
                 null
         );
         if (cursor.moveToFirst()) {
@@ -94,7 +70,7 @@ public class TaskDao {
     public long save(Task task) {
         SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
         long id = sqLiteDatabase.insert(
-                ChronoTaskerContract.UserEntries.TABLE_NAME,
+                ChronoTaskerContract.TaskEntries.TABLE_NAME,
                 null,
                 createContent(task)
         );
@@ -133,10 +109,11 @@ public class TaskDao {
     private ContentValues createContent(Task task) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_TITLE, task.getTitle());
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_USER, task.getUserId());
         contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_ICON_ID, task.getIconId());
         contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_START_DATE, task.getStartDate().toString());
         contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_END_DATE, task.getEndDate().toString());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_CATEGORY_FLAGS, String.valueOf(task.getCategoryFlags()));
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_CATEGORY_FLAGS, String.valueOf(task.getCategory().getFlags()));
         contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_DESCRIPTION, task.getDescription());
         contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_LOCATION, task.getLocation());
         contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_ALARM_ID, String.valueOf(task.getAlarmId()));

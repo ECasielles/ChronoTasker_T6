@@ -1,10 +1,10 @@
 package com.example.usuario.chronotasker.data.db.model;
 
-import android.content.res.Resources;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import com.example.usuario.chronotasker.R;
+import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,6 +18,7 @@ import java.lang.annotation.RetentionPolicy;
  * 1 la categoría por defecto. Al ser flags, la prioridad total
  * se obtiene sumando las prioridades de todas las categorías.
  * Cuando se archiva una tarea, su categoría pasa a ser 0.
+ * Por defecto una categoría siempre es normal hasta que es archivada.
  *
  * @author Enrique Casielles Lapeira
  * @version 1.0
@@ -45,19 +46,24 @@ public class Category implements Comparable {
 
     /**
      * Pide las opciones que se han declarado arriba
-     *
      * @param flag Unión de múltiples flags para categoría compuesta
      */
     public Category(@DisplayOptions int flag) {
         if (flag > MAX_FLAGS)
-            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.error_category_argument));
+            throw new IllegalArgumentException(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_category_argument));
         this.flags = flag;
+        setPriority();
+    }
+
+    public Category() {
+        setDefault();
         setPriority();
     }
 
     public int getPriority() {
         return priority;
     }
+
     public int getFlags() {
         return flags;
     }
@@ -107,47 +113,57 @@ public class Category implements Comparable {
      */
     public void setArchived() {
         flags = CATEGORY_ARCHIVED;
+        priority = 0;
     }
     public void setInformal() {
         flags = flags | CATEGORY_INFORMAL;
+        setPriority();
     }
     public void setDefault() {
         flags = flags | CATEGORY_DEFAULT;
+        setPriority();
     }
     public void setImportant() {
         flags = flags | CATEGORY_IMPORTANT;
+        setPriority();
     }
     public void setUrgent() {
-        flags = flags | CATEGORY_DEFAULT;
+        flags = flags | CATEGORY_URGENT;
+        setPriority();
     }
     public void unSetInformal() {
         flags = flags ^ CATEGORY_INFORMAL;
+        setPriority();
     }
     public void unSetDefault() {
         flags = flags ^ CATEGORY_DEFAULT;
+        setPriority();
     }
     public void unSetImportant() {
         flags = flags ^ CATEGORY_IMPORTANT;
+        setPriority();
     }
+
     public void unSetUrgent() {
-        flags = flags ^ CATEGORY_DEFAULT;
+        flags = flags ^ CATEGORY_URGENT;
+        setPriority();
     }
 
     /**
      * Devuelve el nombre de la categoría más característica
-     *
      * @return
      */
     public int getCategoryNameId() {
-        if (this.isUrgent())
+        if (isUrgent())
             return URGENT_NAME;
-        else if (this.isImportant())
+        else if (isImportant())
             return IMPORTANT_NAME;
-        else if (this.isDefault())
-            return DEFAULT_NAME;
-        else if (this.isInformal())
+        else if (isInformal())
             return INFORMAL_NAME;
-        else return ARCHIVED_NAME;
+        else if (isDefault())
+            return DEFAULT_NAME;
+        else
+            return ARCHIVED_NAME;
     }
 
     /**
@@ -168,10 +184,10 @@ public class Category implements Comparable {
 
     @Override
     public String toString() {
-        return String.valueOf(getFlags());
+        return ChronoTaskerApplication.getContext().getResources().getString(getCategoryNameId());
     }
 
-    //CONSTANTES
+
     @IntDef(flag = true,
             value = {CATEGORY_ARCHIVED, CATEGORY_INFORMAL, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT})
     @Retention(RetentionPolicy.SOURCE)

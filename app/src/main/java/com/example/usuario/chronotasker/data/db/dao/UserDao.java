@@ -2,107 +2,74 @@ package com.example.usuario.chronotasker.data.db.dao;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.usuario.chronotasker.data.db.ChronoTaskerContract;
 import com.example.usuario.chronotasker.data.db.ChronoTaskerOpenHelper;
 import com.example.usuario.chronotasker.data.db.model.User;
 
-import java.util.ArrayList;
-
 /**
  * Clase que maneja los cursores que recorren la tabla User de la BD
- * según la consulta indicada por cada función
+ * según la consulta indicada por cada función.
  */
 public class UserDao {
 
-    public ArrayList<User> loadAll() {
-        ArrayList<User> users = new ArrayList<>();
+    /**
+     * Inserta teniendo en cuenta las restricciones como clave única o ajena.
+     *
+     * @return Devuelve el id de la fila modificada.
+     */
+    public long save(User user) {
         SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        Cursor cursor = sqLiteDatabase.query(ChronoTaskerContract.UserEntries.TABLE_NAME,
+        long rows = 0;
+        try {
+            rows = sqLiteDatabase.insertWithOnConflict(
+                    ChronoTaskerContract.UserEntries.TABLE_NAME,
+                    null,
+                    createContent(user),
+                    SQLiteDatabase.CONFLICT_ABORT
+            );
+        } catch (Exception e) {
+            Log.d("UserDao", e.getMessage());
+        }
+        ChronoTaskerOpenHelper.getInstance().closeDatabase();
+        return rows;
+    }
+
+    /**
+     * Comprueba si el usuario existe en la BD devolviendo su id ó -1 si no existe.
+     */
+    public int search(User user) {
+        int id = -1;
+        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
+        String whereClause = ChronoTaskerContract.UserEntries.WHERE_NAME_AND_PASSWORD;
+        String[] whereArgs = new String[]{user.getName(), user.getPassword()};
+        Cursor cursor = sqLiteDatabase.query(
+                ChronoTaskerContract.UserEntries.TABLE_NAME,
                 ChronoTaskerContract.UserEntries.ALL_COLUMNS,
-                null, null, null, null,
-                ChronoTaskerContract.UserEntries.DEFAULT_SORT, null
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                ChronoTaskerContract.UserEntries.DEFAULT_SORT,
+                null
         );
-        //El cursor siempre se coloca antes del primer elemento.
-        if (cursor.moveToFirst())
+        if (cursor.moveToFirst()) {
             do {
-                //Acceder a las columnas en el mismo orden
-                User user = new User(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3)
-                );
-                users.add(user);
+                id = cursor.getInt(0);
             } while (cursor.moveToNext());
+        }
         cursor.close();
         ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return users;
+        return id;
     }
 
-    /**
-     * Devuelve el id del elemento añadido a la BD.
-     *
-     * @param name     Nombre del usuario
-     * @param email    Email del usuario
-     * @param password Contraseña del usuario
-     * @return Id del tipo long del usuario en la BD o -1 si hubo algún error.
-     */
-    public long save(String name, String email, String password) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        long updatedRows = sqLiteDatabase.insert(
-                ChronoTaskerContract.UserEntries.TABLE_NAME,
-                null,
-                createContent(name, email, password)
-        );
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return updatedRows;
-    }
-
-    /**
-     * Elimina un usuario de la BD.
-     *
-     * @param id Id del usuario.
-     * @return True si lo ha borrado. Falso si no.
-     */
-    public int delete(int id) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        int deletedRows = sqLiteDatabase.delete(
-                ChronoTaskerContract.UserEntries.TABLE_NAME,
-                ChronoTaskerContract.UserEntries.WHERE_ID,
-                new String[]{String.valueOf(id)}
-        );
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return deletedRows;
-    }
-
-    /**
-     * Comprueba si el usuario existe en la BD.
-     *
-     * @param name     Nombre del usuario
-     * @param password Contraseña del usuario
-     * @return True si el usuario existe y false si no.
-     */
-    public long exists(String name, String password) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        long numEntries = DatabaseUtils.queryNumEntries(sqLiteDatabase,
-                ChronoTaskerContract.UserEntries.TABLE_NAME,
-                ChronoTaskerContract.UserEntries.WHERE_NAME_AND_PASSWORD,
-                new String[]{name, password}
-        );
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return numEntries;
-    }
-
-    @NonNull
-    private ContentValues createContent(String name, String email, String password) {
+    private ContentValues createContent(User user) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ChronoTaskerContract.UserEntries.COLUMN_NAME, name);
-        contentValues.put(ChronoTaskerContract.UserEntries.COLUMN_EMAIL, email);
-        contentValues.put(ChronoTaskerContract.UserEntries.COLUMN_PASSWORD, password);
+        contentValues.put(ChronoTaskerContract.UserEntries.COLUMN_NAME, user.getName());
+        contentValues.put(ChronoTaskerContract.UserEntries.COLUMN_EMAIL, user.getEmail());
+        contentValues.put(ChronoTaskerContract.UserEntries.COLUMN_PASSWORD, user.getPassword());
         return contentValues;
     }
 

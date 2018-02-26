@@ -3,7 +3,7 @@ package com.example.usuario.chronotasker.ui.task.presenter;
 import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.ui.task.contract.TaskListContract;
 import com.example.usuario.chronotasker.ui.task.interactor.TaskListInteractor;
-import com.example.usuario.chronotasker.ui.task.interactor.TaskListsInteractorImpl;
+import com.example.usuario.chronotasker.ui.task.interactor.TaskListInteractorImpl;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class TaskListPresenter implements TaskListContract.Presenter, TaskListIn
 
     public TaskListPresenter(TaskListContract.View view) {
         this.view = view;
-        this.interactor = new TaskListsInteractorImpl(this);
+        this.interactor = new TaskListInteractorImpl(this);
     }
 
     //Modos de importación de la lista de tareas
@@ -57,6 +57,7 @@ public class TaskListPresenter implements TaskListContract.Presenter, TaskListIn
 
     @Override
     public void deleteTask(Task task) {
+        task.getCategory().setArchived();
         interactor.deleteTask(task);
     }
 
@@ -72,7 +73,7 @@ public class TaskListPresenter implements TaskListContract.Presenter, TaskListIn
 
     @Override
     public void onTaskDeleteError(Throwable throwable) {
-        view.onDeleteTaskInfo(throwable.getMessage());
+        view.onDatabaseError(throwable.getMessage());
     }
 
     /**

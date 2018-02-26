@@ -1,9 +1,9 @@
 package com.example.usuario.chronotasker.data.db.repository;
 
+import com.example.usuario.chronotasker.R;
+import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.dao.UserDao;
 import com.example.usuario.chronotasker.data.db.model.User;
-
-import java.util.ArrayList;
 
 /**
  * Devuelve los datos de usuario desde el origen de datos.
@@ -32,21 +32,20 @@ public class UserRepository {
         return userRepository;
     }
 
-    public ArrayList<User> getUsers() {
-        return userDao.loadAll();
+    public void addUser(User user, UserRepositoryCallback callback) {
+        if (userDao.save(user) > 0)
+            callback.onSuccess();
+        else
+            callback.onError(new Throwable(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_database_user_save)));
     }
 
-    public void addUser(String name, String email, String password) {
-        userDao.save(name, email, password);
-    }
-
-    //TODO: Handle error cases
-    public boolean exists(String name, String password) {
-        return userDao.exists(name, password) > 0;
-    }
-
-    public void deleteUser(int id) {
-        userDao.delete(id);
+    public void search(User user, UserRepositoryCallback callback) {
+        int id = userDao.search(user);
+        if (id != -1) {
+            ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserId(id);
+            callback.onSuccess();
+        } else
+            callback.onError(new Throwable(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_database_search)));
     }
 
 }

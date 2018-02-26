@@ -6,11 +6,11 @@ import com.example.usuario.chronotasker.ui.task.contract.TaskViewContract;
 import com.example.usuario.chronotasker.ui.task.interactor.TaskViewInteractor;
 import com.example.usuario.chronotasker.ui.task.interactor.TaskViewInteractorImpl;
 
-public class TaskCreationPresenter implements TaskViewContract.Presenter, TaskViewInteractor.OnTaskCreatedListener {
+public class TaskViewPresenter implements TaskViewContract.Presenter, TaskViewInteractor.OnTaskEditionListener {
     private TaskViewContract.View view;
     private TaskViewInteractor interactor;
 
-    public TaskCreationPresenter(TaskViewContract.View view) {
+    public TaskViewPresenter(TaskViewContract.View view) {
         this.view = view;
         this.interactor = new TaskViewInteractorImpl(this);
     }
@@ -28,6 +28,17 @@ public class TaskCreationPresenter implements TaskViewContract.Presenter, TaskVi
     @Override
     public void onTaskCreated() {
         view.reloadTaskList();
+    }
+
+    @Override
+    public void onTaskUpdated(String title) {
+        view.taskUpdatedInfo(title);
+        view.reloadTaskList();
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        view.onDatabaseError(throwable.getMessage());
     }
 
     /**

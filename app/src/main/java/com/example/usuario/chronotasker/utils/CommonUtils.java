@@ -22,6 +22,7 @@ public class CommonUtils {
      */
     private static final String LENGTH_PATTERN = "^().{6,20}$";
     private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,20}$";
+    private static final String EMAIL_PATTERN = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
 
     public static boolean isValidFieldLength(String field) {
         Pattern pattern = Pattern.compile(LENGTH_PATTERN);
@@ -32,6 +33,12 @@ public class CommonUtils {
     public static boolean isValidPasswordFormat(String password) {
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
         Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
+    }
+
+    public static boolean isValidEmailFormat(String email) {
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
 

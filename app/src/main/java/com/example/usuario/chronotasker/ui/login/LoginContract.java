@@ -1,5 +1,7 @@
 package com.example.usuario.chronotasker.ui.login;
 
+import com.example.usuario.chronotasker.data.db.model.User;
+
 /**
  * Presenter de LoginActivity
  */
@@ -7,25 +9,31 @@ public interface LoginContract {
 
     interface View {
         void errorEmptyField();
-
         void errorNameLengthInvalid();
-
         void errorPasswordLengthInvalid();
-
         void errorPasswordFormatInvalid();
 
-        void navigateToHome();
-        void addUserPreferences(String name, String password, Boolean remember);
+        void loginUser();
+
+        void onUserFound();
+
+        void onDatabaseError(String message);
     }
 
     interface Presenter {
-        void validate(String name, String password, Boolean remember);
+        void loginUser(User user);
 
-        boolean isNameEmpty(String name);
-        boolean isPasswordEmpty(String password);
-        boolean isNameLengthValid(String name);
-        boolean isPasswordLengthValid(String password);
-        boolean isPasswordFormatValid(String password);
+        void validateFields(String name, String password);
+
+        boolean onNameEmptyError(String name);
+
+        boolean onPasswordEmptyError(String password);
+
+        boolean onNameLengthValidError(String name);
+
+        boolean onPasswordLengthValidError(String password);
+
+        boolean onPasswordFormatValidError(String password);
     }
 
 }

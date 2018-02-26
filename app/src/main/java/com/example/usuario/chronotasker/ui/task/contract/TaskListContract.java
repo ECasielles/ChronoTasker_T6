@@ -16,6 +16,8 @@ public interface TaskListContract {
         void onTaskRestored(int position, Task task);
 
         void onDeleteTaskInfo(String title);
+
+        void onDatabaseError(String message);
     }
 
     interface Presenter {

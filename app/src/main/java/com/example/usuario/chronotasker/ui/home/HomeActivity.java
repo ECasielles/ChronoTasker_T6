@@ -13,8 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.example.usuario.chronotasker.R;
+import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.ui.alarm.AlarmListFragment;
 import com.example.usuario.chronotasker.ui.base.OnFragmentActionListener;
+import com.example.usuario.chronotasker.ui.login.LoginActivity;
 import com.example.usuario.chronotasker.ui.settings.AccountSettingsActivity;
 import com.example.usuario.chronotasker.ui.task.fragment.TaskListFragment;
 
@@ -80,6 +82,14 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentActionL
                 break;
             case R.id.action_help:
                 break;
+            case R.id.action_logout:
+                ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserRemember(false);
+                ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserPassword(null);
+                ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserName(null);
+                ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserId(-1);
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+                break;
         }
         getSupportActionBar().setTitle(item.getTitle());
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -104,7 +114,6 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentActionL
     }
 
     public void launchSettingsActivity() {
-        //TODO: end session, launch LoginActivity
         //TODO: launch AboutActivity
         //TODO: launch GeneralSettingsActivity, change theme and language
         //TODO: launch AccountSettingsActivity, change profile settings, remember credentials
@@ -112,7 +121,6 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentActionL
         if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             this.drawerLayout.closeDrawer(GravityCompat.START);
             startActivity(new Intent(this, AccountSettingsActivity.class));
-            //startActivity(new Intent(BaseActivity.this, GeneralSettingsActivity.class));
         }
     }
 
@@ -148,16 +156,23 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentActionL
     }
 
     /**
-     * Cierra el último fragment añadido a la pila.
+     * Fuerza al último fragment añadido a la pila a consumir el evento de cierre.
      * Si el panel lateral está abierto, lo cierra.
-     * Se cierra la aplicación si no hay Fragment que consuma el evento.
+     * Si el usuario quiere que la aplicación lo recuerde, se cierra la aplicación sin
+     * cerrar sesión.
+     * Si el usuario no quiere que la aplicación lo recuerde,
+     * se abre la Activity de Login.
      */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
         else if (selectedFragment == null || !selectedFragment.onBackPressed())
-            super.onBackPressed();
+            if (!ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserRemember()) {
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+            } else
+                super.onBackPressed();
     }
 
 }

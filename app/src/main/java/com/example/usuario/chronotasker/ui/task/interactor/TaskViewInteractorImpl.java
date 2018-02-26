@@ -7,9 +7,9 @@ import com.example.usuario.chronotasker.data.db.repository.TaskRepositoryCallbac
 
 public class TaskViewInteractorImpl implements TaskViewInteractor, TaskRepositoryCallback {
 
-    private final OnTaskCreatedListener listener;
+    private final OnTaskEditionListener listener;
 
-    public TaskViewInteractorImpl(TaskViewInteractor.OnTaskCreatedListener listener) {
+    public TaskViewInteractorImpl(OnTaskEditionListener listener) {
         this.listener = listener;
     }
 
@@ -26,11 +26,12 @@ public class TaskViewInteractorImpl implements TaskViewInteractor, TaskRepositor
 
     @Override
     public void onSuccess(String title) {
-
+        listener.onTaskUpdated(title);
     }
 
     @Override
     public void onError(Throwable throwable) {
-
+        listener.onError(throwable);
     }
+
 }

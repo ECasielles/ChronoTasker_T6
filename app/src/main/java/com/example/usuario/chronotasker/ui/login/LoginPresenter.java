@@ -1,55 +1,73 @@
 package com.example.usuario.chronotasker.ui.login;
 
-import com.example.usuario.chronotasker.data.db.repository.UserRepository;
+import com.example.usuario.chronotasker.data.db.model.User;
 import com.example.usuario.chronotasker.utils.CommonUtils;
 
 /**
  * Presenter de LoginActivity
  */
-public class LoginPresenter implements LoginContract.Presenter {
+public class LoginPresenter implements LoginContract.Presenter, LoginInteractor.OnUserFoundListener {
 
+    private final LoginInteractor interactor;
     private LoginContract.View view;
 
     public LoginPresenter(LoginContract.View view) {
         this.view = view;
+        this.interactor = new LoginInteractorImpl(this);
     }
 
     @Override
-    public void validate(String name, String password, Boolean remember) {
-        if (isNameEmpty(name) || isPasswordEmpty(password))
+    public void loginUser(User user) {
+        interactor.findUser(user);
+    }
+
+    @Override
+    public void validateFields(String name, String password) {
+        if (onNameEmptyError(name) || onPasswordEmptyError(password))
             view.errorEmptyField();
-        else if (!isNameLengthValid(name))
+        else if (!onNameLengthValidError(name))
             view.errorNameLengthInvalid();
-        else if (!isPasswordLengthValid(password))
+        else if (!onPasswordLengthValidError(password))
             view.errorPasswordLengthInvalid();
-        else if (!isPasswordFormatValid(password))
+        else if (!onPasswordFormatValidError(password))
             view.errorPasswordFormatInvalid();
-
-        if (UserRepository.getInstance().exists(name, password)) {
-            view.addUserPreferences(name, password, remember);
-            view.navigateToHome();
-        }
+        else
+            view.loginUser();
     }
 
     @Override
-    public boolean isNameEmpty(String name) {
+    public boolean onNameEmptyError(String name) {
         return name.isEmpty();
     }
+
     @Override
-    public boolean isPasswordEmpty(String password) {
+    public boolean onPasswordEmptyError(String password) {
         return password.isEmpty();
     }
+
     @Override
-    public boolean isNameLengthValid(String name) {
+    public boolean onNameLengthValidError(String name) {
         return CommonUtils.isValidFieldLength(name);
     }
+
     @Override
-    public boolean isPasswordLengthValid(String password) {
+    public boolean onPasswordLengthValidError(String password) {
         return CommonUtils.isValidFieldLength(password);
     }
+
     @Override
-    public boolean isPasswordFormatValid(String password) {
+    public boolean onPasswordFormatValidError(String password) {
         return CommonUtils.isValidPasswordFormat(password);
+    }
+
+    @Override
+    public void onUserFound() {
+        view.onUserFound();
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        view.onDatabaseError(throwable.getMessage());
     }
 
 }

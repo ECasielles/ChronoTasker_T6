@@ -1,8 +1,7 @@
 package com.example.usuario.chronotasker.data.db.repository;
 
-import android.content.res.Resources;
-
 import com.example.usuario.chronotasker.R;
+import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.dao.TaskDao;
 import com.example.usuario.chronotasker.data.db.model.Task;
 
@@ -39,7 +38,6 @@ public class TaskRepository {
         return taskDao.loadAllActive();
     }
 
-    //TODO: Check if is still necessary
     public ArrayList<Task> getTasksOrderById() {
         ArrayList<Task> tasks = getActiveTasks();
         if (tasks.size() != 0)
@@ -53,18 +51,21 @@ public class TaskRepository {
             Collections.sort(tasks, Task.COMPARATOR_PRIORITY);
         return tasks;
     }
+
     public ArrayList<Task> getTasksOrderByStartDate() {
         ArrayList<Task> tasks = getActiveTasks();
         if (tasks.size() != 0)
             Collections.sort(tasks, Task.COMPARATOR_START_DATE);
         return tasks;
     }
+
     public ArrayList<Task> getTasksOrderByUrgency() {
         ArrayList<Task> tasks = getActiveTasks();
         if (tasks.size() != 0)
             Collections.sort(tasks, Task.COMPARATOR_URGENT);
         return tasks;
     }
+
     public ArrayList<Task> getTasksOrderByImportance() {
         ArrayList<Task> tasks = getActiveTasks();
         if (tasks.size() != 0)
@@ -76,19 +77,18 @@ public class TaskRepository {
         taskDao.save(task);
     }
 
-    //TODO: Handle error cases
     public void deleteTask(Task task, TaskRepositoryCallback callback) {
         if (taskDao.delete(task) > 0)
             callback.onSuccess(task.getTitle());
         else
-            callback.onError(new Throwable(Resources.getSystem().getString(R.string.error_database_delete)));
+            callback.onError(new Throwable(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_database_delete)));
     }
 
     public void updateTask(Task task, TaskRepositoryCallback callback) {
         if (taskDao.update(task) > 0)
             callback.onSuccess(task.getTitle());
         else
-            callback.onError(new Throwable(Resources.getSystem().getString(R.string.error_database_update)));
+            callback.onError(new Throwable(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_database_update)));
     }
 
 }

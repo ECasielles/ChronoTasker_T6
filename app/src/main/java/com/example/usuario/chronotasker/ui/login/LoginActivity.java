@@ -16,9 +16,11 @@ import android.widget.CheckBox;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
+import com.example.usuario.chronotasker.data.db.model.User;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;
+import com.example.usuario.chronotasker.ui.signup.SignupActivity;
 
 /**
  * Clase Activity de la vista principal, Login, desde la que
@@ -30,9 +32,6 @@ import com.example.usuario.chronotasker.ui.home.HomeActivity;
  * @see android.support.v7.app.AppCompatActivity
  */
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {
-    private static final int REQUEST_CODE_OK = 0;
-    private static final int RESULT_CODE_LOGIN = 1;
-    private static final int RESULT_CODE_CANCEL = 2;
     private TextInputEditText edtName, edtPassword;
     private CheckBox chbRemember;
     private Button btnLogin, btnSignup;
@@ -64,29 +63,15 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.validate(edtName.getText().toString(), edtPassword.getText().toString(), chbRemember.isChecked());
-                navigateToHome();
+                presenter.validateFields(edtName.getText().toString(), edtPassword.getText().toString());
             }
         });
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(LoginActivity.this, SignupActivity.class), REQUEST_CODE_OK);
+                startActivity(new Intent(LoginActivity.this, SignupActivity.class));
             }
         });
-    }
-
-    //TODO: onActivityResult de SignupActivity
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_OK)
-            switch (resultCode) {
-                case RESULT_CODE_LOGIN:
-                    break;
-                case RESULT_CODE_CANCEL:
-                    break;
-            }
     }
 
     @Override
@@ -121,30 +106,48 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         return super.onOptionsItemSelected(item);
     }
 
-    //COMUNICACION CON LOGINPRESENTER
     @Override
     public void errorEmptyField() {
         Snackbar.make(parent, getResources().getString(R.string.error_name_empty), Snackbar.LENGTH_SHORT).show();
     }
+
     @Override
     public void errorNameLengthInvalid() {
         Snackbar.make(parent, getResources().getString(R.string.error_name_length_invalid), Snackbar.LENGTH_SHORT).show();
     }
+
     @Override
     public void errorPasswordLengthInvalid() {
         Snackbar.make(parent, getResources().getString(R.string.error_password_length_invalid), Snackbar.LENGTH_SHORT).show();
     }
+
     @Override
     public void errorPasswordFormatInvalid() {
         Snackbar.make(parent, getResources().getString(R.string.error_password_format_invalid), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
-    public void addUserPreferences(String name, String password, Boolean remember) {
+    public void loginUser() {
+        presenter.loginUser(new User(
+                -1,
+                edtName.getText().toString(),
+                "",
+                edtPassword.getText().toString()
+        ));
+    }
+
+    @Override
+    public void onUserFound() {
         PreferencesHelper helper = ChronoTaskerApplication.getContext().getPreferencesHelper();
-        helper.setCurrentUserName(name);
-        helper.setCurrentUserPassword(password);
-        helper.setCurrentUserRemember(remember);
+        helper.setCurrentUserName(edtName.getText().toString());
+        helper.setCurrentUserPassword(edtPassword.getText().toString());
+        helper.setCurrentUserRemember(chbRemember.isChecked());
+        navigateToHome();
+    }
+
+    @Override
+    public void onDatabaseError(String message) {
+        Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
     }
 
 }

@@ -45,5 +45,12 @@
     <string name="action_config">Ajustes</string>
     <string name="action_home">Tareas</string>
     <string name="action_alarm">Alarmas</string>
+    <string name="action_logout">Cerrar sesión</string>
+    <string name="info_task_updated">actualizada con éxito</string>
+    <string name="alarm_title">Alarma</string>
+    <string name="alarm_content">Alarma</string>
+    <string name="error_database_alarm_update">Error. No se pudo editar la alarma.</string>
+    <string name="error_database_alarm_save">Error. No se pudo guardar la alarma.</string>
+    <string name="error_database_alarm_delete">Error. No se pudo eliminar la alarma.</string>
 
 </resources>

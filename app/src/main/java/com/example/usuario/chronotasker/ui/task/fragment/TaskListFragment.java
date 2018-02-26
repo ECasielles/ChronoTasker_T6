@@ -20,7 +20,7 @@ import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.ui.base.BaseFragment;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;
-import com.example.usuario.chronotasker.ui.task.adapter.OnItemActionListener;
+import com.example.usuario.chronotasker.ui.task.adapter.OnTaskActionListener;
 import com.example.usuario.chronotasker.ui.task.adapter.RecyclerItemTouchHelper;
 import com.example.usuario.chronotasker.ui.task.adapter.TaskAdapter;
 import com.example.usuario.chronotasker.ui.task.contract.TaskListContract;
@@ -32,11 +32,12 @@ import java.util.ArrayList;
  * Fragment que muestra la lista de tareas
  */
 public class TaskListFragment extends BaseFragment implements TaskListContract.View,
-        RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, OnItemActionListener {
+        RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, OnTaskActionListener {
     public static final String TAG = "TaskListFragment";
     private TaskAdapter adapter;
     private RecyclerView recyclerView;
     private TaskListContract.Presenter presenter;
+    private ViewGroup parent;
 
     /**
      * Devuelve la instancia guardada de este Fragment o crea una nueva
@@ -75,6 +76,7 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
+        parent = view.findViewById(android.R.id.content);
         recyclerView = view.findViewById(android.R.id.list);
         adapter = new TaskAdapter(getContext(), this);
         presenter.importTasks();
@@ -115,25 +117,24 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
                 TaskViewFragment.getInstance((AppCompatActivity) getActivity(), bundle));
     }
 
+    /**
+     * Método callback de la interfaz OnTaskActionListener que permite
+     * editar una tarea.
+     * @param task
+     */
+    @Override
+    public void onTaskClick(Task task) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Task.TAG, task);
+        addTask(bundle);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_activity_task, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /**
-     * Método callback de la interfaz OnItemActionListener que permite
-     * editar una tarea.
-     * @param task
-     */
-    @Override
-    public void onItemClickListener(Task task) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(Task.TAG, task);
-        addTask(bundle);
-    }
-
-    //TODO: Check it is working
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -173,14 +174,13 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
         //Notifica y permite deshacer la acción
         Snackbar snackbar = Snackbar.make(recyclerView, task.getTitle() + " archivada", Snackbar.LENGTH_LONG);
         snackbar.addCallback(new Snackbar.Callback() {
-                                 @Override
-                                 public void onDismissed(Snackbar transientBottomBar, int event) {
-                                     super.onDismissed(transientBottomBar, event);
-                                     if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
-                                         presenter.deleteTask(task);
-                                 }
-                             }
-        );
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                super.onDismissed(transientBottomBar, event);
+                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
+                    presenter.deleteTask(task);
+            }
+        });
         snackbar.setAction(getContext().getResources().getString(R.string.undo), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -211,6 +211,11 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
     @Override
     public void onDeleteTaskInfo(String title) {
         Toast.makeText(getContext(), title + " " + getResources().getString(R.string.info_task_deleted), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDatabaseError(String message) {
+        Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
     }
 
     /**

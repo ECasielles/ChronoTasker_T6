@@ -35,7 +35,7 @@ public class Task implements Parcelable, Comparable {
     public static final Comparator<Task> COMPARATOR_PRIORITY = new Comparator<Task>() {
         @Override
         public int compare(Task task, Task otherTask) {
-            int res = task.getCategoryFlags().compareTo(otherTask.getCategoryFlags());
+            int res = task.getCategory().compareTo(otherTask.getCategory());
             if (res == 0)
                 res = task.compareTo(otherTask);
             return res;
@@ -61,9 +61,9 @@ public class Task implements Parcelable, Comparable {
     public static final Comparator<Task> COMPARATOR_URGENT = new Comparator<Task>() {
         @Override
         public int compare(Task task, Task otherTask) {
-            if (task.getCategoryFlags().isUrgent() && !otherTask.getCategoryFlags().isUrgent())
+            if (task.getCategory().isUrgent() && !otherTask.getCategory().isUrgent())
                 return -1;
-            else if (!task.getCategoryFlags().isUrgent() && otherTask.getCategoryFlags().isUrgent())
+            else if (!task.getCategory().isUrgent() && otherTask.getCategory().isUrgent())
                 return 1;
             else {
                 int res = task.getStartDate().compareTo(otherTask.getStartDate());
@@ -80,9 +80,9 @@ public class Task implements Parcelable, Comparable {
     public static final Comparator<Task> COMPARATOR_IMPORTANT = new Comparator<Task>() {
         @Override
         public int compare(Task task, Task otherTask) {
-            if (task.getCategoryFlags().isImportant() && !otherTask.getCategoryFlags().isImportant())
+            if (task.getCategory().isImportant() && !otherTask.getCategory().isImportant())
                 return -1;
-            else if (!task.getCategoryFlags().isImportant() && otherTask.getCategoryFlags().isImportant())
+            else if (!task.getCategory().isImportant() && otherTask.getCategory().isImportant())
                 return 1;
             else {
                 int res = task.getStartDate().compareTo(otherTask.getStartDate());
@@ -107,11 +107,11 @@ public class Task implements Parcelable, Comparable {
     //PARAMETROS
     private int id;
     private String title;
-    private int ownerId;
+    private int userId;
     private int iconId;
     private DateTime startDate;
     private DateTime endDate;
-    private Category categoryFlags;
+    private Category category;
     private String description;
     private String location;
     private int alarmId;
@@ -119,17 +119,17 @@ public class Task implements Parcelable, Comparable {
     private String reminder;
 
     //CONSTRUCTOR
-    public Task(int id, String title, int ownerId, int iconId, @Nullable DateTime startDate,
-                @Nullable DateTime endDate, Category categoryFlags, @Nullable String description,
+    public Task(int id, String title, int userId, int iconId, @Nullable DateTime startDate,
+                @Nullable DateTime endDate, Category category, @Nullable String description,
                 @Nullable String location, int alarmId, @Nullable Period repetition,
                 @Nullable String reminder) {
         this.id = id;
-        this.ownerId = ownerId;
+        this.userId = userId;
         this.iconId = iconId;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.categoryFlags = categoryFlags;
+        this.category = category;
         this.description = description;
         this.location = location;
         this.alarmId = alarmId;
@@ -142,7 +142,7 @@ public class Task implements Parcelable, Comparable {
         id = in.readInt();
         title = in.readString();
         iconId = in.readInt();
-        ownerId = in.readInt();
+        userId = in.readInt();
         description = in.readString();
         location = in.readString();
         alarmId = in.readInt();
@@ -158,7 +158,7 @@ public class Task implements Parcelable, Comparable {
         parcel.writeInt(id);
         parcel.writeString(title);
         parcel.writeInt(iconId);
-        parcel.writeInt(ownerId);
+        parcel.writeInt(userId);
         parcel.writeString(description);
         parcel.writeString(location);
         parcel.writeInt(alarmId);
@@ -184,11 +184,13 @@ public class Task implements Parcelable, Comparable {
     public void setIconId(int iconId) {
         this.iconId = iconId;
     }
-    public int getOwnerId() {
-        return ownerId;
+
+    public int getUserId() {
+        return userId;
     }
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
     public DateTime getStartDate() {
         return startDate;
@@ -202,11 +204,13 @@ public class Task implements Parcelable, Comparable {
     public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
-    public Category getCategoryFlags() {
-        return categoryFlags;
+
+    public Category getCategory() {
+        return category;
     }
-    public void setCategoryFlags(Category categoryFlags) {
-        this.categoryFlags = categoryFlags;
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
     public String getDescription() {
         return description;

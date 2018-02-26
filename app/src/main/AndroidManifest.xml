@@ -17,11 +17,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.login.SignupActivity" />
+        <activity android:name=".ui.signup.SignupActivity" />
         <activity android:name=".ui.about.AboutActivity" />
-        <activity android:name=".ui.home.HomeActivity"></activity>
+        <activity android:name=".ui.home.HomeActivity">
+
+        </activity>
         <activity android:name=".ui.settings.GeneralSettingsActivity" />
         <activity android:name=".ui.settings.AccountSettingsActivity" />
+
+        <receiver android:name=".ui.alarm.AlarmBroadcast">
+            <intent-filter>
+                <action android:name="com.example.usuario.chronotasker.alarm" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

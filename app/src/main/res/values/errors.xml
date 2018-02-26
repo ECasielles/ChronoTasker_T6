@@ -12,4 +12,7 @@
     <!--Base de datos-->
     <string name="error_database_delete">Error al eliminar</string>
     <string name="error_database_update">Error al actualizar</string>
+    <string name="error_database_search">Error. No se encontró el usuario.</string>
+    <string name="error_database_user_save">Error. Usuario y/o correo no válidos.</string>
+    <string name="error_email_format_invalid">Formato de email no válido</string>
 </resources>

@@ -1,15 +1,17 @@
 package com.example.usuario.chronotasker.ui.task.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
@@ -18,7 +20,7 @@ import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.ui.base.BaseFragment;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;
 import com.example.usuario.chronotasker.ui.task.contract.TaskViewContract;
-import com.example.usuario.chronotasker.ui.task.presenter.TaskCreationPresenter;
+import com.example.usuario.chronotasker.ui.task.presenter.TaskViewPresenter;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -31,8 +33,9 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
 
     private TaskViewContract.Presenter presenter;
     private TextInputLayout tilTitle, tilDescription;
-    private CheckBox ckbInformal, ckbDefault, ckbImportant, ckbUrgent;
+    private CheckBox ckbInformal, ckbImportant, ckbUrgent;
     private TextView txvDateTime;
+    private ViewGroup parent;
 
     public static TaskViewFragment getInstance(AppCompatActivity appCompatActivity, Bundle bundle) {
         TaskViewFragment taskViewFragment = (TaskViewFragment)
@@ -50,62 +53,89 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
         //Mantener los datos en cambio de contexto
         setRetainInstance(true);
         //Inicializar presenter
-        presenter = new TaskCreationPresenter(this);
+        presenter = new TaskViewPresenter(this);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_task_creation, container, false);
+        View view = inflater.inflate(R.layout.fragment_task_view, container, false);
         tilTitle = view.findViewById(R.id.tilTitle);
         tilDescription = view.findViewById(R.id.tilDescription);
         ckbInformal = view.findViewById(R.id.ckbInformal);
-        ckbDefault = view.findViewById(R.id.ckbDefault);
         ckbImportant = view.findViewById(R.id.ckbImportant);
         ckbUrgent = view.findViewById(R.id.ckbUrgent);
         txvDateTime = view.findViewById(R.id.txvDateTime);
+        //Guarda vista para Snackbar
+        parent = view.findViewById(android.R.id.content);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm DD/MM/YYYY");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm dd/MM/yyyy");
         final DateTime dateTime = new DateTime();
         txvDateTime.setText(formatter.print(dateTime));
-        super.onViewCreated(view, savedInstanceState);
 
         //FloatingActionButton
+        final int finalId = getArgumentsAndTaskId();
         ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick");
-                Category category = new Category(Category.CATEGORY_ARCHIVED);
-                if (ckbInformal.isChecked())
-                    category.setInformal();
-                if (ckbDefault.isChecked())
-                    category.setDefault();
-                if (ckbImportant.isChecked())
-                    category.setImportant();
-                if (ckbUrgent.isChecked())
-                    category.setUrgent();
-
-                presenter.addTask(new Task(
-                        -1,
-                        tilTitle.getEditText().getText().toString(),
-                        ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserId(),
-                        -1,
-                        dateTime,
-                        dateTime,
-                        category,
-                        tilDescription.getEditText().getText().toString(),
-                        "",
-                        -1,
-                        new Period(0),
-                        ""
-                ));
+                if (getArguments() == null)
+                    presenter.addTask(createTask(finalId));
+                else
+                    presenter.updateTask(createTask(finalId));
             }
         });
+    }
 
+    /**
+     * Devuelve el id de la tarea si se le han pasado argumentos al Fragment
+     * y rellena los campos de edición o devuelve -1.
+     */
+    private int getArgumentsAndTaskId() {
+        Bundle args = getArguments();
+        int id = -1;
+        if (args != null) {
+            Task task = args.getParcelable(Task.TAG);
+            id = task.getId();
+            tilTitle.getEditText().setText(task.getTitle());
+            tilDescription.getEditText().setText(task.getDescription());
+            Category category = task.getCategory();
+            ckbInformal.setChecked(category.isInformal());
+            ckbImportant.setChecked(category.isImportant());
+            ckbUrgent.setChecked(category.isUrgent());
+            txvDateTime.setText(task.getStartDate().toString());
+        }
+        return id;
+    }
+
+    @NonNull
+    private Task createTask(int id) {
+        Category category = new Category();
+        category.setDefault();
+        if (ckbInformal.isChecked())
+            category.setInformal();
+        if (ckbImportant.isChecked())
+            category.setImportant();
+        if (ckbUrgent.isChecked())
+            category.setUrgent();
+
+        return new Task(
+                id,
+                tilTitle.getEditText().getText().toString(),
+                ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserId(),
+                -1,
+                new DateTime(txvDateTime.getText().toString()),
+                new DateTime(txvDateTime.getText().toString()),
+                category,
+                tilDescription.getEditText().getText().toString(),
+                "",
+                -1,
+                new Period(0),
+                ""
+        );
     }
 
     /**
@@ -114,6 +144,16 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
     @Override
     public void reloadTaskList() {
         fragmentEventHandler.popBackStack();
+    }
+
+    @Override
+    public void onDatabaseError(String message) {
+        Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void taskUpdatedInfo(String title) {
+        Toast.makeText(getContext(), title + " " + getResources().getString(R.string.info_task_updated), Toast.LENGTH_SHORT).show();
     }
 
     /**

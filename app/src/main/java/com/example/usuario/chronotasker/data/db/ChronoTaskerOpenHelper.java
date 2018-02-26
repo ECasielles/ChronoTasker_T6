@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ChronoTaskerOpenHelper extends SQLiteOpenHelper {
 
-    private static ChronoTaskerOpenHelper helper;
+    private volatile static ChronoTaskerOpenHelper helper;
     private AtomicInteger openCounter = new AtomicInteger(0);
     private SQLiteDatabase sqLiteDatabase;
 
@@ -33,14 +33,25 @@ public class ChronoTaskerOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //Creo en orden directo de referencias
         db.execSQL(ChronoTaskerContract.UserEntries.CREATE_TABLE);
-        db.execSQL(ChronoTaskerContract.TaskEntries.CREATE_TABLE);
         db.execSQL(ChronoTaskerContract.UserEntries.INSERT_VALUES);
+        db.execSQL(ChronoTaskerContract.TaskEntries.CREATE_TABLE);
         db.execSQL(ChronoTaskerContract.TaskEntries.INSERT_VALUES);
+        db.execSQL(ChronoTaskerContract.AlarmEntries.CREATE_TABLE);
+        db.execSQL(ChronoTaskerContract.AlarmEntries.INSERT_VALUES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //Borro en orden inverso de referencias
+        db.execSQL(ChronoTaskerContract.TaskEntries.DROP_TABLE);
+        db.execSQL(ChronoTaskerContract.UserEntries.DROP_TABLE);
+        onCreate(db);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //Borro en orden inverso de referencias
+        db.execSQL(ChronoTaskerContract.AlarmEntries.DROP_TABLE);
         db.execSQL(ChronoTaskerContract.TaskEntries.DROP_TABLE);
         db.execSQL(ChronoTaskerContract.UserEntries.DROP_TABLE);
         onCreate(db);
