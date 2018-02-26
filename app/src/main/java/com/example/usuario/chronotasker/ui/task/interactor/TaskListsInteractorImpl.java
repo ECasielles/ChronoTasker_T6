@@ -2,12 +2,13 @@ package com.example.usuario.chronotasker.ui.task.interactor;
 
 import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.data.db.repository.TaskRepository;
+import com.example.usuario.chronotasker.data.db.repository.TaskRepositoryCallback;
 
 /**
  * Interactor de TaskListPresenter.
  */
-public class TaskListsInteractorImpl implements TaskListInteractor {
-    TaskListInteractor.OnImportFinishedListener listener;
+public class TaskListsInteractorImpl implements TaskListInteractor, TaskRepositoryCallback {
+    private TaskListInteractor.OnImportFinishedListener listener;
 
     public TaskListsInteractorImpl(TaskListInteractor.OnImportFinishedListener listener) {
         this.listener = listener;
@@ -40,8 +41,17 @@ public class TaskListsInteractorImpl implements TaskListInteractor {
 
     @Override
     public void deleteTask(Task task) {
-        TaskRepository.getInstance().deleteTask(task.getId());
-        listener.onTaskDeletedFromRepository(task.getTitle());
+        TaskRepository.getInstance().deleteTask(task, this);
+    }
+
+    @Override
+    public void onSuccess(String title) {
+        listener.onTaskDeleted(title);
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        listener.onTaskDeleteError(throwable);
     }
 
 }

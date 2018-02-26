@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Presenter de TaskListFragment.
  */
 public class TaskListPresenter implements TaskListContract.Presenter, TaskListInteractor.OnImportFinishedListener {
-    private final TaskListContract.View view;
+    private TaskListContract.View view;
     private TaskListInteractor interactor;
 
     public TaskListPresenter(TaskListContract.View view) {
@@ -66,8 +66,22 @@ public class TaskListPresenter implements TaskListContract.Presenter, TaskListIn
     }
 
     @Override
-    public void onTaskDeletedFromRepository(String title) {
-        view.onTaskDeletedFromRepository(title);
+    public void onTaskDeleted(String title) {
+        view.onDeleteTaskInfo(title);
+    }
+
+    @Override
+    public void onTaskDeleteError(Throwable throwable) {
+        view.onDeleteTaskInfo(throwable.getMessage());
+    }
+
+    /**
+     * Se eliminan las referencias del presentador
+     */
+    @Override
+    public void onDestroy() {
+        view = null;
+        interactor = null;
     }
 
 }

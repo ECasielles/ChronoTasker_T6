@@ -1,11 +1,11 @@
 package com.example.usuario.chronotasker.ui.task.fragment;
 
-import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;
+import com.example.usuario.chronotasker.ui.task.adapter.OnItemActionListener;
 import com.example.usuario.chronotasker.ui.task.adapter.RecyclerItemTouchHelper;
 import com.example.usuario.chronotasker.ui.task.adapter.TaskAdapter;
 import com.example.usuario.chronotasker.ui.task.contract.TaskListContract;
@@ -32,10 +33,8 @@ import java.util.ArrayList;
  * Fragment que muestra la lista de tareas
  */
 public class TaskListFragment extends Fragment implements TaskListContract.View,
-        RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
-
+        RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, TaskViewFragment.TaskCreationListener, OnItemActionListener {
     public static final String TAG = "TaskListFragment";
-    private TaskListListener callback;
     private TaskAdapter adapter;
     private RecyclerView recyclerView;
     private TaskListContract.Presenter presenter;
@@ -43,17 +42,6 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
     //CONSTRUCTOR
     public static TaskListFragment newInstance() {
         return new TaskListFragment();
-    }
-
-    //CICLO DE VIDA: CREACION DE LA VISTA
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            callback = (TaskListListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Error: " + activity + " must implement TaskListListener.");
-        }
     }
 
     @Override
@@ -76,7 +64,7 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         recyclerView = view.findViewById(android.R.id.list);
 
         //Adapter + Presenter
-        adapter = new TaskAdapter(getContext());
+        adapter = new TaskAdapter(getContext(), this);
         presenter.importTasks();
 
         return view;
@@ -100,11 +88,21 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callback.addTask(null);
+                addTask(null);
             }
         });
+    }
 
-
+    private void addTask(Bundle bundle) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        TaskViewFragment taskViewFragment = (TaskViewFragment) fragmentManager.findFragmentByTag(TaskViewFragment.TAG);
+        if (taskViewFragment == null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            taskViewFragment = TaskViewFragment.getInstance(bundle, this);
+            fragmentTransaction.addToBackStack(TaskViewFragment.TAG);
+            fragmentTransaction.replace(R.id.frame_content, taskViewFragment, TaskViewFragment.TAG);
+            fragmentTransaction.commit();
+        }
     }
 
     @Override
@@ -113,6 +111,14 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
+    public void onItemClickListener(Task task) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Task.TAG, task);
+        addTask(bundle);
+    }
+
+    //TODO: Check it is working
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -172,7 +178,7 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
                 presenter.restoreTask(position, task);
             }
         });
-        snackbar.setActionTextColor(Color.BLUE);
+        snackbar.setActionTextColor(getContext().getResources().getColor(R.color.colorAccent));
         snackbar.show();
     }
 
@@ -194,7 +200,7 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
      * @param title
      */
     @Override
-    public void onTaskDeletedFromRepository(String title) {
+    public void onDeleteTaskInfo(String title) {
         Toast.makeText(getContext(), title + " " + getResources().getString(R.string.info_task_deleted), Toast.LENGTH_SHORT).show();
     }
 
@@ -218,11 +224,21 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         }
     }
 
-    //COMUNICACION CON EL RECYCLER_ITEM_TOUCH_HELPER
+    @Override
+    public void reloadTasks() {
+        getActivity().getSupportFragmentManager().popBackStack();
+    }
 
-    //CONTRATO CON LA ACTIVITY
-    public interface TaskListListener {
-        void addTask(Bundle bundle);
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
+        adapter = null;
     }
 
 }

@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     private Button btnLogin, btnSignup;
     private ViewGroup parent;
     private LoginContract.Presenter presenter;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
         //Guarda vista para Snackbar
         parent = findViewById(android.R.id.content);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         //Inicializa Presenter y lo asigna
         presenter = new LoginPresenter(this);

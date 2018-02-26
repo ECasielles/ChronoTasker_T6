@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">ChronoTasker</string>
-    <string name="login">Credenciales</string>
+    <string name="login">Iniciar sesión</string>
     <string name="tilUserHint">Nombre de usuario o email</string>
     <string name="tilPasswordHint">Contraseña</string>
     <string name="chkRemember"><u>Recordarme</u></string>
     <string name="btnSignIn">Entrar</string>
     <string name="btnSignUp">Registro</string>
-    <string name="txvSignup">No tienes cuenta? <b>Regístrate</b>!</string>
+    <string name="txvSignup">¿No tienes cuenta? ¡<b>Regístrate</b>!</string>
     <string name="signup">Registro</string>
     <string name="tilUsernameHint">Nombre de usuario</string>
     <string name="tilEmailHint">Correo electrónico</string>
@@ -45,4 +45,5 @@
     <string name="action_config">Ajustes</string>
     <string name="action_home">Tareas</string>
     <string name="action_alarm">Alarmas</string>
+
 </resources>

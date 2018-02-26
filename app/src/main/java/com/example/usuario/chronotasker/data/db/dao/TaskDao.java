@@ -2,7 +2,6 @@ package com.example.usuario.chronotasker.data.db.dao;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
@@ -90,98 +89,59 @@ public class TaskDao {
 
     /**
      * Devuelve el id del elemento añadido a la BD.
-     *
-     * @param title         Título
-     * @param iconId        Id del icono
-     * @param startDate     Fecha de inicio
-     * @param endDate       Fecha de fin
-     * @param categoryFlags Categoría
-     * @param description   Descripción
-     * @param location      Ubicación
-     * @param alarmId       Id de la alarma
-     * @param repeat        Fecha de repetición
-     * @param reminder      Objeto JSON con la configuración de recordatorios
      * @return Id del tipo long de la Tarea en la BD o -1 si hubo algún error.
      */
-    public long save(String title, int iconId, DateTime startDate, DateTime endDate,
-                     Category categoryFlags, String description, String location,
-                     int alarmId, DateTime repeat, String reminder) {
+    public long save(Task task) {
         SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
         long id = sqLiteDatabase.insert(
                 ChronoTaskerContract.UserEntries.TABLE_NAME,
                 null,
-                createContent(title, iconId, startDate, endDate, categoryFlags, description,
-                        location, alarmId, repeat, reminder)
+                createContent(task)
         );
         ChronoTaskerOpenHelper.getInstance().closeDatabase();
         return id;
     }
 
-    public int update(int id, String title, int iconId, DateTime startDate,
-                      DateTime endDate, Category categoryFlags, String description,
-                      String location, int alarmId, DateTime repeat, String reminder) {
+    public int update(Task task) {
         SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        String[] whereArgs = new String[]{String.valueOf(id)};
+        String whereClause = ChronoTaskerContract.TaskEntries.WHERE_ID;
+        String[] whereArgs = new String[]{String.valueOf(task.getId())};
         int updatedRows = sqLiteDatabase.update(
                 ChronoTaskerContract.TaskEntries.TABLE_NAME,
-                createContent(
-                        title, iconId, startDate, endDate, categoryFlags,
-                        description, location, alarmId, repeat, reminder
-                ),
-                ChronoTaskerContract.TaskEntries.WHERE_ID,
+                createContent(task),
+                whereClause,
                 whereArgs
         );
         ChronoTaskerOpenHelper.getInstance().closeDatabase();
         return updatedRows;
     }
 
-    /**
-     * Devuelve true si ha borrado la tarea de la BD.
-     *
-     * @return True si la ha borrado. Falso si no.
-     */
-    public int delete(int id) {
+    public int delete(Task task) {
         SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
+        String whereClause = ChronoTaskerContract.TaskEntries.WHERE_ID;
+        String[] whereArgs = new String[]{String.valueOf(task.getId())};
         int deletedRows = sqLiteDatabase.delete(
                 ChronoTaskerContract.TaskEntries.TABLE_NAME,
-                ChronoTaskerContract.TaskEntries.WHERE_ID,
-                new String[]{String.valueOf(id)}
+                whereClause,
+                whereArgs
         );
         ChronoTaskerOpenHelper.getInstance().closeDatabase();
         return deletedRows;
     }
 
-    /**
-     * Comprueba si la tarea existe en la BD.
-     *
-     * @return True si la tarea existe y false si no.
-     */
-    public long exists(int id, int ownerId) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        long numEntries = DatabaseUtils.queryNumEntries(sqLiteDatabase,
-                ChronoTaskerContract.TaskEntries.TABLE_NAME,
-                ChronoTaskerContract.TaskEntries.WHERE_ID_AND_OWNER,
-                new String[]{String.valueOf(id), String.valueOf(ownerId)}
-        );
-        return numEntries;
-    }
-
     @NonNull
-    private ContentValues createContent(String title, int iconId, DateTime startDate, DateTime endDate,
-                                        Category categoryFlags, String description, String location,
-                                        int alarmId, DateTime repeat, String reminder) {
-        //ContentValues funciona como un mapa
+    private ContentValues createContent(Task task) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_TITLE, title);
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_ICON_ID, iconId);
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_START_DATE, startDate.toString());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_END_DATE, endDate.toString());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_CATEGORY_FLAGS, String.valueOf(categoryFlags));
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_DESCRIPTION, description);
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_LOCATION, location);
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_ALARM_ID, String.valueOf(alarmId));
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_REPEAT, repeat.toString());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_REMINDER, reminder);
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_TITLE, task.getTitle());
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_ICON_ID, task.getIconId());
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_START_DATE, task.getStartDate().toString());
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_END_DATE, task.getEndDate().toString());
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_CATEGORY_FLAGS, String.valueOf(task.getCategoryFlags()));
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_DESCRIPTION, task.getDescription());
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_LOCATION, task.getLocation());
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_ALARM_ID, String.valueOf(task.getAlarmId()));
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_REPEAT, task.getRepetition().toString());
+        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_REMINDER, task.getReminder());
         return contentValues;
     }
 

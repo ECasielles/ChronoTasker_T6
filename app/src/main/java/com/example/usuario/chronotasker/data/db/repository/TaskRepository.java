@@ -1,12 +1,10 @@
 package com.example.usuario.chronotasker.data.db.repository;
 
-import android.support.annotation.Nullable;
+import android.content.res.Resources;
 
+import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.dao.TaskDao;
-import com.example.usuario.chronotasker.data.db.model.Category;
 import com.example.usuario.chronotasker.data.db.model.Task;
-
-import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,29 +35,18 @@ public class TaskRepository {
         return taskRepository;
     }
 
-    public void addTask(String title, int iconId, @Nullable DateTime startDate,
-                        @Nullable DateTime endDate, Category categoryFlags, @Nullable String description,
-                        @Nullable String location, int alarmId, @Nullable DateTime repeat,
-                        @Nullable String reminder) {
-        taskDao.save(title, iconId, startDate, endDate, categoryFlags,
-                description, location, alarmId, repeat, reminder);
-    }
-
-    public ArrayList<Task> getAllTasks() {
-        return taskDao.loadAll();
-    }
-
     public ArrayList<Task> getActiveTasks() {
         return taskDao.loadAllActive();
     }
 
-    //TODO: Handle the case where tasks.size() == 0
+    //TODO: Check if is still necessary
     public ArrayList<Task> getTasksOrderById() {
         ArrayList<Task> tasks = getActiveTasks();
         if (tasks.size() != 0)
             Collections.sort(tasks, Task.COMPARATOR_ID);
         return tasks;
     }
+
     public ArrayList<Task> getTasksOrderByPriority() {
         ArrayList<Task> tasks = getActiveTasks();
         if (tasks.size() != 0)
@@ -85,17 +72,23 @@ public class TaskRepository {
         return tasks;
     }
 
-    //TODO: Handle error cases
-    public void deleteTask(int id) {
-        taskDao.delete(id);
+    public void addTask(Task task) {
+        taskDao.save(task);
     }
 
-    public void editTask(int id, String title, int iconId, @Nullable DateTime startDate,
-                         @Nullable DateTime endDate, Category categoryFlags, @Nullable String description,
-                         @Nullable String location, int alarmId, @Nullable DateTime repeat,
-                         @Nullable String reminder) {
-        taskDao.update(id, title, iconId, startDate, endDate, categoryFlags,
-                description, location, alarmId, repeat, reminder);
+    //TODO: Handle error cases
+    public void deleteTask(Task task, TaskRepositoryCallback callback) {
+        if (taskDao.delete(task) > 0)
+            callback.onSuccess(task.getTitle());
+        else
+            callback.onError(new Throwable(Resources.getSystem().getString(R.string.error_database_delete)));
+    }
+
+    public void updateTask(Task task, TaskRepositoryCallback callback) {
+        if (taskDao.update(task) > 0)
+            callback.onSuccess(task.getTitle());
+        else
+            callback.onError(new Throwable(Resources.getSystem().getString(R.string.error_database_update)));
     }
 
 }

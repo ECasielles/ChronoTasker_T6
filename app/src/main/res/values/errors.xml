@@ -8,4 +8,8 @@
 
     <!--Excepciones-->
     <string name="error_category_argument" type="id">No existe el valor recurso para la categoría</string>
+
+    <!--Base de datos-->
+    <string name="error_database_delete">Error al eliminar</string>
+    <string name="error_database_update">Error al actualizar</string>
 </resources>

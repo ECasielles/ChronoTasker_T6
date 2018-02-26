@@ -2,19 +2,18 @@ package com.example.usuario.chronotasker.ui.task.presenter;
 
 
 import com.example.usuario.chronotasker.ui.task.contract.TaskCreationContract;
-import com.example.usuario.chronotasker.ui.task.interactor.TaskCreationInteractor;
-import com.example.usuario.chronotasker.ui.task.interactor.TaskCreationInteractorImpl;
+import com.example.usuario.chronotasker.ui.task.interactor.TaskViewInteractor;
+import com.example.usuario.chronotasker.ui.task.interactor.TaskViewInteractorImpl;
 
 import org.joda.time.DateTime;
 
-public class TaskCreationPresenter implements TaskCreationContract.Presenter, TaskCreationInteractor.OnTaskCreatedListener {
-
-    TaskCreationContract.View view;
-    TaskCreationInteractor interactor;
+public class TaskCreationPresenter implements TaskCreationContract.Presenter, TaskViewInteractor.OnTaskCreatedListener {
+    private TaskCreationContract.View view;
+    private TaskViewInteractor interactor;
 
     public TaskCreationPresenter(TaskCreationContract.View view) {
         this.view = view;
-        this.interactor = new TaskCreationInteractorImpl(this);
+        this.interactor = new TaskViewInteractorImpl(this);
     }
 
     @Override
@@ -26,4 +25,14 @@ public class TaskCreationPresenter implements TaskCreationContract.Presenter, Ta
     public void onTaskCreated() {
         view.reloadTaskList();
     }
+
+    /**
+     * Se eliminan las referencias del presentador
+     */
+    @Override
+    public void onDestroy() {
+        view = null;
+        interactor = null;
+    }
+
 }

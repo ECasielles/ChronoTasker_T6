@@ -10,13 +10,9 @@ import java.util.ArrayList;
 public interface TaskListInteractor {
 
     void importTasksSortedById();
-
     void importTasksSortedByPriority();
-
     void importTasksSortedByStartDate();
-
     void importTasksSortedByUrgency();
-
     void importTasksSortedByImportance();
 
     void deleteTask(Task task);
@@ -24,7 +20,9 @@ public interface TaskListInteractor {
     interface OnImportFinishedListener {
         void onTasksImported(ArrayList<Task> tasks);
 
-        void onTaskDeletedFromRepository(String title);
+        void onTaskDeleted(String title);
+
+        void onTaskDeleteError(Throwable throwable);
     }
 
 }

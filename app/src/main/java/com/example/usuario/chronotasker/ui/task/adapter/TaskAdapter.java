@@ -25,9 +25,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
     private Context context;
     private ArrayList<Task> tasks;
+    private OnItemActionListener listener;
 
-    public TaskAdapter(Context context) {
+    public TaskAdapter(Context context, OnItemActionListener listener) {
         this.context = context;
+        this.listener = listener;
         this.tasks = new ArrayList<>();
     }
 
@@ -41,15 +43,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
     @Override
     public void onBindViewHolder(TaskHolder holder, int position) {
-        holder.txvTitle.setText(tasks.get(position).getTitle());
+        Task tempTask = tasks.get(position);
+        holder.txvTitle.setText(tempTask.getTitle());
 
         //Usa Joda-Time para dar formato a las fechas
-        DateTime dateTime = tasks.get(position).getStartDate();
+        DateTime dateTime = tempTask.getStartDate();
         DateTimeFormatter formatter = DateTimeFormat.forPattern("DD/MM/YYYY");
         holder.txvStartDate.setText(formatter.print(dateTime));
 
         //Toma el valor de la descripción de la tarea u oculta el campo
-        String description = tasks.get(position).getDescription();
+        String description = tempTask.getDescription();
         if (description == null) {
             holder.txvDescription.setVisibility(View.GONE);
         } else {
@@ -58,14 +61,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         }
 
         //Toma el valor de la categoría u oculta el campo
-        Category category = tasks.get(position).getCategoryFlags();
+        Category category = tempTask.getCategoryFlags();
         if (category.isArchived()) {
             holder.txvCategory.setVisibility(View.GONE);
         } else {
             holder.txvCategory.setVisibility(View.VISIBLE);
             holder.txvCategory.setText(context.getResources()
-                    .getString(tasks.get(position).getCategoryFlags().getCategoryNameId()));
+                    .getString(tempTask.getCategoryFlags().getCategoryNameId()));
         }
+
+        holder.bind(tempTask, listener);
     }
 
     @Override
@@ -108,6 +113,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
             txvCategory = itemView.findViewById(R.id.txvCategory);
             cardView = itemView.findViewById(R.id.cardView);
         }
+
+        public void bind(final Task task, final OnItemActionListener listener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClickListener(task);
+                }
+            });
+        }
+
     }
 
 }

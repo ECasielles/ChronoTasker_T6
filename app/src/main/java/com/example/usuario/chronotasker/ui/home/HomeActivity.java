@@ -6,8 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +15,8 @@ import android.view.MenuItem;
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.ui.alarm.AlarmListFragment;
 import com.example.usuario.chronotasker.ui.settings.AccountSettingsActivity;
-import com.example.usuario.chronotasker.ui.task.fragment.TaskCreationFragment;
 import com.example.usuario.chronotasker.ui.task.fragment.TaskListFragment;
+import com.example.usuario.chronotasker.ui.task.fragment.TaskViewFragment;
 import com.example.usuario.chronotasker.ui.task.presenter.TaskCreationPresenter;
 
 /**
@@ -26,14 +24,13 @@ import com.example.usuario.chronotasker.ui.task.presenter.TaskCreationPresenter;
  *
  * @author Enrique Casielles Lapeira
  */
-public class HomeActivity extends AppCompatActivity implements
-        TaskListFragment.TaskListListener, TaskCreationFragment.TaskCreationListener {
+public class HomeActivity extends AppCompatActivity {
 
     public FloatingActionButton floatingActionButton;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private TaskCreationFragment taskCreationFragment;
+    private TaskViewFragment taskViewFragment;
     private TaskCreationPresenter taskCreationPresenter;
 
     @Override
@@ -59,30 +56,8 @@ public class HomeActivity extends AppCompatActivity implements
             taskListFragment = TaskListFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_content, taskListFragment, TaskListFragment.TAG)
+                .add(R.id.frame_content, taskListFragment, TaskListFragment.TAG)
                 .commit();
-    }
-
-    @Override
-    public void addTask(Bundle bundle) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        taskCreationFragment = (TaskCreationFragment) fragmentManager.findFragmentByTag(TaskCreationFragment.TAG);
-
-        if (taskCreationFragment == null) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            taskCreationFragment = TaskCreationFragment.getInstance(bundle);
-            fragmentTransaction.addToBackStack(TaskCreationFragment.TAG);
-            fragmentTransaction.replace(R.id.frame_content, taskCreationFragment, TaskCreationFragment.TAG);
-            fragmentTransaction.commit();
-        }
-
-        taskCreationPresenter = new TaskCreationPresenter(taskCreationFragment);
-        taskCreationFragment.setPresenter(taskCreationPresenter);
-    }
-
-    @Override
-    public void reloadTasks() {
-        getSupportFragmentManager().popBackStack();
     }
 
     /**
@@ -97,19 +72,6 @@ public class HomeActivity extends AppCompatActivity implements
                 return true;
             }
         });
-    }
-
-    public void launchSettingsActivity() {
-        //TODO: end session, launch LoginActivity
-        //TODO: launch AboutActivity
-        //TODO: launch GeneralSettingsActivity, change theme and language
-        //TODO: launch AccountSettingsActivity, change profile settings, remember credentials
-        //Si está abierto, lo cierra
-        if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            this.drawerLayout.closeDrawer(GravityCompat.START);
-            startActivity(new Intent(this, AccountSettingsActivity.class));
-            //startActivity(new Intent(BaseActivity.this, GeneralSettingsActivity.class));
-        }
     }
 
     public void launchFragment(MenuItem item) {
@@ -135,9 +97,21 @@ public class HomeActivity extends AppCompatActivity implements
         drawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    public void launchSettingsActivity() {
+        //TODO: end session, launch LoginActivity
+        //TODO: launch AboutActivity
+        //TODO: launch GeneralSettingsActivity, change theme and language
+        //TODO: launch AccountSettingsActivity, change profile settings, remember credentials
+        //Si está abierto, lo cierra
+        if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            this.drawerLayout.closeDrawer(GravityCompat.START);
+            startActivity(new Intent(this, AccountSettingsActivity.class));
+            //startActivity(new Intent(BaseActivity.this, GeneralSettingsActivity.class));
+        }
+    }
+
     /**
      * Abre el panel lateral al pulsar el botón Home de la Toolbar
-     *
      * @param item
      * @return
      */
@@ -157,7 +131,6 @@ public class HomeActivity extends AppCompatActivity implements
      */
     @Override
     public void onBackPressed() {
-        //TODO: Watch carefully if this is the right order of operations
         if (getFragmentManager().getBackStackEntryCount() != 0)
             getFragmentManager().popBackStack();
         else if (this.drawerLayout.isDrawerOpen(GravityCompat.START))

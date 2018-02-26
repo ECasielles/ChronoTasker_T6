@@ -1,6 +1,5 @@
 package com.example.usuario.chronotasker.ui.task.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -12,6 +11,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.usuario.chronotasker.R;
+import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
+import com.example.usuario.chronotasker.data.db.model.Category;
+import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;
 import com.example.usuario.chronotasker.ui.task.contract.TaskCreationContract;
 import com.example.usuario.chronotasker.ui.task.presenter.TaskCreationPresenter;
@@ -21,9 +23,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 
-public class TaskCreationFragment extends Fragment implements TaskCreationContract.View {
-
-    public static final String TAG = "TaskCreationFragment";
+public class TaskViewFragment extends Fragment implements TaskCreationContract.View {
+    public static final String TAG = "TaskViewFragment";
 
     private TaskCreationListener callback;
     private TaskCreationContract.Presenter presenter;
@@ -32,22 +33,12 @@ public class TaskCreationFragment extends Fragment implements TaskCreationContra
     private TextView txvDateTime;
 
     //CONSTRUCTOR
-    public static TaskCreationFragment getInstance(Bundle bundle) {
-        TaskCreationFragment taskCreationFragment = new TaskCreationFragment();
+    public static TaskViewFragment getInstance(Bundle bundle, TaskCreationListener taskCreationListener) {
+        TaskViewFragment taskViewFragment = new TaskViewFragment();
+        taskViewFragment.callback = taskCreationListener;
         if (bundle != null)
-            taskCreationFragment.setArguments(bundle);
-        return taskCreationFragment;
-    }
-
-    //CICLO DE VIDA DEL FRAGMENT: INICIO
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            callback = (TaskCreationListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity + " must implement TaskCreationListener interface");
-        }
+            taskViewFragment.setArguments(bundle);
+        return taskViewFragment;
     }
 
     @Override
@@ -80,20 +71,34 @@ public class TaskCreationFragment extends Fragment implements TaskCreationContra
         txvDateTime.setText(formatter.print(dateTime));
         super.onViewCreated(view, savedInstanceState);
 
-        //TODO: Implement the rest of the features
         //FloatingActionButton
         ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.addTask(
+                Category category = new Category(Category.CATEGORY_ARCHIVED);
+                if (ckbInformal.isChecked())
+                    category.setInformal();
+                if (ckbDefault.isChecked())
+                    category.setDefault();
+                if (ckbImportant.isChecked())
+                    category.setImportant();
+                if (ckbUrgent.isChecked())
+                    category.setUrgent();
+
+                presenter.addTask(new Task(
+                        -1,
                         tilTitle.getEditText().getText().toString(),
+                        ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserId(),
+                        -1,
+                        dateTime,
+                        dateTime,
+                        category,
                         tilDescription.getEditText().getText().toString(),
-                        ckbInformal.isChecked(),
-                        ckbDefault.isChecked(),
-                        ckbImportant.isChecked(),
-                        ckbUrgent.isChecked(),
-                        dateTime
-                );
+                        null,
+                        -1,
+                        null,
+                        null
+                ));
             }
         });
 
@@ -110,10 +115,20 @@ public class TaskCreationFragment extends Fragment implements TaskCreationContra
         callback.reloadTasks();
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        callback = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
+    }
+
     //CONTRATO CON LA ACTIVITY
     public interface TaskCreationListener {
         void reloadTasks();
     }
-
-
 }
