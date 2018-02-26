@@ -11,7 +11,6 @@ import java.util.ArrayList;
 public interface TaskListContract {
 
     interface View {
-        void setPresenter(TaskListContract.Presenter presenter);
         void loadTasks(ArrayList<Task> tasks);
         void onTaskDeleteEvent(int position, Task task);
         void onTaskRestored(int position, Task task);

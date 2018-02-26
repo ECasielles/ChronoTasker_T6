@@ -14,24 +14,22 @@ import android.view.MenuItem;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.ui.alarm.AlarmListFragment;
+import com.example.usuario.chronotasker.ui.base.OnFragmentActionListener;
 import com.example.usuario.chronotasker.ui.settings.AccountSettingsActivity;
 import com.example.usuario.chronotasker.ui.task.fragment.TaskListFragment;
-import com.example.usuario.chronotasker.ui.task.fragment.TaskViewFragment;
-import com.example.usuario.chronotasker.ui.task.presenter.TaskCreationPresenter;
 
 /**
  * Activity que maneja el uso de la lista de tareas
  *
  * @author Enrique Casielles Lapeira
  */
-public class HomeActivity extends AppCompatActivity {
-
+public class HomeActivity extends AppCompatActivity implements OnFragmentActionListener.FragmentEventHandler {
+    private static final String TAG = "HomeActivity";
     public FloatingActionButton floatingActionButton;
+    private OnFragmentActionListener selectedFragment;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private TaskViewFragment taskViewFragment;
-    private TaskCreationPresenter taskCreationPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,53 +46,61 @@ public class HomeActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setupNavigationView();
-        navigationView.setCheckedItem(R.id.action_home);
 
-        TaskListFragment taskListFragment =
-                (TaskListFragment) getSupportFragmentManager().findFragmentByTag(TaskListFragment.TAG);
-        if (taskListFragment == null)
-            taskListFragment = TaskListFragment.newInstance();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.frame_content, taskListFragment, TaskListFragment.TAG)
-                .commit();
+        addFragment(TaskListFragment.getInstance(this));
+        navigationView.setCheckedItem(R.id.action_home);
     }
 
     /**
      * Método que inicializa el Listener NavigationItemSelected, y envía la opción
-     * seleccionada al método launchFragment.
+     * seleccionada al método navigationAction.
      */
     private void setupNavigationView() {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                launchFragment(item);
+                navigationAction(item);
                 return true;
             }
         });
     }
 
-    public void launchFragment(MenuItem item) {
-        Fragment fragment = null;
+    public void navigationAction(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_home:
-                fragment = TaskListFragment.newInstance();
+                popBackStack();
+                item.setChecked(true);
                 break;
             case R.id.action_alarm:
-                fragment = AlarmListFragment.newInstance();
+                launchFragment(AlarmListFragment.newInstance(this));
+                item.setChecked(true);
+                break;
+            case R.id.action_settings:
+                launchSettingsActivity();
+                break;
+            case R.id.action_help:
                 break;
         }
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_content, fragment)
-                .commit();
-
-        //No hay que deseleccionar en los elementos del grupo de menú
-        item.setChecked(true);
-
-        //TODO: Deseleccionar las opciones de help y settings, que no están en un grupo
         getSupportActionBar().setTitle(item.getTitle());
         drawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public void launchFragment(OnFragmentActionListener listener) {
+        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.frame_content, (Fragment) listener)
+                .commit();
+    }
+
+    @Override
+    public void addFragment(OnFragmentActionListener listener) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.frame_content, (Fragment) listener)
+                .commit();
     }
 
     public void launchSettingsActivity() {
@@ -126,16 +132,31 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     /**
+     * Asigna el Fragment en uso como seleccionado para comunicación
+     * entre Fragment y Activity
+     *
+     * @param selectedFragment
+     */
+    @Override
+    public void setSelectedFragment(OnFragmentActionListener selectedFragment) {
+        this.selectedFragment = selectedFragment;
+    }
+
+    @Override
+    public void popBackStack() {
+        getSupportFragmentManager().popBackStack();
+    }
+
+    /**
      * Cierra el último fragment añadido a la pila.
      * Si el panel lateral está abierto, lo cierra.
+     * Se cierra la aplicación si no hay Fragment que consuma el evento.
      */
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() != 0)
-            getFragmentManager().popBackStack();
-        else if (this.drawerLayout.isDrawerOpen(GravityCompat.START))
-            this.drawerLayout.closeDrawer(GravityCompat.START);
-        else
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
+        else if (selectedFragment == null || !selectedFragment.onBackPressed())
             super.onBackPressed();
     }
 

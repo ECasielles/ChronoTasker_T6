@@ -3,7 +3,8 @@ package com.example.usuario.chronotasker.ui.task.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,28 +15,30 @@ import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.model.Category;
 import com.example.usuario.chronotasker.data.db.model.Task;
+import com.example.usuario.chronotasker.ui.base.BaseFragment;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;
-import com.example.usuario.chronotasker.ui.task.contract.TaskCreationContract;
+import com.example.usuario.chronotasker.ui.task.contract.TaskViewContract;
 import com.example.usuario.chronotasker.ui.task.presenter.TaskCreationPresenter;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 
-public class TaskViewFragment extends Fragment implements TaskCreationContract.View {
+public class TaskViewFragment extends BaseFragment implements TaskViewContract.View {
     public static final String TAG = "TaskViewFragment";
 
-    private TaskCreationListener callback;
-    private TaskCreationContract.Presenter presenter;
+    private TaskViewContract.Presenter presenter;
     private TextInputLayout tilTitle, tilDescription;
     private CheckBox ckbInformal, ckbDefault, ckbImportant, ckbUrgent;
     private TextView txvDateTime;
 
-    //CONSTRUCTOR
-    public static TaskViewFragment getInstance(Bundle bundle, TaskCreationListener taskCreationListener) {
-        TaskViewFragment taskViewFragment = new TaskViewFragment();
-        taskViewFragment.callback = taskCreationListener;
+    public static TaskViewFragment getInstance(AppCompatActivity appCompatActivity, Bundle bundle) {
+        TaskViewFragment taskViewFragment = (TaskViewFragment)
+                appCompatActivity.getSupportFragmentManager().findFragmentByTag(TAG);
+        if (taskViewFragment == null)
+            taskViewFragment = new TaskViewFragment();
         if (bundle != null)
             taskViewFragment.setArguments(bundle);
         return taskViewFragment;
@@ -75,6 +78,7 @@ public class TaskViewFragment extends Fragment implements TaskCreationContract.V
         ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d(TAG, "onClick");
                 Category category = new Category(Category.CATEGORY_ARCHIVED);
                 if (ckbInformal.isChecked())
                     category.setInformal();
@@ -94,31 +98,37 @@ public class TaskViewFragment extends Fragment implements TaskCreationContract.V
                         dateTime,
                         category,
                         tilDescription.getEditText().getText().toString(),
-                        null,
+                        "",
                         -1,
-                        null,
-                        null
+                        new Period(0),
+                        ""
                 ));
             }
         });
 
     }
 
-    //COMUNICACION CON EL PRESENTER
-    @Override
-    public void setPresenter(TaskCreationContract.Presenter presenter) {
-        this.presenter = presenter;
-    }
-
+    /**
+     * Indica a la Activity que debe sacar este Fragment de la pila
+     */
     @Override
     public void reloadTaskList() {
-        callback.reloadTasks();
+        fragmentEventHandler.popBackStack();
+    }
+
+    /**
+     * Al pulsar Back, envía a la Activity la orden de cerrar este Fragment
+     */
+    @Override
+    public boolean onBackPressed() {
+        fragmentEventHandler.popBackStack();
+        return true;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        callback = null;
+        fragmentEventHandler = null;
     }
 
     @Override
@@ -127,8 +137,4 @@ public class TaskViewFragment extends Fragment implements TaskCreationContract.V
         presenter.onDestroy();
     }
 
-    //CONTRATO CON LA ACTIVITY
-    public interface TaskCreationListener {
-        void reloadTasks();
-    }
 }

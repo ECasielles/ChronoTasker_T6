@@ -3,9 +3,7 @@ package com.example.usuario.chronotasker.ui.task.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.model.Task;
+import com.example.usuario.chronotasker.ui.base.BaseFragment;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;
 import com.example.usuario.chronotasker.ui.task.adapter.OnItemActionListener;
 import com.example.usuario.chronotasker.ui.task.adapter.RecyclerItemTouchHelper;
@@ -32,49 +31,64 @@ import java.util.ArrayList;
 /**
  * Fragment que muestra la lista de tareas
  */
-public class TaskListFragment extends Fragment implements TaskListContract.View,
-        RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, TaskViewFragment.TaskCreationListener, OnItemActionListener {
+public class TaskListFragment extends BaseFragment implements TaskListContract.View,
+        RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, OnItemActionListener {
     public static final String TAG = "TaskListFragment";
     private TaskAdapter adapter;
     private RecyclerView recyclerView;
     private TaskListContract.Presenter presenter;
 
-    //CONSTRUCTOR
-    public static TaskListFragment newInstance() {
-        return new TaskListFragment();
+    /**
+     * Devuelve la instancia guardada de este Fragment o crea una nueva
+     * si no existe.
+     *
+     * @param appCompatActivity
+     * @return
+     */
+    public static TaskListFragment getInstance(AppCompatActivity appCompatActivity) {
+        TaskListFragment taskListFragment = (TaskListFragment)
+                appCompatActivity.getSupportFragmentManager().findFragmentByTag(TAG);
+        if (taskListFragment == null)
+            taskListFragment = new TaskListFragment();
+        return taskListFragment;
     }
 
+    /**
+     * Inicializa los parámetros del Fragment
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Menu
         setHasOptionsMenu(true);
-        //Retener fragment
         setRetainInstance(true);
-        //Inicializar presenter
         presenter = new TaskListPresenter(this);
     }
 
+    /**
+     * Inicializa los elementos de la vista del Fragment
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //Inflar vista + Crear elementos
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
-
-        //RecyclerView
         recyclerView = view.findViewById(android.R.id.list);
-
-        //Adapter + Presenter
         adapter = new TaskAdapter(getContext(), this);
         presenter.importTasks();
-
         return view;
     }
 
+    /**
+     * Modifica los elementos de la vista una vez instanciados
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        //RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
@@ -84,7 +98,6 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
                 0, ItemTouchHelper.START | ItemTouchHelper.END, this);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
-        //FloatingActionButton
         ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,16 +106,13 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         });
     }
 
+    /**
+     * Lanza TaskViewFragment
+     * @param bundle
+     */
     private void addTask(Bundle bundle) {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        TaskViewFragment taskViewFragment = (TaskViewFragment) fragmentManager.findFragmentByTag(TaskViewFragment.TAG);
-        if (taskViewFragment == null) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            taskViewFragment = TaskViewFragment.getInstance(bundle, this);
-            fragmentTransaction.addToBackStack(TaskViewFragment.TAG);
-            fragmentTransaction.replace(R.id.frame_content, taskViewFragment, TaskViewFragment.TAG);
-            fragmentTransaction.commit();
-        }
+        fragmentEventHandler.launchFragment(
+                TaskViewFragment.getInstance((AppCompatActivity) getActivity(), bundle));
     }
 
     @Override
@@ -111,6 +121,11 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    /**
+     * Método callback de la interfaz OnItemActionListener que permite
+     * editar una tarea.
+     * @param task
+     */
     @Override
     public void onItemClickListener(Task task) {
         Bundle bundle = new Bundle();
@@ -139,12 +154,6 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    //COMUNICACION CON EL PRESENTER
-    @Override
-    public void setPresenter(TaskListContract.Presenter presenter) {
-        this.presenter = presenter;
     }
 
     @Override
@@ -224,9 +233,13 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         }
     }
 
+    /**
+     * Al pulsar Back, envía a la Activity la orden de cerrar
+     */
     @Override
-    public void reloadTasks() {
-        getActivity().getSupportFragmentManager().popBackStack();
+    public boolean onBackPressed() {
+        fragmentEventHandler.setSelectedFragment(null);
+        return false;
     }
 
     @Override
@@ -240,5 +253,4 @@ public class TaskListFragment extends Fragment implements TaskListContract.View,
         presenter.onDestroy();
         adapter = null;
     }
-
 }

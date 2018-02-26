@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <item
         android:id="@+id/action_menu_general_settings"
-        app:showAsAction="never"
         android:title="@string/textGeneralSettings"
+        app:showAsAction="never"
         />
     <item
         android:id="@+id/action_menu_account_settings"
-        app:showAsAction="never"
         android:title="@string/textAccountSettings"
+        app:showAsAction="never"
         />
     <item
         android:id="@+id/action_menu_about"
-        app:showAsAction="never"
         android:title="@string/textAbout"
+        app:showAsAction="never"
         />
     <item
         android:id="@+id/action_menu_logout"
+        android:title="@string/action_menu_logout"
         app:showAsAction="never"
-        android:title="@string/action_menu_logout" />
+        />
 
 </menu>
