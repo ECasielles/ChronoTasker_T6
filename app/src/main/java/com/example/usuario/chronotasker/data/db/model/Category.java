@@ -3,8 +3,8 @@ package com.example.usuario.chronotasker.data.db.model;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -50,7 +50,7 @@ public class Category implements Comparable {
      */
     public Category(@DisplayOptions int flag) {
         if (flag > MAX_FLAGS)
-            throw new IllegalArgumentException(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_category_argument));
+            throw new IllegalArgumentException(App.getApp().getResources().getString(R.string.error_category_argument));
         this.flags = flag;
         setPriority();
     }
@@ -184,7 +184,7 @@ public class Category implements Comparable {
 
     @Override
     public String toString() {
-        return ChronoTaskerApplication.getContext().getResources().getString(getCategoryNameId());
+        return App.getApp().getResources().getString(getCategoryNameId());
     }
 
 

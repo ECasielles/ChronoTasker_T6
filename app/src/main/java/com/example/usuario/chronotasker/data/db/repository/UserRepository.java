@@ -1,7 +1,7 @@
 package com.example.usuario.chronotasker.data.db.repository;
 
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.dao.UserDao;
 import com.example.usuario.chronotasker.data.db.model.User;
 
@@ -36,16 +36,16 @@ public class UserRepository {
         if (userDao.save(user) > 0)
             callback.onSuccess();
         else
-            callback.onError(new Throwable(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_database_user_save)));
+            callback.onError(new Throwable(App.getApp().getResources().getString(R.string.error_database_user_save)));
     }
 
     public void search(User user, UserRepositoryCallback callback) {
         int id = userDao.search(user);
         if (id != -1) {
-            ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserId(id);
+            App.getApp().getmPreferencesHelper().setCurrentUserId(id);
             callback.onSuccess();
         } else
-            callback.onError(new Throwable(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_database_search)));
+            callback.onError(new Throwable(App.getApp().getResources().getString(R.string.error_database_search)));
     }
 
 }

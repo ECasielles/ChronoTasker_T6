@@ -1,11 +1,11 @@
 package com.example.usuario.chronotasker.data.db.repository;
 
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.dao.AlarmDao;
 import com.example.usuario.chronotasker.data.db.model.Alarm;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by icenri on 2/26/18.
@@ -30,7 +30,7 @@ public class AlarmRepository {
         return alarmRepository;
     }
 
-    public ArrayList<Alarm> loadAll() {
+    public List<Alarm> loadAll() {
         return alarmDao.loadAll();
     }
 
@@ -39,7 +39,7 @@ public class AlarmRepository {
             callback.onSuccess(alarm.getTitle());
         else
             callback.onError(new Throwable(
-                    ChronoTaskerApplication.getContext().getResources()
+                    App.getApp().getResources()
                             .getString(R.string.error_database_alarm_save)
             ));
     }
@@ -49,7 +49,7 @@ public class AlarmRepository {
             callback.onSuccess(alarm.getTitle());
         else
             callback.onError(new Throwable(
-                    ChronoTaskerApplication.getContext().getResources()
+                    App.getApp().getResources()
                             .getString(R.string.error_database_alarm_update)
             ));
     }
@@ -59,7 +59,7 @@ public class AlarmRepository {
             callback.onSuccess(alarm.getTitle());
         else
             callback.onError(new Throwable(
-                    ChronoTaskerApplication.getContext().getResources()
+                    App.getApp().getResources()
                             .getString(R.string.error_database_alarm_delete)
             ));
     }

@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.model.User;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
@@ -78,8 +78,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     protected void onStart() {
         super.onStart();
         //Comprueba que si hay una sesión guardada anterior para iniciar la aplicación
-        if (ChronoTaskerApplication.getContext()
-                .getPreferencesHelper().getCurrentUserRemember())
+        if (App.getApp()
+                .getmPreferencesHelper().getCurrentUserRemember())
             navigateToHome();
     }
 
@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     @Override
     public void onUserFound() {
-        PreferencesHelper helper = ChronoTaskerApplication.getContext().getPreferencesHelper();
+        PreferencesHelper helper = App.getApp().getmPreferencesHelper();
         helper.setCurrentUserName(edtName.getText().toString());
         helper.setCurrentUserPassword(edtPassword.getText().toString());
         helper.setCurrentUserRemember(chbRemember.isChecked());

@@ -4,7 +4,7 @@ package com.example.usuario.chronotasker.data.prefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
+import com.example.usuario.chronotasker.App;
 
 /**
  * Clase que maneja las preferencias de usuario de la aplicación.
@@ -16,12 +16,11 @@ import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 public class PreferencesHelper implements AccountPreferencesHelper {
 
     private static final String TAG = "PreferencesHelper";
-
-    private final SharedPreferences preferences;
     private static PreferencesHelper helper;
+    private final SharedPreferences preferences;
 
     private PreferencesHelper() {
-        preferences = ChronoTaskerApplication.getContext().getSharedPreferences(ChronoTaskerApplication.PREF_NAME, Context.MODE_PRIVATE);
+        preferences = App.getApp().getSharedPreferences(App.PREF_NAME, Context.MODE_PRIVATE);
     }
 
     public static PreferencesHelper getInstance() {

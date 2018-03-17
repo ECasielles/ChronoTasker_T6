@@ -1,94 +1,61 @@
 package com.example.usuario.chronotasker.data.db.dao;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.example.usuario.chronotasker.data.db.ChronoTaskerContract;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerOpenHelper;
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.data.db.model.Alarm;
 
-import org.joda.time.DateTime;
+import java.util.Collection;
+import java.util.List;
 
-import java.util.ArrayList;
+import io.objectbox.Box;
+import io.objectbox.BoxStore;
+import io.objectbox.android.AndroidScheduler;
+import io.objectbox.reactive.DataObserver;
+import io.objectbox.reactive.DataSubscription;
 
-/**
- * Created by icenri on 2/26/18.
- */
 
 public class AlarmDao {
 
-    public ArrayList<Alarm> loadAll() {
-        ArrayList<Alarm> alarms = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        Cursor cursor = sqLiteDatabase.query(
-                ChronoTaskerContract.AlarmEntries.TABLE_NAME,
-                ChronoTaskerContract.AlarmEntries.ALL_COLUMNS,
-                null,
-                null,
-                null,
-                null,
-                ChronoTaskerContract.AlarmEntries.ORDER_BY_ID,
-                null
-        );
-        if (cursor.moveToFirst()) {
-            do {
-                alarms.add(new Alarm(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        new DateTime(cursor.getString(3))
-                ));
-            } while (cursor.moveToNext());
+    private static Box<Alarm> getAlarmBox() {
+        return App.getApp().getBoxStore().boxFor(Alarm.class);
+    }
+
+    public static DataSubscription subscribeToAlarmList(DataObserver<List<Alarm>> observer) {
+        return getAlarmBox().query().build().subscribe().on(AndroidScheduler.mainThread()).observer(observer);
+    }
+
+    public static DataSubscription subscribeToAlarm(DataObserver<Alarm> observer, long id, boolean singleUpdate) {
+        //TODO: FIX!!!
+        /*SubscriptionBuilder<Alarm> builder = getAlarmBox().query().eager(Alarm_.).equal(Alarm_.id, id).build().subscribe().transform(list -> {
+            if (list.size() == 0) {
+                return null;
+            } else {
+                return list.get(0);
+            }
+        }).on(AndroidScheduler.mainThread());
+
+        if (singleUpdate) {
+            builder.single();
         }
-        cursor.close();
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return alarms;
+        return builder.observer(observer);*/
+        return null;
     }
 
-    public long save(Alarm alarm) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        long id = sqLiteDatabase.insert(
-                ChronoTaskerContract.AlarmEntries.TABLE_NAME,
-                null,
-                createContent(alarm)
-        );
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return id;
+    public static void insertAlarm(Alarm alarm) {
+        getAlarmBox().put(alarm);
     }
 
-    public long update(Alarm alarm) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        String whereClause = ChronoTaskerContract.AlarmEntries.WHERE_ID;
-        String[] whereArgs = new String[]{String.valueOf(alarm.getId())};
-        int updatedRows = sqLiteDatabase.update(
-                ChronoTaskerContract.AlarmEntries.TABLE_NAME,
-                createContent(alarm),
-                whereClause,
-                whereArgs
-        );
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return updatedRows;
+    public static void insertAlarms(Collection<Alarm> alarms) {
+        getAlarmBox().put(alarms);
     }
 
-    public int delete(Alarm alarm) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        String whereClause = ChronoTaskerContract.AlarmEntries.WHERE_ID;
-        String[] whereArgs = new String[]{String.valueOf(alarm.getId())};
-        int deletedRows = sqLiteDatabase.delete(
-                ChronoTaskerContract.AlarmEntries.TABLE_NAME,
-                whereClause,
-                whereArgs
-        );
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return deletedRows;
+    public static void deleteAlarm(Alarm alarm) {
+        getAlarmBox().remove(alarm);
     }
 
-    private ContentValues createContent(Alarm alarm) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ChronoTaskerContract.AlarmEntries.COLUMN_TITLE, alarm.getTitle());
-        contentValues.put(ChronoTaskerContract.AlarmEntries.COLUMN_CONTENT, alarm.getContent());
-        contentValues.put(ChronoTaskerContract.AlarmEntries.COLUMN_TIME, alarm.getTime().toString());
-        return contentValues;
+    public List<Alarm> loadAll() {
+        BoxStore boxStore = App.getApp().getBoxStore();
+        Box<Alarm> alarmBox = boxStore.boxFor(Alarm.class);
+        return alarmBox.getAll();
     }
+
 }

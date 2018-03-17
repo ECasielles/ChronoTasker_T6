@@ -12,8 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.ui.alarm.AlarmListFragment;
 import com.example.usuario.chronotasker.ui.base.OnFragmentActionListener;
 import com.example.usuario.chronotasker.ui.login.LoginActivity;
@@ -83,10 +83,10 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentActionL
             case R.id.action_help:
                 break;
             case R.id.action_logout:
-                ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserRemember(false);
-                ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserPassword(null);
-                ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserName(null);
-                ChronoTaskerApplication.getContext().getPreferencesHelper().setCurrentUserId(-1);
+                App.getApp().getmPreferencesHelper().setCurrentUserRemember(false);
+                App.getApp().getmPreferencesHelper().setCurrentUserPassword(null);
+                App.getApp().getmPreferencesHelper().setCurrentUserName(null);
+                App.getApp().getmPreferencesHelper().setCurrentUserId(-1);
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();
                 break;
@@ -168,7 +168,7 @@ public class HomeActivity extends AppCompatActivity implements OnFragmentActionL
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
         else if (selectedFragment == null || !selectedFragment.onBackPressed())
-            if (!ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserRemember()) {
+            if (!App.getApp().getmPreferencesHelper().getCurrentUserRemember()) {
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();
             } else

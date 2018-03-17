@@ -13,8 +13,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.model.Category;
 import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.ui.base.BaseFragment;
@@ -125,7 +125,7 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
         return new Task(
                 id,
                 tilTitle.getEditText().getText().toString(),
-                ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserId(),
+                App.getApp().getmPreferencesHelper().getCurrentUserId(),
                 -1,
                 new DateTime(txvDateTime.getText().toString()),
                 new DateTime(txvDateTime.getText().toString()),

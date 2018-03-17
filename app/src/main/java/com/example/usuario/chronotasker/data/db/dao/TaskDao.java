@@ -5,9 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerContract;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerOpenHelper;
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.data.db.model.Category;
 import com.example.usuario.chronotasker.data.db.model.Task;
 
@@ -27,7 +25,7 @@ public class TaskDao {
         SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
         String whereClause = ChronoTaskerContract.TaskEntries.WHERE_USER_AND_CATEGORY_NOT;
         String[] whereArgs = new String[]{
-                String.valueOf(ChronoTaskerApplication.getContext().getPreferencesHelper().getCurrentUserId()),
+                String.valueOf(App.getApp().getmPreferencesHelper().getCurrentUserId()),
                 String.valueOf(Category.CATEGORY_ARCHIVED)
         };
         Cursor cursor = sqLiteDatabase.query(
@@ -43,7 +41,7 @@ public class TaskDao {
         if (cursor.moveToFirst()) {
             do {
                 tasks.add(new Task(
-                        cursor.getInt(0),
+                        cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getInt(2),
                         cursor.getInt(3),

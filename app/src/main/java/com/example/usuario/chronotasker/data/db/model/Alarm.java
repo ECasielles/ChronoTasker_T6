@@ -3,10 +3,13 @@ package com.example.usuario.chronotasker.data.db.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 
 import org.joda.time.DateTime;
+
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
 
 /**
  * Representa los tipos de alarma de la aplicación.
@@ -14,6 +17,7 @@ import org.joda.time.DateTime;
  * @author Enrique Casielles Lapeira
  * @version 1.0
  */
+@Entity
 public class Alarm implements Parcelable {
     public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
         @Override
@@ -27,19 +31,21 @@ public class Alarm implements Parcelable {
         }
     };
     public static String TAG;
-    int id;
+
+    @Id
+    long id;
     String title;
     String content;
     DateTime time;
 
     public Alarm() {
         this.id = -1;
-        this.title = ChronoTaskerApplication.getContext().getResources().getString(R.string.alarm_title);
-        this.content = ChronoTaskerApplication.getContext().getResources().getString(R.string.alarm_content);
+        this.title = App.getApp().getResources().getString(R.string.alarm_title);
+        this.content = App.getApp().getResources().getString(R.string.alarm_content);
         this.time = new DateTime().plusMinutes(1);
     }
 
-    public Alarm(int id, String title, String content, DateTime time) {
+    public Alarm(long id, String title, String content, DateTime time) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -52,11 +58,11 @@ public class Alarm implements Parcelable {
         content = in.readString();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -91,7 +97,7 @@ public class Alarm implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
+        parcel.writeLong(id);
         parcel.writeString(title);
         parcel.writeString(content);
     }

@@ -1,7 +1,7 @@
 package com.example.usuario.chronotasker.data.db.repository;
 
+import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.ChronoTaskerApplication;
 import com.example.usuario.chronotasker.data.db.dao.TaskDao;
 import com.example.usuario.chronotasker.data.db.model.Task;
 
@@ -81,14 +81,14 @@ public class TaskRepository {
         if (taskDao.delete(task) > 0)
             callback.onSuccess(task.getTitle());
         else
-            callback.onError(new Throwable(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_database_delete)));
+            callback.onError(new Throwable(App.getApp().getResources().getString(R.string.error_database_delete)));
     }
 
     public void updateTask(Task task, TaskRepositoryCallback callback) {
         if (taskDao.update(task) > 0)
             callback.onSuccess(task.getTitle());
         else
-            callback.onError(new Throwable(ChronoTaskerApplication.getContext().getResources().getString(R.string.error_database_update)));
+            callback.onError(new Throwable(App.getApp().getResources().getString(R.string.error_database_update)));
     }
 
 }

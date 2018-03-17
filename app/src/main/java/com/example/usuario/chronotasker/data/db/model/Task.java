@@ -10,12 +10,17 @@ import org.joda.time.Period;
 
 import java.util.Comparator;
 
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
+import io.objectbox.relation.ToOne;
+
 /**
  * Representa una tarea creada por el usuario
  *
  * @author Enrique Casielles Lapeira
  * @version 1.0
  */
+@Entity
 public class Task implements Parcelable, Comparable {
 
     //CONSTANTES
@@ -103,11 +108,11 @@ public class Task implements Parcelable, Comparable {
             return new Task[size];
         }
     };
-
+    ToOne<User> user;
     //PARAMETROS
-    private int id;
+    @Id
+    private long id;
     private String title;
-    private int userId;
     private int iconId;
     private DateTime startDate;
     private DateTime endDate;
@@ -119,12 +124,11 @@ public class Task implements Parcelable, Comparable {
     private String reminder;
 
     //CONSTRUCTOR
-    public Task(int id, String title, int userId, int iconId, @Nullable DateTime startDate,
+    public Task(long id, String title, int iconId, @Nullable DateTime startDate,
                 @Nullable DateTime endDate, Category category, @Nullable String description,
                 @Nullable String location, int alarmId, @Nullable Period repetition,
                 @Nullable String reminder) {
         this.id = id;
-        this.userId = userId;
         this.iconId = iconId;
         this.title = title;
         this.startDate = startDate;
@@ -139,10 +143,9 @@ public class Task implements Parcelable, Comparable {
 
     //IMPLEMENTACION DE PARCELABLE
     protected Task(Parcel in) {
-        id = in.readInt();
+        id = in.readLong();
         title = in.readString();
         iconId = in.readInt();
-        userId = in.readInt();
         description = in.readString();
         location = in.readString();
         alarmId = in.readInt();
@@ -155,10 +158,9 @@ public class Task implements Parcelable, Comparable {
     }
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
+        parcel.writeLong(id);
         parcel.writeString(title);
         parcel.writeInt(iconId);
-        parcel.writeInt(userId);
         parcel.writeString(description);
         parcel.writeString(location);
         parcel.writeInt(alarmId);
@@ -166,7 +168,7 @@ public class Task implements Parcelable, Comparable {
     }
 
     //GETTERS Y SETTERS
-    public int getId() {
+    public long getId() {
         return id;
     }
     public void setId(int id) {
@@ -184,14 +186,6 @@ public class Task implements Parcelable, Comparable {
     public void setIconId(int iconId) {
         this.iconId = iconId;
     }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
     public DateTime getStartDate() {
         return startDate;
     }
@@ -204,11 +198,9 @@ public class Task implements Parcelable, Comparable {
     public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
-
     public Category getCategory() {
         return category;
     }
-
     public void setCategory(Category category) {
         this.category = category;
     }
@@ -252,7 +244,8 @@ public class Task implements Parcelable, Comparable {
     @Override
     public int compareTo(@NonNull Object other) {
         try {
-            return this.getId() - ((Task) other).getId();
+            //TODO: FIX!!!
+            return (int) (this.getId() - ((Task) other).getId());
         } catch (ClassCastException e) {
             throw new ClassCastException("Parameter must be of TaskEntries class");
         }
@@ -274,7 +267,8 @@ public class Task implements Parcelable, Comparable {
 
     @Override
     public int hashCode() {
-        return id;
+        //TODO: FIX!!!
+        return (int) id;
     }
 
     @Override
