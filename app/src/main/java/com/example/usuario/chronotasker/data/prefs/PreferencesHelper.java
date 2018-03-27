@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.usuario.chronotasker.App;
+import com.google.gson.Gson;
 
 /**
  * Clase que maneja las preferencias de usuario de la aplicación.
@@ -27,6 +28,24 @@ public class PreferencesHelper implements AccountPreferencesHelper {
         if (helper == null)
             helper = new PreferencesHelper();
         return helper;
+    }
+
+    public static void saveObjectToSharedPreference(Context context, String preferenceFileName, String serializedObjectKey, Object object) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(preferenceFileName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        final Gson gson = new Gson();
+        String serializedObject = gson.toJson(object);
+        sharedPreferencesEditor.putString(serializedObjectKey, serializedObject);
+        sharedPreferencesEditor.apply();
+    }
+
+    public static <Type> Type getSavedObjectFromPreference(Context context, String preferenceFileName, String preferenceKey, Class<Type> classType) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(preferenceFileName, Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(preferenceKey)) {
+            final Gson gson = new Gson();
+            return gson.fromJson(sharedPreferences.getString(preferenceKey, ""), classType);
+        }
+        return null;
     }
 
     public int getCurrentUserId() {
