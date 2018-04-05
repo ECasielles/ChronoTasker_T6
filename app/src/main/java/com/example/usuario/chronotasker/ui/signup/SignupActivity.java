@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.model.User;
+import com.example.usuario.chronotasker.data.model.User;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
 
 /**

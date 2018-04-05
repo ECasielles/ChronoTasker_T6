@@ -1,7 +1,7 @@
 package com.example.usuario.chronotasker.ui.task.interactor;
 
-import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.data.db.repository.TaskRepository;
+import com.example.usuario.chronotasker.data.model.Task;
 
 /**
  * Interactor de TaskListPresenter.

@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import com.example.usuario.chronotasker.App;
-import com.example.usuario.chronotasker.data.db.model.Category;
-import com.example.usuario.chronotasker.data.db.model.Task;
+import com.example.usuario.chronotasker.data.model.Category;
+import com.example.usuario.chronotasker.data.model.Task;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;

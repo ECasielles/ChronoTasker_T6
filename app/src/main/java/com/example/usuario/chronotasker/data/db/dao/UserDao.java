@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.usuario.chronotasker.data.db.model.User;
+import com.example.usuario.chronotasker.data.model.User;
 
 /**
  * Clase que maneja los cursores que recorren la tabla User de la BD

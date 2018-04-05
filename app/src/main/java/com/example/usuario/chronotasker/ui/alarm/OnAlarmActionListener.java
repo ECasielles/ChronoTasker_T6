@@ -1,6 +1,6 @@
 package com.example.usuario.chronotasker.ui.alarm;
 
-import com.example.usuario.chronotasker.data.db.model.Alarm;
+import com.example.usuario.chronotasker.data.model.Alarm;
 
 /**
  * Created by icenri on 2/26/18.

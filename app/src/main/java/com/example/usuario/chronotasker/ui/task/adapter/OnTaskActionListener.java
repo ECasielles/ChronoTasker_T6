@@ -1,6 +1,6 @@
 package com.example.usuario.chronotasker.ui.task.adapter;
 
-import com.example.usuario.chronotasker.data.db.model.Task;
+import com.example.usuario.chronotasker.data.model.Task;
 
 /**
  * Created by icenri on 2/26/18.

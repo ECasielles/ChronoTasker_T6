@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.model.Task;
+import com.example.usuario.chronotasker.data.model.Task;
 import com.example.usuario.chronotasker.ui.base.BaseFragment;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;
 import com.example.usuario.chronotasker.ui.task.adapter.OnTaskActionListener;

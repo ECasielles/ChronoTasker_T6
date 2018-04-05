@@ -1,7 +1,7 @@
 package com.example.usuario.chronotasker.ui.task.contract;
 
 
-import com.example.usuario.chronotasker.data.db.model.Task;
+import com.example.usuario.chronotasker.data.model.Task;
 
 public interface TaskViewContract {
 

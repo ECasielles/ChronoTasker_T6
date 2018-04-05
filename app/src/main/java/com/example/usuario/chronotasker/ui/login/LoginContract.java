@@ -1,6 +1,6 @@
 package com.example.usuario.chronotasker.ui.login;
 
-import com.example.usuario.chronotasker.data.db.model.User;
+import com.example.usuario.chronotasker.data.model.User;
 
 /**
  * Presenter de LoginActivity

@@ -1,6 +1,6 @@
 package com.example.usuario.chronotasker.ui.signup;
 
-import com.example.usuario.chronotasker.data.db.model.User;
+import com.example.usuario.chronotasker.data.model.User;
 
 /**
  * Created by icenri on 2/26/18.

@@ -1,9 +1,9 @@
 package com.example.usuario.chronotasker.ui.task.interactor;
 
 
-import com.example.usuario.chronotasker.data.db.model.Task;
 import com.example.usuario.chronotasker.data.db.repository.TaskRepository;
 import com.example.usuario.chronotasker.data.db.repository.TaskRepositoryCallback;
+import com.example.usuario.chronotasker.data.model.Task;
 
 public class TaskViewInteractorImpl implements TaskViewInteractor, TaskRepositoryCallback {
 

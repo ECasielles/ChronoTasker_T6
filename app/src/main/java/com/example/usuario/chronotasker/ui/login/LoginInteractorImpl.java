@@ -1,7 +1,7 @@
 package com.example.usuario.chronotasker.ui.login;
 
-import com.example.usuario.chronotasker.data.db.model.User;
 import com.example.usuario.chronotasker.data.db.repository.UserRepository;
+import com.example.usuario.chronotasker.data.model.User;
 
 /**
  * Created by icenri on 2/26/18.

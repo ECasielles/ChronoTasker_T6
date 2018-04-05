@@ -20,7 +20,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.model.Alarm;
+import com.example.usuario.chronotasker.data.model.Alarm;
 import com.example.usuario.chronotasker.ui.base.BaseFragment;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;
 

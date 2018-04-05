@@ -3,7 +3,7 @@ package com.example.usuario.chronotasker.data.db.repository;
 import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.dao.UserDao;
-import com.example.usuario.chronotasker.data.db.model.User;
+import com.example.usuario.chronotasker.data.model.User;
 
 /**
  * Devuelve los datos de usuario desde el origen de datos.

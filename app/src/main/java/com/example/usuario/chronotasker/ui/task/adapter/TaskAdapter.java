@@ -1,6 +1,8 @@
 package com.example.usuario.chronotasker.ui.task.adapter;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.model.Task;
+import com.example.usuario.chronotasker.data.model.Task;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -34,14 +36,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
     @Override
     public TaskHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_task, parent, false);
-        TaskHolder holder = new TaskHolder(view);
-        return holder;
+        return new TaskHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_task, parent, false));
     }
 
     @Override
     public void onBindViewHolder(TaskHolder holder, int position) {
+
+        ViewDataBinding viewDataBinding = customViewHolder.getViewDataBinding();
+        viewDataBinding.setVariable(se.jayway.databinding.BR.mymodel, mMyModels.get(i));
+
+
         Task tempTask = tasks.get(position);
         holder.txvTitle.setText(tempTask.getTitle());
 
@@ -103,6 +107,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
             txvDescription = itemView.findViewById(R.id.txvDescription);
             txvCategory = itemView.findViewById(R.id.txvCategory);
             cardView = itemView.findViewById(R.id.cardView);
+        }
+
+        public <T extends ViewDataBinding> TaskHolder(T inflate) {
+            super(inflate);
         }
 
         public void bind(final Task task, final OnTaskActionListener listener) {

@@ -16,7 +16,7 @@ import android.widget.CheckBox;
 
 import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.data.db.model.User;
+import com.example.usuario.chronotasker.data.model.User;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.ui.about.AboutActivity;
 import com.example.usuario.chronotasker.ui.home.HomeActivity;

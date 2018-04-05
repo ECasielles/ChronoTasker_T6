@@ -3,7 +3,7 @@ package com.example.usuario.chronotasker.data.db.repository;
 import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.dao.AlarmDao;
-import com.example.usuario.chronotasker.data.db.model.Alarm;
+import com.example.usuario.chronotasker.data.model.Alarm;
 
 import java.util.List;
 

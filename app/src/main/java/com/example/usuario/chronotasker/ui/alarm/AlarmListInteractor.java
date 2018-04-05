@@ -1,7 +1,7 @@
 package com.example.usuario.chronotasker.ui.alarm;
 
-import com.example.usuario.chronotasker.data.db.model.Alarm;
 import com.example.usuario.chronotasker.data.db.repository.AlarmRepositoryCallback;
+import com.example.usuario.chronotasker.data.model.Alarm;
 
 import java.util.ArrayList;
 

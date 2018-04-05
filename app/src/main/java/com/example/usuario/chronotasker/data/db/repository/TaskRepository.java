@@ -3,7 +3,7 @@ package com.example.usuario.chronotasker.data.db.repository;
 import com.example.usuario.chronotasker.App;
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.db.dao.TaskDao;
-import com.example.usuario.chronotasker.data.db.model.Task;
+import com.example.usuario.chronotasker.data.model.Task;
 
 import java.util.ArrayList;
 import java.util.Collections;

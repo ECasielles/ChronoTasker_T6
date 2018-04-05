@@ -1,7 +1,7 @@
 package com.example.usuario.chronotasker.ui.task.presenter;
 
 
-import com.example.usuario.chronotasker.data.db.model.Task;
+import com.example.usuario.chronotasker.data.model.Task;
 import com.example.usuario.chronotasker.ui.task.contract.TaskViewContract;
 import com.example.usuario.chronotasker.ui.task.interactor.TaskViewInteractor;
 import com.example.usuario.chronotasker.ui.task.interactor.TaskViewInteractorImpl;
