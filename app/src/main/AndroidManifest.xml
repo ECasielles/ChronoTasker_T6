@@ -4,7 +4,7 @@
     >
 
     <application
-        android:name=".App"
+        android:name=".app.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -12,20 +12,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         >
-        <activity android:name=".ui.login.LoginActivity">
+        <activity android:name=".mvvm.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.priority.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.signup.SignupActivity" />
-        <activity android:name=".ui.about.AboutActivity" />
-        <activity android:name=".ui.home.HomeActivity" />
-        <activity android:name=".ui.settings.GeneralSettingsActivity" />
-        <activity android:name=".ui.settings.AccountSettingsActivity" />
+        <activity android:name=".mvvm.signup.SignupActivity" />
+        <activity android:name=".mvvm.about.AboutActivity" />
+        <activity android:name=".mvvm.home.HomeActivity" />
+        <activity android:name=".mvvm.settings.GeneralSettingsActivity" />
+        <activity android:name=".mvvm.settings.AccountSettingsActivity" />
 
-        <receiver android:name=".ui.alarm.AlarmBroadcast">
+        <receiver android:name=".mvvm.alarm.AlarmBroadcast">
             <intent-filter>
                 <action android:name="com.example.usuario.chronotasker.alarm" />
             </intent-filter>

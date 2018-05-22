@@ -52,5 +52,7 @@
     <string name="error_database_alarm_update">Error. No se pudo editar la alarma.</string>
     <string name="error_database_alarm_save">Error. No se pudo guardar la alarma.</string>
     <string name="error_database_alarm_delete">Error. No se pudo eliminar la alarma.</string>
+    <string name="error_user_not_found">Credenciales no válidos</string>
+    <string name="login_title">ChronoTasker - Credenciales</string>
 
 </resources>

@@ -1,123 +1,87 @@
 package com.example.usuario.chronotasker.data.db.dao;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
-
-import com.example.usuario.chronotasker.App;
-import com.example.usuario.chronotasker.data.model.Category;
+import com.example.usuario.chronotasker.app.App;
 import com.example.usuario.chronotasker.data.model.Task;
+import com.example.usuario.chronotasker.data.model.Task_;
+import com.example.usuario.chronotasker.data.model.User;
 
-import org.joda.time.DateTime;
-import org.joda.time.Period;
+import java.util.Collection;
+import java.util.List;
 
-import java.util.ArrayList;
+import io.objectbox.Box;
+import io.objectbox.android.AndroidScheduler;
+import io.objectbox.android.ObjectBoxLiveData;
+import io.objectbox.reactive.DataObserver;
+import io.objectbox.reactive.DataSubscription;
+import io.objectbox.reactive.SubscriptionBuilder;
 
 /**
  * Clase que maneja los cursores que recorren la tabla Task de la BD
  * según la consulta indicada por cada función
+ *
+ * @version 2.0
  */
 public class TaskDao {
 
-    public ArrayList<Task> loadAllActive() {
-        ArrayList<Task> tasks = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        String whereClause = ChronoTaskerContract.TaskEntries.WHERE_USER_AND_CATEGORY_NOT;
-        String[] whereArgs = new String[]{
-                String.valueOf(App.getApp().getmPreferencesHelper().getCurrentUserId()),
-                String.valueOf(Category.CATEGORY_ARCHIVED)
-        };
-        Cursor cursor = sqLiteDatabase.query(
-                ChronoTaskerContract.TaskEntries.TABLE_NAME,
-                ChronoTaskerContract.TaskEntries.ALL_COLUMNS,
-                whereClause,
-                whereArgs,
-                null,
-                null,
-                ChronoTaskerContract.TaskEntries.ORDER_BY_ID,
-                null
-        );
-        if (cursor.moveToFirst()) {
-            do {
-                tasks.add(new Task(
-                        cursor.getLong(0),
-                        cursor.getString(1),
-                        cursor.getInt(2),
-                        cursor.getInt(3),
-                        new DateTime(cursor.getString(4)),
-                        new DateTime(cursor.getString(5)),
-                        new Category(cursor.getInt(6)),
-                        cursor.getString(7),
-                        cursor.getString(8),
-                        cursor.getInt(9),
-                        new Period(cursor.getString(10).equals("") ? null : new Period(cursor.getString(10)).toString()),
-                        cursor.getString(11)
-                ));
-            } while (cursor.moveToNext());
+    private static TaskDao sInstance;
+
+    public static TaskDao getInstance() {
+        if(sInstance != null)
+            sInstance = new TaskDao();
+        return sInstance;
+    }
+
+    public Box<Task> getTaskBox() {
+        return App.getApp().getBoxStore().boxFor(Task.class);
+    }
+
+    public DataSubscription subscribeToTaskList(DataObserver<List<Task>> observer) {
+        return getTaskBox().query().build().subscribe().on(AndroidScheduler.mainThread()).observer(observer);
+    }
+
+    public DataSubscription subscribeToTask(DataObserver<Task> observer, long id, boolean singleUpdate) {
+        SubscriptionBuilder<Task> builder = getTaskBox().query().equal(Task_.id, id).build().subscribe().transform(list -> {
+            if (list.size() == 0) {
+                return null;
+            } else {
+                return list.get(0);
+            }
+        }).on(AndroidScheduler.mainThread());
+
+        if (singleUpdate) {
+            builder.single();
         }
-        cursor.close();
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return tasks;
+        return builder.observer(observer);
     }
 
-    /**
-     * Devuelve el id del elemento añadido a la BD.
-     * @return Id del tipo long de la Tarea en la BD o -1 si hubo algún error.
-     */
-    public long save(Task task) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        long id = sqLiteDatabase.insert(
-                ChronoTaskerContract.TaskEntries.TABLE_NAME,
-                null,
-                createContent(task)
-        );
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return id;
+    public void insertTask(Task task) {
+        getTaskBox().put(task);
     }
 
-    public int update(Task task) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        String whereClause = ChronoTaskerContract.TaskEntries.WHERE_ID;
-        String[] whereArgs = new String[]{String.valueOf(task.getId())};
-        int updatedRows = sqLiteDatabase.update(
-                ChronoTaskerContract.TaskEntries.TABLE_NAME,
-                createContent(task),
-                whereClause,
-                whereArgs
-        );
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return updatedRows;
+    public void insertTasks(Collection<Task> tasks) {
+        getTaskBox().put(tasks);
     }
 
-    public int delete(Task task) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        String whereClause = ChronoTaskerContract.TaskEntries.WHERE_ID;
-        String[] whereArgs = new String[]{String.valueOf(task.getId())};
-        int deletedRows = sqLiteDatabase.delete(
-                ChronoTaskerContract.TaskEntries.TABLE_NAME,
-                whereClause,
-                whereArgs
-        );
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return deletedRows;
+    public void deleteTask(Task task) {
+        getTaskBox().remove(task);
     }
 
-    @NonNull
-    private ContentValues createContent(Task task) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_TITLE, task.getTitle());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_USER, task.getUserId());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_ICON_ID, task.getIconId());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_START_DATE, task.getStartDate().toString());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_END_DATE, task.getEndDate().toString());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_CATEGORY_FLAGS, String.valueOf(task.getCategory().getFlags()));
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_DESCRIPTION, task.getDescription());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_LOCATION, task.getLocation());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_ALARM_ID, String.valueOf(task.getAlarmId()));
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_REPEAT, task.getRepetition().toString());
-        contentValues.put(ChronoTaskerContract.TaskEntries.COLUMN_REMINDER, task.getReminder());
-        return contentValues;
+    public void deleteAllTasks() {
+        getTaskBox().removeAll();
+    }
+
+    public long getCount() {
+        return getTaskBox().count();
+    }
+
+    public ObjectBoxLiveData<Task> getAllTasksById() {
+        // query all notes, sorted a-z by their text (http://greenrobot.org/objectbox/documentation/queries/)
+        return new ObjectBoxLiveData<>(getTaskBox().query().order(Task_.id).build());
+    }
+
+    public ObjectBoxLiveData<Task> getAllTasksByIdFromUserId(User user) {
+        // query all notes, sorted a-z by their text (http://greenrobot.org/objectbox/documentation/queries/)
+        return new ObjectBoxLiveData<>(getTaskBox().query().equal(Task_.ownerId, user.getId()).build());
     }
 
 }

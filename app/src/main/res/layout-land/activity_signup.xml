@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.usuario.chronotasker.ui.signup.SignupActivity"
+    tools:context=".mvvm.signup.SignupActivity"
     >
 
     <TextView

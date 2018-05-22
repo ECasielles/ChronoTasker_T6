@@ -1,126 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@android:id/content"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.example.usuario.chronotasker.ui.login.LoginActivity"
-    >
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:titleTextColor="@android:color/white"
-        />
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.usuario.chronotasker.mvvm.base.BaseViewModel"
+            />
+    </data>
 
     <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@android:id/content"
         >
 
-        <TextView
-            android:id="@+id/txvTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="@string/login"
-            android:textAppearance="@style/Custom.Title"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tilName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/shape_edt"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txvTitle"
-            >
-
-            <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/tilUserHint"
-                android:inputType="text"
-                android:text=""
-                />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tilPassword"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/shape_edt"
-            app:layout_constraintEnd_toEndOf="@+id/tilName"
-            app:layout_constraintStart_toStartOf="@+id/tilName"
-            app:layout_constraintTop_toBottomOf="@+id/tilName"
-            >
-
-            <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/tilPasswordHint"
-                android:inputType="textPassword"
-                android:text=""
-                />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <CheckBox
-            android:id="@+id/chbRemember"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/chkRemember"
-            app:layout_constraintEnd_toEndOf="@+id/tilPassword"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/tilPassword"
-            app:layout_constraintTop_toBottomOf="@+id/tilPassword"
-            />
-
-        <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_weight="1"
-            android:background="@color/colorPrimaryLight"
-            android:text="@string/btnSignIn"
-            app:layout_constraintEnd_toEndOf="@+id/tilPassword"
-            app:layout_constraintStart_toStartOf="@+id/tilPassword"
-            app:layout_constraintTop_toBottomOf="@+id/chbRemember"
-            />
-
-        <Button
-            android:id="@+id/txvSignup"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:background="@color/colorPrimaryLight"
-            android:text="@string/txvSignup"
-            android:textAlignment="center"
-            android:textAppearance="@style/Custom.SignUp"
-            app:layout_constraintEnd_toEndOf="@+id/btnLogin"
-            app:layout_constraintStart_toStartOf="@+id/btnLogin"
-            app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+        <FrameLayout
+            android:id="@+id/frame_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             />
 
     </android.support.constraint.ConstraintLayout>
-</LinearLayout>
+
+</layout>

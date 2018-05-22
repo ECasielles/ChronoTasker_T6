@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+        <variable name="viewModel" type="com.example.usuario.chronotasker.mvvm.home.HomeViewModel"/>
+    </data>
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/header_navview"
     android:layout_width="match_parent"
     android:layout_height="@dimen/header_navview_height"
     android:background="@drawable/material_background"
-    android:paddingLeft="@dimen/header_navview_padding_left"
+    android:paddingStart="@dimen/header_navview_padding_horizontal"
+    android:paddingEnd="@dimen/header_navview_padding_horizontal"
     >
 
     <!--Imagen de perfil-->
@@ -15,7 +26,8 @@
         android:layout_height="84dp"
         android:layout_marginTop="24dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/profile"
+        tools:src="@drawable/profile"
+        bind:srcCompat="@{viewModel.image}"
         app:civ_border_color="#FFFFFFF0"
         app:civ_border_width="2dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +39,8 @@
         android:id="@+id/txvUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/txvUserName"
+        tools:text="@string/txvUserName"
+        android:text="@{viewModel.name}"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title.Inverse"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/txvEmail"
@@ -42,7 +55,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="@string/txvEmail"
+        tools:text="@string/txvEmail"
+        android:text="@{viewModel.email}"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -50,3 +64,5 @@
         />
 
 </android.support.constraint.ConstraintLayout>
+
+</layout>

@@ -1,74 +1,74 @@
 package com.example.usuario.chronotasker.data.db.dao;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
+import com.example.usuario.chronotasker.app.App;
 import com.example.usuario.chronotasker.data.model.User;
+import com.example.usuario.chronotasker.data.model.User_;
 
-/**
- * Clase que maneja los cursores que recorren la tabla User de la BD
- * según la consulta indicada por cada función.
- */
+import java.util.Collection;
+import java.util.List;
+
+import io.objectbox.Box;
+import io.objectbox.android.AndroidScheduler;
+import io.objectbox.android.ObjectBoxLiveData;
+import io.objectbox.reactive.DataObserver;
+import io.objectbox.reactive.DataSubscription;
+import io.objectbox.reactive.SubscriptionBuilder;
+
 public class UserDao {
 
-    /**
-     * Inserta teniendo en cuenta las restricciones como clave única o ajena.
-     *
-     * @return Devuelve el id de la fila modificada.
-     */
-    public long save(User user) {
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        long rows = 0;
-        try {
-            rows = sqLiteDatabase.insertWithOnConflict(
-                    ChronoTaskerContract.UserEntries.TABLE_NAME,
-                    null,
-                    createContent(user),
-                    SQLiteDatabase.CONFLICT_ABORT
-            );
-        } catch (Exception e) {
-            Log.d("UserDao", e.getMessage());
+    private static UserDao sInstance;
+
+    public static UserDao getInstance() {
+        if(sInstance != null)
+            sInstance = new UserDao();
+        return sInstance;
+    }
+
+    public Box<User> getUserBox() {
+        return App.getApp().getBoxStore().boxFor(User.class);
+    }
+
+    public DataSubscription subscribeToUserList(DataObserver<List<User>> observer) {
+        return getUserBox().query().build().subscribe().on(AndroidScheduler.mainThread()).observer(observer);
+    }
+
+    public DataSubscription subscribeToUser(DataObserver<User> observer, long id, boolean singleUpdate) {
+        SubscriptionBuilder<User> builder = getUserBox().query().equal(User_.id, id).build().subscribe().transform(list -> {
+            if (list.size() == 0) {
+                return null;
+            } else {
+                return list.get(0);
+            }
+        }).on(AndroidScheduler.mainThread());
+
+        if (singleUpdate) {
+            builder.single();
         }
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return rows;
+        return builder.observer(observer);
     }
 
-    /**
-     * Comprueba si el usuario existe en la BD devolviendo su id ó -1 si no existe.
-     */
-    public int search(User user) {
-        int id = -1;
-        SQLiteDatabase sqLiteDatabase = ChronoTaskerOpenHelper.getInstance().openDatabase();
-        String whereClause = ChronoTaskerContract.UserEntries.WHERE_NAME_AND_PASSWORD;
-        String[] whereArgs = new String[]{user.getName(), user.getPassword()};
-        Cursor cursor = sqLiteDatabase.query(
-                ChronoTaskerContract.UserEntries.TABLE_NAME,
-                ChronoTaskerContract.UserEntries.ALL_COLUMNS,
-                whereClause,
-                whereArgs,
-                null,
-                null,
-                ChronoTaskerContract.UserEntries.DEFAULT_SORT,
-                null
-        );
-        if (cursor.moveToFirst()) {
-            do {
-                id = cursor.getInt(0);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        ChronoTaskerOpenHelper.getInstance().closeDatabase();
-        return id;
+    public void insertUser(User user) {
+        getUserBox().put(user);
     }
 
-    private ContentValues createContent(User user) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ChronoTaskerContract.UserEntries.COLUMN_NAME, user.getName());
-        contentValues.put(ChronoTaskerContract.UserEntries.COLUMN_EMAIL, user.getEmail());
-        contentValues.put(ChronoTaskerContract.UserEntries.COLUMN_PASSWORD, user.getPassword());
-        return contentValues;
+    public void insertUsers(Collection<User> users) {
+        getUserBox().put(users);
     }
 
+    public void deleteUser(User user) {
+        getUserBox().remove(user);
+    }
+
+    public void deleteAllUsers() {
+        getUserBox().removeAll();
+    }
+
+    public long getCount() {
+        return getUserBox().count();
+    }
+
+    public ObjectBoxLiveData<User> getAllUsersById() {
+        // query all notes, sorted a-z by their text (http://greenrobot.org/objectbox/documentation/queries/)
+        return new ObjectBoxLiveData<>(getUserBox().query().order(User_.id).build());
+    }
 }
