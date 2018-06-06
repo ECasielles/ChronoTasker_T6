@@ -1,45 +1,40 @@
 package com.example.usuario.chronotasker.mvvm.task.fragment;
 
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
 import com.example.usuario.chronotasker.data.model.Task;
+import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
 import com.example.usuario.chronotasker.mvvm.home.HomeActivity;
 import com.example.usuario.chronotasker.mvvm.task.adapter.OnTaskActionListener;
 import com.example.usuario.chronotasker.mvvm.task.adapter.RecyclerItemTouchHelper;
 import com.example.usuario.chronotasker.mvvm.task.adapter.TaskAdapter;
-import com.example.usuario.chronotasker.mvvm.task.contract.TaskListContract;
-import com.example.usuario.chronotasker.mvvm.task.presenter.TaskListPresenter;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
  * Fragment que muestra la lista de tareas
  */
-public class TaskListFragment extends BaseFragment implements TaskListContract.View,
-        RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, OnTaskActionListener {
-    //public static final String TAG = "TaskListFragment";
+public class TaskListFragment extends BaseFragment
+        implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, OnTaskActionListener {
+
+    //CONSTANTS
+    public static String TAG = TaskListFragment.class.getSimpleName();
+
     private TaskAdapter adapter;
-    private TaskListContract.Presenter presenter;
     private ViewGroup parent;
     private RecyclerView recyclerView;
 
@@ -68,7 +63,6 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
 
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        presenter = new TaskListPresenter(this);
     }
 
     /**
@@ -82,12 +76,7 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
         setupRecyclerView(view);
-        ViewDataBinding vdb = DataBindingUtil.bind(view);
-
         parent = view.findViewById(android.R.id.content);
-        recyclerView = view.findViewById(android.R.id.list);
-        adapter = new TaskAdapter(getContext(), this);
-        presenter.importTasks();
         return view;
     }
 
@@ -111,10 +100,8 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
 
 
     private void setupRecyclerView(View view) {
+        recyclerView = view.findViewById(android.R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        //recyclerView.setHasFixedSize(true);
-        //adapter.setItems(mStories);
         recyclerView.setAdapter(adapter);
     }
 
@@ -148,41 +135,12 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_menu_task_sort_default:
-                presenter.importTasks();
-                break;
-            case R.id.action_menu_task_sort_priority:
-                presenter.importTasksSortedByPriority();
-                break;
-            case R.id.action_menu_task_sort_start_date:
-                presenter.importTasksSortedByStartDate();
-                break;
-            case R.id.action_menu_task_sort_urgent:
-                presenter.importTasksSortedByUrgency();
-                break;
-            case R.id.action_menu_task_sort_important:
-                presenter.importTasksSortedByImportance();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void loadTasks(ArrayList<Task> tasks) {
-        adapter.clear();
-        adapter.addAll(tasks);
-    }
-
     /**
      * Elimina definitivamente o restaura una tarea según el Snackbar que muestra
      *
      * @param position
      * @param task
      */
-    @Override
     public void onTaskDeleteEvent(final int position, final Task task) {
         //Notifica y permite deshacer la acción
         Snackbar snackbar = Snackbar.make(recyclerView, task.getTitle() + " archivada", Snackbar.LENGTH_LONG);
@@ -190,14 +148,13 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
-                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
-                    presenter.deleteTask(task);
+                //if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) presenter.deleteTask(task);
             }
         });
         snackbar.setAction(getContext().getResources().getString(R.string.undo), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.restoreTask(position, task);
+                //presenter.restoreTask(position, task);
             }
         });
         snackbar.setActionTextColor(getContext().getResources().getColor(R.color.colorAccent));
@@ -210,9 +167,8 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
      * @param position
      * @param task
      */
-    @Override
     public void onTaskRestored(int position, Task task) {
-        adapter.restoreItem(position, task);
+        //adapter.restoreItem(position, task);
         Toast.makeText(getContext(), task.getTitle() + " " + getResources().getString(R.string.info_task_restored), Toast.LENGTH_SHORT).show();
     }
 
@@ -221,12 +177,10 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
      *
      * @param title
      */
-    @Override
     public void onDeleteTaskInfo(String title) {
         Toast.makeText(getContext(), title + " " + getResources().getString(R.string.info_task_deleted), Toast.LENGTH_SHORT).show();
     }
 
-    @Override
     public void onDatabaseError(String message) {
         Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
     }
@@ -241,14 +195,12 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
      */
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        if (viewHolder instanceof TaskAdapter.TaskHolder) {
-            int index = viewHolder.getAdapterPosition();
-            Task task = adapter.getItem(index);
+        int index = viewHolder.getAdapterPosition();
+        Task task = adapter.getItem(index);
 
-            //Elimina el elemento de la vista
-            adapter.remove(index);
-            presenter.deleteTaskEvent(index, task);
-        }
+        //Elimina el elemento de la vista
+        adapter.remove(index);
+        //presenter.deleteTaskEvent(index, task);
     }
 
     /**
@@ -268,7 +220,6 @@ public class TaskListFragment extends BaseFragment implements TaskListContract.V
     @Override
     public void onDestroy() {
         super.onDestroy();
-        presenter.onDestroy();
         adapter = null;
     }
 }

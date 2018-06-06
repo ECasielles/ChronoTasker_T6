@@ -35,10 +35,9 @@ import static android.content.Context.ALARM_SERVICE;
  * Created by icenri on 2/25/18.
  */
 
-public class AlarmListFragment extends BaseFragment implements AlarmListContract.View, OnAlarmActionListener {
+public class AlarmListFragment extends BaseFragment implements OnAlarmActionListener {
     private static final String TAG = "AlarmListFragment";
     private RecyclerView recyclerView;
-    private AlarmListContract.Presenter presenter;
     private ViewGroup parent;
     private AlarmAdapter adapter;
 
@@ -54,7 +53,6 @@ public class AlarmListFragment extends BaseFragment implements AlarmListContract
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        presenter = new AlarmListPresenter(this);
     }
 
     @Nullable
@@ -64,7 +62,7 @@ public class AlarmListFragment extends BaseFragment implements AlarmListContract
         parent = view.findViewById(android.R.id.content);
         recyclerView = view.findViewById(android.R.id.list);
         adapter = new AlarmAdapter(getContext(), this);
-        presenter.loadAlarms();
+        //presenter.loadAlarms();
         return view;
     }
 
@@ -174,14 +172,14 @@ public class AlarmListFragment extends BaseFragment implements AlarmListContract
         AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarm.getTime().getMillis(), pendingIntent);
         Toast.makeText(getContext(), alarm.getTitle() + " sonará a las " + alarm.getTime().toString("HH:mm"), Toast.LENGTH_SHORT).show();
-
+        /*
         if (getArguments() != null)
             presenter.editAlarm(alarm);
         else
             presenter.addAlarm(alarm);
+        */
     }
 
-    @Override
     public void onAlarmsLoaded(ArrayList<Alarm> alarms) {
         adapter.clear();
         adapter.addAll(alarms);
@@ -196,12 +194,10 @@ public class AlarmListFragment extends BaseFragment implements AlarmListContract
         return false;
     }
 
-    @Override
     public void onAlarmUpdated(String title) {
         Toast.makeText(getContext(), title + " " + getResources().getString(R.string.info_task_updated), Toast.LENGTH_SHORT).show();
     }
 
-    @Override
     public void onDatabaseError(String message) {
         Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
     }

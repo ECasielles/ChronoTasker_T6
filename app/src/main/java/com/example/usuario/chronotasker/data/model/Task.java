@@ -1,13 +1,13 @@
 package com.example.usuario.chronotasker.data.model;
 
-import android.databinding.Bindable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.example.usuario.chronotasker.mvvm.base.BaseModel;
 import com.example.usuario.chronotasker.data.db.converter.DateTimeConverter;
+import com.example.usuario.chronotasker.data.db.converter.PeriodConverter;
+import com.example.usuario.chronotasker.mvvm.base.BaseModel;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -110,7 +110,7 @@ public class Task extends BaseModel implements Parcelable, Comparable {
     private int priority;
     private String description;
     private String location;
-    @Convert(converter = DateTimeConverter.class, dbType = Long.class)
+    @Convert(converter = PeriodConverter.class, dbType = Integer.class)
     private Period repetition;
     private String reminder;
     private String alarm;
@@ -188,43 +188,33 @@ public class Task extends BaseModel implements Parcelable, Comparable {
     public void setId(long id) {
         this.id = id;
     }
-    @Bindable
     public String getTitle() {
         return title;
     }
-    @Bindable
     public void setTitle(String title) {
         this.title = title;
     }
-    @Bindable
     public int getIconId() {
         return iconId;
     }
-    @Bindable
     public void setIconId(int iconId) {
         this.iconId = iconId;
     }
-    @Bindable
     public DateTime getStartDate() {
         return startDate;
     }
-    @Bindable
     public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
-    @Bindable
     public DateTime getEndDate() {
         return endDate;
     }
-    @Bindable
     public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
-    @Bindable
     public int getPriority() {
         return priority;
     }
-    @Bindable
     public void setPriority(int priority) {
         this.priority = priority;
     }
@@ -234,43 +224,33 @@ public class Task extends BaseModel implements Parcelable, Comparable {
     public void setOwner(ToOne<User> owner) {
         this.owner = owner;
     }
-    @Bindable
     public String getDescription() {
         return description;
     }
-    @Bindable
     public void setDescription(String description) {
         this.description = description;
     }
-    @Bindable
     public String getLocation() {
         return location;
     }
-    @Bindable
     public void setLocation(String location) {
         this.location = location;
     }
-    @Bindable
     public String getAlarm() {
         return alarm;
     }
-    @Bindable
     public void setAlarm(String alarm) {
         this.alarm = alarm;
     }
-    @Bindable
     public Period getRepetition() {
         return repetition;
     }
-    @Bindable
     public void setRepetition(Period repetition) {
         this.repetition = repetition;
     }
-    @Bindable
     public String getReminder() {
         return reminder;
     }
-    @Bindable
     public void setReminder(String reminder) {
         this.reminder = reminder;
     }

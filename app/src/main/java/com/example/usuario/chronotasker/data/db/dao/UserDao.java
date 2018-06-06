@@ -4,23 +4,23 @@ import com.example.usuario.chronotasker.app.App;
 import com.example.usuario.chronotasker.data.model.User;
 import com.example.usuario.chronotasker.data.model.User_;
 
-import java.util.Collection;
-import java.util.List;
-
 import io.objectbox.Box;
-import io.objectbox.android.AndroidScheduler;
-import io.objectbox.android.ObjectBoxLiveData;
-import io.objectbox.reactive.DataObserver;
-import io.objectbox.reactive.DataSubscription;
-import io.objectbox.reactive.SubscriptionBuilder;
+import io.objectbox.query.Query;
 
-public class UserDao {
+/**
+ * Singleton con acceso a la base de datos local de usuarios.
+ */
+public class UserDao extends BaseDao<User>{
 
     private static UserDao sInstance;
 
+    public UserDao(Class<User> type) {
+        super(type);
+    }
+
     public static UserDao getInstance() {
-        if(sInstance != null)
-            sInstance = new UserDao();
+        if(sInstance == null)
+            sInstance = new UserDao(User.class);
         return sInstance;
     }
 
@@ -28,47 +28,22 @@ public class UserDao {
         return App.getApp().getBoxStore().boxFor(User.class);
     }
 
-    public DataSubscription subscribeToUserList(DataObserver<List<User>> observer) {
-        return getUserBox().query().build().subscribe().on(AndroidScheduler.mainThread()).observer(observer);
-    }
-
-    public DataSubscription subscribeToUser(DataObserver<User> observer, long id, boolean singleUpdate) {
-        SubscriptionBuilder<User> builder = getUserBox().query().equal(User_.id, id).build().subscribe().transform(list -> {
-            if (list.size() == 0) {
-                return null;
-            } else {
-                return list.get(0);
-            }
-        }).on(AndroidScheduler.mainThread());
-
-        if (singleUpdate) {
-            builder.single();
-        }
-        return builder.observer(observer);
-    }
-
-    public void insertUser(User user) {
-        getUserBox().put(user);
-    }
-
-    public void insertUsers(Collection<User> users) {
-        getUserBox().put(users);
-    }
-
-    public void deleteUser(User user) {
-        getUserBox().remove(user);
-    }
-
     public void deleteAllUsers() {
         getUserBox().removeAll();
     }
 
-    public long getCount() {
+    public long count() {
         return getUserBox().count();
     }
 
-    public ObjectBoxLiveData<User> getAllUsersById() {
-        // query all notes, sorted a-z by their text (http://greenrobot.org/objectbox/documentation/queries/)
-        return new ObjectBoxLiveData<>(getUserBox().query().order(User_.id).build());
+    public User find(String name, String password) {
+        Query query = getBox().query()
+                .equal(User_.name, name)
+                .and()
+                .equal(User_.password, password)
+                .build();
+
+        return (User) query.findFirst();
     }
+
 }

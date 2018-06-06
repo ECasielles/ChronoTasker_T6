@@ -1,5 +1,6 @@
 package com.example.usuario.chronotasker.mvvm.base;
 
+import android.database.DataSetObservable;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.annotation.LayoutRes;
@@ -14,6 +15,8 @@ import java.util.List;
 
 
 public abstract class BaseBindAdapter<T> extends BaseQuickAdapter<T, BaseBindHolder> {
+
+    private final DataSetObservable mDataSetObservable = new DataSetObservable();
 
     public BaseBindAdapter(@LayoutRes int layoutResId, @Nullable List<T> data) {
         super(layoutResId, data);

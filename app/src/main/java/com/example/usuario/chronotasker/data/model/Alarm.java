@@ -1,11 +1,10 @@
 package com.example.usuario.chronotasker.data.model;
 
-import android.databinding.Bindable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.usuario.chronotasker.mvvm.base.BaseModel;
 import com.example.usuario.chronotasker.data.db.converter.DateTimeConverter;
+import com.example.usuario.chronotasker.mvvm.base.BaseModel;
 
 import org.joda.time.DateTime;
 
@@ -56,11 +55,9 @@ public class Alarm extends BaseModel implements Parcelable {
     public void setId(long id) {
         this.id = id;
     }
-    @Bindable
     public String getTitle() {
         return title;
     }
-    @Bindable
     public void setTitle(String title) {
         this.title = title;
     }

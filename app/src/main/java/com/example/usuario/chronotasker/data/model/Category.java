@@ -74,6 +74,10 @@ public class Category {
         checkValidPriority(priority);
     }
 
+    public int getFlags() {
+        return flags;
+    }
+
     /**
      * Comprueba si el objeto contiene una categoría concreta.
      * @param flag Categoría contenida en el objeto.

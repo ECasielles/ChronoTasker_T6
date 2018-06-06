@@ -1,6 +1,6 @@
 package com.example.usuario.chronotasker.mvvm.login;
 
-import com.example.usuario.chronotasker.mvvm.base.INavigator;
+import com.example.usuario.chronotasker.mvvm.base.navigator.INavigator;
 
 public interface LoginNavigator extends INavigator {
 

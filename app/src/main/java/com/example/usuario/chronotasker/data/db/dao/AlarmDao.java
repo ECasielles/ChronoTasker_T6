@@ -19,7 +19,7 @@ public class AlarmDao {
     private static AlarmDao sInstance;
 
     public static AlarmDao getInstance() {
-        if(sInstance != null)
+        if(sInstance == null)
             sInstance = new AlarmDao();
         return sInstance;
     }

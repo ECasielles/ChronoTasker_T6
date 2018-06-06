@@ -3,7 +3,6 @@ package com.example.usuario.chronotasker.mvvm.task.adapter;
 import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.View;
 
 /**
  * Clase que controla el gesto Swipe del RecyclerView en TaskListFragment
@@ -30,21 +29,21 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         if (viewHolder != null) {
-            View cardView = ((TaskAdapter.TaskHolder) viewHolder).cardView;
-            getDefaultUIUtil().onSelected(cardView);
+            //View cardView = ((TaskAdapter.TaskHolder) viewHolder).cardView;
+            //getDefaultUIUtil().onSelected(cardView);
         }
     }
 
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        View cardView = ((TaskAdapter.TaskHolder) viewHolder).cardView;
-        getDefaultUIUtil().clearView(cardView);
+        //View cardView = ((TaskAdapter.TaskHolder) viewHolder).cardView;
+        //getDefaultUIUtil().clearView(cardView);
     }
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        View cardView = ((TaskAdapter.TaskHolder) viewHolder).cardView;
-        getDefaultUIUtil().onDraw(c, recyclerView, cardView, dX, dY, actionState, isCurrentlyActive);
+        //View cardView = ((TaskAdapter.TaskHolder) viewHolder).cardView;
+        //getDefaultUIUtil().onDraw(c, recyclerView, cardView, dX, dY, actionState, isCurrentlyActive);
     }
 
     public interface RecyclerItemTouchHelperListener {

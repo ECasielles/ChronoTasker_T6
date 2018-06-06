@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 
 
 /**
- * Non-UI Fragment used to retain ViewModels.
+ * Clase wrapper Fragment para retener objetos ViewModel usando FragmentManager.
  */
 public class ViewModelHolder<VM> extends Fragment {
 

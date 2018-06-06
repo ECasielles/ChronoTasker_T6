@@ -1,11 +1,13 @@
 package com.example.usuario.chronotasker.mvvm.base;
 
-import android.arch.lifecycle.LifecycleObserver;
+import android.annotation.SuppressLint;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.View;
+
+import static android.support.v4.util.Preconditions.checkNotNull;
 
 
 /**
@@ -14,11 +16,11 @@ import android.view.View;
  *
  * @author Enrique Casielles
  */
-public abstract class BaseFragment<DB extends ViewDataBinding, VM extends IViewModel>
+public abstract class BaseFragment<DB extends ViewDataBinding, VM extends BaseViewModel>
         extends Fragment implements OnFragmentActionListener {
 
     //PRIVATE FIELDS
-    private View mRootView;
+    //private View mRootView;
 
     //INHERITABLE FIELDS
     protected FragmentEventHandler fragmentEventHandler;
@@ -29,7 +31,6 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends IViewM
     public BaseFragment() {
         setArguments(new Bundle());
     }
-
 
     /**
      * Instancia el objeto callback que maneja la comunicación entre
@@ -45,7 +46,12 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends IViewM
         } else {
             fragmentEventHandler = (FragmentEventHandler) getActivity();
         }
-        addObserver();
+        //addObserver();
+    }
+
+    @SuppressLint("RestrictedApi")
+    public void setViewModel(@NonNull VM viewModel) {
+        mViewModel = checkNotNull(viewModel);
     }
 
 
@@ -67,8 +73,8 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends IViewM
     public void onDestroy() {
         super.onDestroy();
         mBinding = null;
-        mRootView = null;
-        removeObserver();
+        //mRootView = null;
+        //removeObserver();
         mViewModel = null;
     }
 
@@ -78,7 +84,6 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends IViewM
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return initView(inflater, container, savedInstanceState);
     }
-*/
 
     private void addObserver() {
         if (mViewModel != null)  getLifecycle().addObserver((LifecycleObserver) mViewModel);
@@ -88,5 +93,6 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends IViewM
     private void removeObserver() {
         if (mViewModel != null) getLifecycle().removeObserver((LifecycleObserver) mViewModel);
     }
+*/
 
 }

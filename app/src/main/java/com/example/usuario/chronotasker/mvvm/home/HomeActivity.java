@@ -44,7 +44,7 @@ public class HomeActivity extends BaseActivity<ActivityBaseBinding, HomeViewMode
 
         //Inicializa el ViewModel
         mViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        mViewModel.setNavigator(this);
+        //mViewModel.setNavigator(this);
 
         floatingActionButton = findViewById(R.id.floationActionButton);
         drawerLayout = findViewById(R.id.drawer_layout);

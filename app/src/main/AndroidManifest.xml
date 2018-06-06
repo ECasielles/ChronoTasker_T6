@@ -12,14 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         >
-        <activity android:name=".mvvm.login.LoginActivity">
+        <!--android:configChanges="keyboardHidden|orientation"-->
+        <activity
+            android:name=".mvvm.login.LoginActivity"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.priority.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".mvvm.signup.SignupActivity" />
         <activity android:name=".mvvm.about.AboutActivity" />
         <activity android:name=".mvvm.home.HomeActivity" />
         <activity android:name=".mvvm.settings.GeneralSettingsActivity" />

@@ -47,12 +47,12 @@ public class PreferencesHelper implements AccountPreferencesHelper {
         return null;
     }
 
-    public int getCurrentUserId() {
-        return preferences.getInt(PREF_KEY_CURRENT_USER_ID, -1);
+    public long getCurrentUserId() {
+        return preferences.getLong(PREF_KEY_CURRENT_USER_ID, -1);
     }
 
-    public void setCurrentUserId(int id) {
-        preferences.edit().putInt(PREF_KEY_CURRENT_USER_ID, id).apply();
+    public void setCurrentUserId(long id) {
+        preferences.edit().putLong(PREF_KEY_CURRENT_USER_ID, id).apply();
     }
 
     public String getCurrentUserName() {

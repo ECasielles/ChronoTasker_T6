@@ -7,29 +7,16 @@
     >
 
     <data>
-        <variable name="viewModel" type="com.example.usuario.chronotasker.mvvm.login.LoginViewModel" />
-    </data>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".mvvm.login.LoginActivity"
-        >
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            app:titleTextColor="@android:color/white"
+        <variable
+            name="viewModel"
+            type="com.example.usuario.chronotasker.mvvm.login.LoginViewModel"
             />
+    </data>
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            tools:context=".mvvm.login.LoginActivity"
             >
 
             <TextView
@@ -94,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/chkRemember"
-                bind:checked="@{viewModel.checked}"
+                bind:checked="@{safeUnbox(viewModel.checked)}"
                 app:layout_constraintEnd_toEndOf="@+id/tilPassword"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/tilPassword"
@@ -111,7 +98,7 @@
                 android:layout_weight="1"
                 android:background="@color/colorPrimaryLight"
                 android:text="@string/btnSignIn"
-                bind:onClick="@{() -> viewModel.onClick()}"
+                bind:onClick="@{() -> viewModel.onClickLogin()}"
                 app:layout_constraintEnd_toEndOf="@+id/tilPassword"
                 app:layout_constraintStart_toStartOf="@+id/tilPassword"
                 app:layout_constraintTop_toBottomOf="@+id/chbRemember"
@@ -126,12 +113,12 @@
                 android:text="@string/txvSignup"
                 android:textAlignment="center"
                 android:textAppearance="@style/Custom.SignUp"
+                bind:onClick="@{() -> viewModel.onClickSignup()}"
                 app:layout_constraintEnd_toEndOf="@+id/btnLogin"
                 app:layout_constraintStart_toStartOf="@+id/btnLogin"
                 app:layout_constraintTop_toBottomOf="@+id/btnLogin"
                 />
 
         </android.support.constraint.ConstraintLayout>
-    </LinearLayout>
 
 </layout>

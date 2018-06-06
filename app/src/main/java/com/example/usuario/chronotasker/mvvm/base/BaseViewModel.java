@@ -9,7 +9,7 @@ import java.util.List;
 import io.objectbox.reactive.DataSubscription;
 
 
-public abstract class BaseViewModel extends ViewModel implements IViewModel {
+public abstract class BaseViewModel extends ViewModel {
 
     // Using ObjectBox Data Subscription for observable items
     private final List<DataSubscription> mSubscriptions;

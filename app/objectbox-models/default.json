@@ -1,0 +1,135 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:2979005628682113566",
+      "lastPropertyId": "5:6325841072338241566",
+      "name": "Alarm",
+      "properties": [
+        {
+          "id": "1:3009271183128069662",
+          "name": "TAG"
+        },
+        {
+          "id": "2:8497979449603061744",
+          "name": "id"
+        },
+        {
+          "id": "3:3176305155361021946",
+          "name": "title"
+        },
+        {
+          "id": "4:4880619496921420425",
+          "name": "time"
+        },
+        {
+          "id": "5:6325841072338241566",
+          "name": "ringtoneUri"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:8583262008609563973",
+      "lastPropertyId": "5:6728250655794825045",
+      "name": "User",
+      "properties": [
+        {
+          "id": "1:7979186119038495675",
+          "name": "TAG"
+        },
+        {
+          "id": "2:2186624766321196977",
+          "name": "id"
+        },
+        {
+          "id": "3:7533204118086060272",
+          "name": "name"
+        },
+        {
+          "id": "4:4438508606120513633",
+          "name": "email"
+        },
+        {
+          "id": "5:6728250655794825045",
+          "name": "password"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:806148019075323788",
+      "lastPropertyId": "13:5540983385666483204",
+      "name": "Task",
+      "properties": [
+        {
+          "id": "1:1514765777975002127",
+          "name": "TAG"
+        },
+        {
+          "id": "2:1807520671522452507",
+          "name": "id"
+        },
+        {
+          "id": "3:4142817077312535059",
+          "name": "title"
+        },
+        {
+          "id": "4:323133468033974585",
+          "name": "iconId"
+        },
+        {
+          "id": "5:4052162093751959216",
+          "name": "startDate"
+        },
+        {
+          "id": "6:3504281777378150978",
+          "name": "endDate"
+        },
+        {
+          "id": "7:3050625359166645485",
+          "name": "priority"
+        },
+        {
+          "id": "8:2241321420409184289",
+          "name": "description"
+        },
+        {
+          "id": "9:7111885148466416364",
+          "name": "location"
+        },
+        {
+          "id": "10:3714364555078192744",
+          "name": "repetition"
+        },
+        {
+          "id": "11:7120163668878545543",
+          "name": "reminder"
+        },
+        {
+          "id": "12:4282661535340402841",
+          "name": "alarm"
+        },
+        {
+          "id": "13:5540983385666483204",
+          "indexId": "1:5252201536430935059",
+          "name": "ownerId"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "3:806148019075323788",
+  "lastIndexId": "1:5252201536430935059",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

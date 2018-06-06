@@ -1,6 +1,7 @@
 package com.example.usuario.chronotasker.data.db.dao;
 
 import com.example.usuario.chronotasker.app.App;
+import com.example.usuario.chronotasker.data.model.Category;
 import com.example.usuario.chronotasker.data.model.Task;
 import com.example.usuario.chronotasker.data.model.Task_;
 import com.example.usuario.chronotasker.data.model.User;
@@ -11,6 +12,7 @@ import java.util.List;
 import io.objectbox.Box;
 import io.objectbox.android.AndroidScheduler;
 import io.objectbox.android.ObjectBoxLiveData;
+import io.objectbox.query.Query;
 import io.objectbox.reactive.DataObserver;
 import io.objectbox.reactive.DataSubscription;
 import io.objectbox.reactive.SubscriptionBuilder;
@@ -21,12 +23,12 @@ import io.objectbox.reactive.SubscriptionBuilder;
  *
  * @version 2.0
  */
-public class TaskDao {
+public class TaskDao implements DataObserver<Task> {
 
     private static TaskDao sInstance;
 
     public static TaskDao getInstance() {
-        if(sInstance != null)
+        if(sInstance == null)
             sInstance = new TaskDao();
         return sInstance;
     }
@@ -36,11 +38,15 @@ public class TaskDao {
     }
 
     public DataSubscription subscribeToTaskList(DataObserver<List<Task>> observer) {
-        return getTaskBox().query().build().subscribe().on(AndroidScheduler.mainThread()).observer(observer);
+        Query<Task> query = getTaskBox().query().notEqual(Task_.priority, Category.ARCHIVED_NAME).build();
+        SubscriptionBuilder<List<Task>> builder = query.subscribe();
+        builder.observer(observer);
+        return query.subscribe().on(AndroidScheduler.mainThread()).observer(observer);
     }
 
     public DataSubscription subscribeToTask(DataObserver<Task> observer, long id, boolean singleUpdate) {
-        SubscriptionBuilder<Task> builder = getTaskBox().query().equal(Task_.id, id).build().subscribe().transform(list -> {
+        Query<Task> query = getTaskBox().query().equal(Task_.id, id).build();
+        SubscriptionBuilder<Task> builder = query.subscribe().transform(list -> {
             if (list.size() == 0) {
                 return null;
             } else {
@@ -82,6 +88,11 @@ public class TaskDao {
     public ObjectBoxLiveData<Task> getAllTasksByIdFromUserId(User user) {
         // query all notes, sorted a-z by their text (http://greenrobot.org/objectbox/documentation/queries/)
         return new ObjectBoxLiveData<>(getTaskBox().query().equal(Task_.ownerId, user.getId()).build());
+    }
+
+    @Override
+    public void onData(Task data) {
+
     }
 
 }

@@ -1,7 +1,5 @@
 package com.example.usuario.chronotasker.data.model;
 
-import android.databinding.Bindable;
-
 import com.example.usuario.chronotasker.mvvm.base.BaseModel;
 
 import io.objectbox.annotation.Backlink;
@@ -46,27 +44,21 @@ public class User extends BaseModel {
     public void setId(long id) {
         this.id = id;
     }
-    @Bindable
     public String getName() {
         return name;
     }
-    @Bindable
     public void setName(String name) {
         this.name = name;
     }
-    @Bindable
     public String getEmail() {
         return email;
     }
-    @Bindable
     public void setEmail(String email) {
         this.email = email;
     }
-    @Bindable
     public String getPassword() {
         return password;
     }
-    @Bindable
     public void setPassword(String password) {
         this.password = password;
     }

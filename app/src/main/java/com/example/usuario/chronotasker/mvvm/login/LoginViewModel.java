@@ -1,40 +1,48 @@
 package com.example.usuario.chronotasker.mvvm.login;
 
-import android.databinding.Bindable;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
+import android.arch.lifecycle.MutableLiveData;
 
 import com.example.usuario.chronotasker.app.App;
 import com.example.usuario.chronotasker.app.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.data.model.User;
 import com.example.usuario.chronotasker.data.repository.UserRepository;
-import com.example.usuario.chronotasker.mvvm.base.BaseViewModel;
-import com.example.usuario.chronotasker.mvvm.base.INavigator;
-import com.example.usuario.chronotasker.mvvm.base.IViewModel;
+import com.example.usuario.chronotasker.mvvm.base.navigator.INavigator;
+import com.example.usuario.chronotasker.mvvm.base.navigator.NavigatorViewModel;
 import com.example.usuario.chronotasker.utils.Common;
 
-public class LoginViewModel extends BaseViewModel implements IViewModel {
+
+public class LoginViewModel extends NavigatorViewModel {
 
     //CONSTANTS
-    public static String TAG = LoginFragment.class.getSimpleName();
+    public static String TAG = LoginViewModel.class.getSimpleName();
 
-    @Bindable
-    public ObservableField<String> name = new ObservableField<>();
-    @Bindable
-    public ObservableField<String> password = new ObservableField<>();
-    @Bindable
-    public ObservableBoolean checked = new ObservableBoolean(false);
+    public MutableLiveData<String> name = new MutableLiveData<>();
+    public MutableLiveData<String> email = new MutableLiveData<>();
+    public MutableLiveData<String> password = new MutableLiveData<>();
+    public MutableLiveData<Boolean> checked = new MutableLiveData<>();
 
     private LoginNavigator mNavigator;
+
+    public LoginViewModel() {
+        checked.setValue(Boolean.FALSE);
+        name.setValue("Usuario");
+        password.setValue("Pwd123");
+        email.setValue("example@test.com");
+    }
 
     @Override
     public void setNavigator(INavigator navigator) {
         mNavigator = (LoginNavigator) navigator;
     }
 
-    public void onClick() {
-        validateFields(name.get(), password.get());
+    //TODO: Move these two to LoginFragment to use DataBinding???
+    public void onClickLogin() {
+        validateFields(name.getValue(), password.getValue());
     }
+    public void onClickSignup() {
+        //Load fragment from View
+    }
+
 
     public void validateFields(String name, String password) {
         if (areFieldsEmpty(name, password))             mNavigator.errorEmptyField();
@@ -45,17 +53,19 @@ public class LoginViewModel extends BaseViewModel implements IViewModel {
     }
 
     private void loginUser(String name, String password) {
-        if(UserRepository.getInstance().findUser(new User(name, password)))
-            onUserFound();
+        User user = UserRepository.getInstance().findUser(name, password);
+        if(user != null)
+            onUserFound(user);
         else
             mNavigator.onUserNotFound();
     }
 
-    private void onUserFound() {
+    private void onUserFound(User user) {
         PreferencesHelper helper = App.getApp().getPreferencesHelper();
-        helper.setCurrentUserName(name.get());
-        helper.setCurrentUserPassword(password.get());
-        helper.setCurrentUserRemember(checked.get());
+        helper.setCurrentUserId(user.getId());
+        helper.setCurrentUserName(user.getName());
+        helper.setCurrentUserPassword(user.getPassword());
+        helper.setCurrentUserRemember(checked.getValue());
         mNavigator.onUserFound();
     }
 

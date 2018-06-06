@@ -4,10 +4,11 @@ import android.app.Application;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.app.prefs.PreferencesHelper;
-import com.example.usuario.chronotasker.data.model.Task;
-import com.example.usuario.chronotasker.data.model.User;
 import com.example.usuario.chronotasker.data.db.dao.TaskDao;
 import com.example.usuario.chronotasker.data.db.dao.UserDao;
+import com.example.usuario.chronotasker.data.model.MyObjectBox;
+import com.example.usuario.chronotasker.data.model.Task;
+import com.example.usuario.chronotasker.data.model.User;
 
 import org.joda.time.DateTime;
 
@@ -36,7 +37,7 @@ public class App extends Application {
         super.onCreate();
         sApp = this;
         mPreferencesHelper = PreferencesHelper.getInstance();
-        mBoxStore = null;//MyObjectBox.builder().androidContext(this).build();
+        mBoxStore = MyObjectBox.builder().androidContext(this).build();
 
         //Create mock database
         initDatabase();
@@ -67,21 +68,21 @@ public class App extends Application {
         UserDao userDao = UserDao.getInstance();
 
         if(taskDao.getCount() != mTaskCount) taskDao.deleteAllTasks();
-        if(userDao.getCount() != mUserCount) userDao.deleteAllUsers();
+        if(userDao.count() != mUserCount) userDao.deleteAllUsers();
 
         if(taskDao.getCount() == 0) {
             User defaultUser = new User(0, "Enrique", "enrique@gmail.com", "Pwd123");
 
             for (int i = 0; i < mTaskCount; i++) {
                 defaultUser.getTasks().add(new Task(
-                        i, "No perder el bus: " + i, mIcon,
+                        0, "No perder el bus: " + i, mIcon,
                         new DateTime(), new DateTime(), (int)(1 + Math.random() * 31),
                         "Salida a las 8:05", null,
                         null, null, null
                 ));
             }
 
-            UserDao.getInstance().insertUser(defaultUser);
+            UserDao.getInstance().insert(defaultUser);
         }
 
     }

@@ -13,14 +13,12 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.usuario.chronotasker.app.App;
 import com.example.usuario.chronotasker.R;
+import com.example.usuario.chronotasker.app.App;
 import com.example.usuario.chronotasker.data.model.Category;
 import com.example.usuario.chronotasker.data.model.Task;
 import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
 import com.example.usuario.chronotasker.mvvm.home.HomeActivity;
-import com.example.usuario.chronotasker.mvvm.task.contract.TaskViewContract;
-import com.example.usuario.chronotasker.mvvm.task.presenter.TaskViewPresenter;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -28,10 +26,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 
-public class TaskViewFragment extends BaseFragment implements TaskViewContract.View {
+public class TaskViewFragment extends BaseFragment {
     public static final String TAG = "TaskViewFragment";
 
-    private TaskViewContract.Presenter presenter;
     private TextInputLayout tilTitle, tilDescription;
     private CheckBox ckbInformal, ckbImportant, ckbUrgent;
     private TextView txvDateTime;
@@ -52,8 +49,6 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
         super.onCreate(savedInstanceState);
         //Mantener los datos en cambio de contexto
         setRetainInstance(true);
-        //Inicializar presenter
-        presenter = new TaskViewPresenter(this);
     }
 
     @Nullable
@@ -82,10 +77,12 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
         ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*
                 if (getArguments() == null)
                     presenter.addTask(createTask(finalId));
                 else
                     presenter.updateTask(createTask(finalId));
+                */
             }
         });
     }
@@ -99,6 +96,7 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
         int id = -1;
         if (args != null) {
             Task task = args.getParcelable(Task.TAG);
+            /*
             id = task.getId();
             tilTitle.getEditText().setText(task.getTitle());
             tilDescription.getEditText().setText(task.getDescription());
@@ -107,32 +105,34 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
             ckbImportant.setChecked(category.isImportant());
             ckbUrgent.setChecked(category.isUrgent());
             txvDateTime.setText(task.getStartDate().toString());
+            */
         }
         return id;
     }
 
     @NonNull
     private Task createTask(int id) {
+        int mIcon = R.drawable.ic_action_help;
         Category category = new Category();
-        category.setDefault();
+        category.setFlag(Category.CATEGORY_DEFAULT);
         if (ckbInformal.isChecked())
-            category.setInformal();
+            category.setFlag(Category.CATEGORY_INFORMAL);
         if (ckbImportant.isChecked())
-            category.setImportant();
+            category.setFlag(Category.CATEGORY_IMPORTANT);
         if (ckbUrgent.isChecked())
-            category.setUrgent();
+            category.setFlag(Category.CATEGORY_URGENT);
 
         return new Task(
                 id,
                 tilTitle.getEditText().getText().toString(),
+                mIcon,
+                new DateTime(txvDateTime.getText().toString()),
+                new DateTime(txvDateTime.getText().toString()),
+                category.getFlags(),
                 App.getApp().getPreferencesHelper().getCurrentUserId(),
-                -1,
-                new DateTime(txvDateTime.getText().toString()),
-                new DateTime(txvDateTime.getText().toString()),
-                category,
                 tilDescription.getEditText().getText().toString(),
                 "",
-                -1,
+                "",//new Alarm(),
                 new Period(0),
                 ""
         );
@@ -141,17 +141,16 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
     /**
      * Indica a la Activity que debe sacar este Fragment de la pila
      */
-    @Override
     public void reloadTaskList() {
         fragmentEventHandler.popBackStack();
     }
 
-    @Override
+
     public void onDatabaseError(String message) {
         Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
     }
 
-    @Override
+
     public void taskUpdatedInfo(String title) {
         Toast.makeText(getContext(), title + " " + getResources().getString(R.string.info_task_updated), Toast.LENGTH_SHORT).show();
     }
@@ -174,7 +173,6 @@ public class TaskViewFragment extends BaseFragment implements TaskViewContract.V
     @Override
     public void onDestroy() {
         super.onDestroy();
-        presenter.onDestroy();
     }
 
 }

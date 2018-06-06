@@ -3,15 +3,15 @@ package com.example.usuario.chronotasker.mvvm.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.app.App;
-import com.example.usuario.chronotasker.databinding.ActivityLoginBinding;
 import com.example.usuario.chronotasker.mvvm.about.AboutActivity;
 import com.example.usuario.chronotasker.mvvm.activity.ActivityUtils;
-import com.example.usuario.chronotasker.mvvm.base.BaseActivity;
+import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
 import com.example.usuario.chronotasker.mvvm.base.OnFragmentActionListener;
 import com.example.usuario.chronotasker.mvvm.base.ViewModelHolder;
 import com.example.usuario.chronotasker.mvvm.home.HomeActivity;
@@ -26,22 +26,19 @@ import com.example.usuario.chronotasker.mvvm.home.HomeActivity;
  * @see android.support.v7.app.AppCompatActivity
  * @see LoginViewModel
  */
-public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewModel> {
+public class LoginActivity extends AppCompatActivity implements OnFragmentActionListener.FragmentEventHandler {
 
     private OnFragmentActionListener selectedFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_login);
-
         setupToolbar();
 
-        // Link View and ViewModel
+        // Links View and ViewModel
         findOrCreateViewFragment().setViewModel(findOrCreateViewModel());
-
-        //btnSignup.setOnClickListener((View.OnClickListener) view -> startActivity(new Intent(LoginActivity.this, SignupActivity.class)));
     }
 
     /**
@@ -51,15 +48,19 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
         setSupportActionBar(findViewById(R.id.toolbar));
     }
 
-    private LoginFragment findOrCreateViewFragment() {
-        LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.frame_content);
-        if (loginFragment == null) {
-            loginFragment = LoginFragment.newInstance();
+    private BaseFragment findOrCreateViewFragment() {
+        setSelectedFragment((OnFragmentActionListener)
+                getSupportFragmentManager().findFragmentById(R.id.frame_content));
+        if (selectedFragment == null) {
+            LoginFragment loginFragment = LoginFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), loginFragment, R.id.frame_content);
+                    getSupportFragmentManager(),
+                    loginFragment,
+                    R.id.frame_content
+            );
+            setSelectedFragment(loginFragment);
         }
-        return loginFragment;
+        return (BaseFragment) selectedFragment;
     }
 
     /**
@@ -67,24 +68,21 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
      * @return Either returns currently retained ViewModel or creates a new one
      */
     private LoginViewModel findOrCreateViewModel() {
-
         // Fetches a retained ViewModel from Fragment Manager
-        @SuppressWarnings("unchecked")
         ViewModelHolder<LoginViewModel> retainedViewModel =
                 (ViewModelHolder<LoginViewModel>) getSupportFragmentManager()
                         .findFragmentByTag(LoginFragment.TAG);
-
         if (retainedViewModel != null && retainedViewModel.getViewmodel() != null) {
             // Returns retained ViewModel
             return retainedViewModel.getViewmodel();
         } else {
             // Creates a new ViewModel and bind it to this Activity's lifecycle
             LoginViewModel viewModel = new LoginViewModel();
-
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(),
                     ViewModelHolder.createContainer(viewModel),
-                    LoginViewModel.TAG);
+                    LoginFragment.TAG
+            );
             return viewModel;
         }
     }
@@ -131,6 +129,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
     public void setSelectedFragment(OnFragmentActionListener selectedFragment) {
         this.selectedFragment = selectedFragment;
     }
+
     @Override
     public void launchFragment(OnFragmentActionListener listener) {
         getSupportFragmentManager().popBackStack();
@@ -140,6 +139,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
                 .replace(R.id.frame_content, (Fragment) listener)
                 .commit();
     }
+
     @Override
     public void addFragment(OnFragmentActionListener listener) {
         getSupportFragmentManager()
@@ -147,6 +147,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
                 .add(R.id.frame_content, (Fragment) listener)
                 .commit();
     }
+
     @Override
     public void popBackStack() {
         getSupportFragmentManager().popBackStack();
