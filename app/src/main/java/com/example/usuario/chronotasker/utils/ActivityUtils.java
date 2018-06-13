@@ -1,4 +1,4 @@
-package com.example.usuario.chronotasker.mvvm.activity;
+package com.example.usuario.chronotasker.utils;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;

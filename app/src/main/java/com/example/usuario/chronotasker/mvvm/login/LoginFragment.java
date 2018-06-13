@@ -14,8 +14,6 @@ import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.databinding.FragmentLoginBinding;
 import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
 
-import java.util.Objects;
-
 public class LoginFragment extends BaseFragment<FragmentLoginBinding, LoginViewModel> implements LoginNavigator {
 
     //CONSTANTS
@@ -30,7 +28,6 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, LoginViewM
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
     }
 
     @Nullable
@@ -38,10 +35,14 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, LoginViewM
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false);
 
+        mBinding.setLifecycleOwner(this);
         mBinding.setViewModel(mViewModel);
-        mViewModel.name.observe(this, Objects.requireNonNull(mBinding.tilName.getEditText())::setText);
-        mViewModel.password.observe(this, Objects.requireNonNull(mBinding.tilPassword.getEditText())::setText);
-        mViewModel.checked.observe(this, mBinding.chbRemember::setChecked);
+
+        if(mBinding.hasPendingBindings())
+            mBinding.executePendingBindings();
+
+        //setRetainInstance(false);
+        mViewModel.setNavigator(this);
 
         return mBinding.getRoot();
     }
@@ -54,8 +55,6 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, LoginViewM
         parent = (ViewGroup) view.getParent();
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.login_title);
-
-        mViewModel.setNavigator(this);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.example.usuario.chronotasker.data.model;
 import android.support.annotation.IntDef;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.app.App;
+import com.example.usuario.chronotasker.data.App;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,6 +24,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 public class Category {
 
+    //LINTING
     @IntDef(flag = true,
             value = {
             CATEGORY_ARCHIVED, CATEGORY_INFORMAL, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT
@@ -31,6 +32,8 @@ public class Category {
     @Retention(RetentionPolicy.SOURCE)
     public @interface DisplayOptions { }
 
+
+    //CONSTANTES
     public static final int ARCHIVED_NAME = R.string.category_archived;
     public static final int INFORMAL_NAME = R.string.category_informal;
     public static final int DEFAULT_NAME = R.string.category_default;
@@ -42,30 +45,17 @@ public class Category {
     public static final int CATEGORY_DEFAULT = 0x01 << 2;
     public static final int CATEGORY_IMPORTANT = 0x01 << 3;
     public static final int CATEGORY_URGENT = 0x01 << 4;
-    public static final int MAX_PRIORITY = 0x01 << 5 - 1;
+    public static final int MAX_PRIORITY = (0x01 << 5) - 1;
+
 
     //PARAMETROS
     private int flags;
 
-    public static int comparer(int priority, int otherPriority, @DisplayOptions int flag) {
-        boolean firstHasFlag = hasFlag(priority, flag);
-        boolean secondHasFlag = hasFlag(otherPriority, flag);
 
-        if (firstHasFlag == secondHasFlag)
-            return 0;
-        else
-            return firstHasFlag ? 1 : -1;
-    }
-
-    public static void checkValidPriority(int priority) throws IllegalArgumentException {
-        if(priority < CATEGORY_ARCHIVED || priority > MAX_PRIORITY)
-            throw new IllegalArgumentException(App.getApp().getResources().getString(R.string.error_category_argument));
-    }
-
+    //CONSTRUCTORES
     public Category() {
         setFlag(CATEGORY_DEFAULT);
     }
-
     /**
      * Pide las opciones que se han declarado arriba
      * @param priority Unión de múltiples flags para categoría compuesta
@@ -74,10 +64,8 @@ public class Category {
         checkValidPriority(priority);
     }
 
-    public int getFlags() {
-        return flags;
-    }
 
+    //COMPARACION Y ANALISIS DE FLAGS
     /**
      * Comprueba si el objeto contiene una categoría concreta.
      * @param flag Categoría contenida en el objeto.
@@ -85,45 +73,55 @@ public class Category {
      */
     public static boolean hasFlag(int priority, @DisplayOptions int flag) {
         checkValidPriority(priority);
-        if(priority == CATEGORY_ARCHIVED || flag == CATEGORY_ARCHIVED)
-            return flag == CATEGORY_ARCHIVED;
-        return priority == (priority | flag);
+        return priority != CATEGORY_ARCHIVED && flag != CATEGORY_ARCHIVED ?
+                priority == (priority | flag) :
+                flag == CATEGORY_ARCHIVED;
+    }
+    public static void checkValidPriority(int priority) throws IllegalArgumentException {
+        if(priority < CATEGORY_ARCHIVED || priority > MAX_PRIORITY)
+            throw new IllegalArgumentException(App.getApp().getResources().getString(R.string.error_category_argument));
+    }
+    public static int compareFlagPriority(int priority, int otherPriority, @DisplayOptions int flag) {
+        boolean firstHasFlag = hasFlag(priority, flag);
+        boolean secondHasFlag = hasFlag(otherPriority, flag);
+
+        return firstHasFlag == secondHasFlag ? 0 : firstHasFlag ? 1 : -1;
     }
 
+
+    //MANEJO DE FLAGS
+    public int getFlags() {
+        return flags;
+    }
     /**
      * Permite añadir los flags de la categoría.
      * @param flag Categoría que se añade al objeto.
      */
     public void setFlag(@DisplayOptions int flag) {
-        if(flag != CATEGORY_ARCHIVED) {
-            flags = flags | flag;
-        } else {
-            flags = CATEGORY_ARCHIVED;
-        }
+        flags = flag != CATEGORY_ARCHIVED ?
+                flags | flag :
+                CATEGORY_ARCHIVED;
     }
-
     /**
      * Permite editar los flags de la categoría.
      * @param flag Categoría que se elimina al objeto.
      */
     public void unSetFlag(@DisplayOptions int flag) {
-        if(flag != CATEGORY_ARCHIVED) {
+        if(flag != CATEGORY_ARCHIVED)
             flags = flags ^ flag;
-        }
     }
-
     /**
      * Devuelve el nombre de la categoría más característica
      * @return Valor del recurso String correspondiente a dicha categoría.
      */
     public static int getFlagStringResId(int priority) {
-            if(hasFlag(priority, CATEGORY_URGENT)) return URGENT_NAME;
-            if(hasFlag(priority, CATEGORY_IMPORTANT)) return IMPORTANT_NAME;
-            if(hasFlag(priority, CATEGORY_DEFAULT)) return DEFAULT_NAME;
-            if(hasFlag(priority, CATEGORY_INFORMAL)) return INFORMAL_NAME;
-            return ARCHIVED_NAME;
+        //TODO: Use Dictionary here
+        if(hasFlag(priority, CATEGORY_URGENT))          return URGENT_NAME;
+        if(hasFlag(priority, CATEGORY_IMPORTANT))       return IMPORTANT_NAME;
+        if(hasFlag(priority, CATEGORY_DEFAULT))         return DEFAULT_NAME;
+        if(hasFlag(priority, CATEGORY_INFORMAL))        return INFORMAL_NAME;
+                                                        return ARCHIVED_NAME;
     }
-
     public static String getCategoryName(int priority) {
         return App.getApp().getResources().getString(getFlagStringResId(priority));
     }

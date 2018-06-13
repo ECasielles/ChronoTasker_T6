@@ -1,16 +1,9 @@
 package com.example.usuario.chronotasker.data.repository;
 
-import android.arch.lifecycle.MutableLiveData;
-
-import com.example.usuario.chronotasker.data.model.Task;
 import com.example.usuario.chronotasker.data.db.dao.TaskDao;
+import com.example.usuario.chronotasker.data.model.Task;
 
-import java.util.Collection;
 import java.util.List;
-
-import io.objectbox.android.ObjectBoxLiveData;
-import io.objectbox.reactive.DataObserver;
-import io.objectbox.reactive.DataSubscription;
 
 
 /**
@@ -31,6 +24,7 @@ public class TaskRepository {
         return instance;
     }
 
+    /*
     public DataSubscription subscribeToTaskList(DataObserver<List<Task>> observer) {
         return taskDao.subscribeToTaskList(observer);
     }
@@ -38,6 +32,7 @@ public class TaskRepository {
     public DataSubscription subscribeToTask(DataObserver<Task> observer, long id, boolean singleUpdate) {
         return taskDao.subscribeToTask(observer, id, singleUpdate);
     }
+
     public void addTaskCollection(Collection<Task> tasks) {
         taskDao.insertTasks(tasks);
     }
@@ -52,5 +47,22 @@ public class TaskRepository {
     public ObjectBoxLiveData<Task> getTasksLiveData() {
         return taskDao.getAllTasksById();
     }
+    */
+
+
+    public List<Task> findCurrentUserTaskList() {
+        return taskDao.findCurrentUserTaskList();
+    }
+
+    /*
+    public User findFirstUser() {
+        return taskDao.findFirst();
+    }
+
+    public User findCurrentUser() {
+        long userId = App.getApp().getPreferencesHelper().getCurrentUserId();
+        return taskDao.findById(userId);
+    }
+    */
 
 }

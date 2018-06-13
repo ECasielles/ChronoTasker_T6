@@ -1,6 +1,6 @@
 package com.example.usuario.chronotasker.data.db.dao;
 
-import com.example.usuario.chronotasker.app.App;
+import com.example.usuario.chronotasker.data.App;
 
 import java.util.Collection;
 import java.util.List;
@@ -49,5 +49,9 @@ public abstract class BaseDao<T> {
     public long count() {
         return getBox().count();
     }
+
+    public abstract T findFirst();
+
+    public abstract T findById(long id);
 
 }

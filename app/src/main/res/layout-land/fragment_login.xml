@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/tilUserHint"
                     android:inputType="text"
-                    bind:text="@{viewModel.name}"
+                    android:text="@={viewModel.name}"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/tilPasswordHint"
                     android:inputType="textPassword"
-                    bind:text="@{viewModel.password}"
+                    android:text="@={viewModel.password}"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -73,7 +73,7 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/tilPassword"
                 app:layout_constraintTop_toBottomOf="@+id/tilPassword"
-                bind:checked="@{safeUnbox(viewModel.checked)}"
+                android:checked="@={viewModel.checked}"
                 />
 
             <Button

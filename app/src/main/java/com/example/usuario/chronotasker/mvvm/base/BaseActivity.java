@@ -1,6 +1,5 @@
 package com.example.usuario.chronotasker.mvvm.base;
 
-import android.arch.lifecycle.LifecycleObserver;
 import android.databinding.ViewDataBinding;
 import android.support.v7.app.AppCompatActivity;
 
@@ -18,10 +17,6 @@ public abstract class BaseActivity<DB extends ViewDataBinding, VM extends BaseVi
         super.onDestroy();
 
         mBinding = null;
-
-        //LifecycleObserver
-        if (mViewModel != null)
-            getLifecycle().removeObserver((LifecycleObserver) mViewModel);
 
         mViewModel = null;
     }

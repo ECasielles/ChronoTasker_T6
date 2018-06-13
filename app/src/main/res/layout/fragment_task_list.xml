@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    >
 
     <data>
-        <!--<variable
-            name="tasks"
-            type="android"/>-->
+        <variable
+            name="viewModel"
+            type="com.example.usuario.chronotasker.mvvm.task.list.TaskListViewModel"/>
     </data>
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         >
 
         <android.support.v7.widget.RecyclerView
-            android:id="@android:id/list"
+            android:id="@+id/recycler_task_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
+            tools:listitem="@layout/item_task"
             />
 
-    </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floationActionButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:src="@drawable/ic_add_task_default"
+            app:pressedTranslationZ="@dimen/fab_pressed_translation_z"
+            bind:onClick="@{() -> viewModel.newTask()}"
+            />
+
+    </android.support.design.widget.CoordinatorLayout>
 </layout>

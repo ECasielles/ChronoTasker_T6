@@ -1,6 +1,6 @@
 package com.example.usuario.chronotasker.data.db.dao;
 
-import com.example.usuario.chronotasker.app.App;
+import com.example.usuario.chronotasker.data.App;
 import com.example.usuario.chronotasker.data.model.User;
 import com.example.usuario.chronotasker.data.model.User_;
 
@@ -10,7 +10,7 @@ import io.objectbox.query.Query;
 /**
  * Singleton con acceso a la base de datos local de usuarios.
  */
-public class UserDao extends BaseDao<User>{
+public class UserDao extends BaseDao<User> {
 
     private static UserDao sInstance;
 
@@ -42,8 +42,21 @@ public class UserDao extends BaseDao<User>{
                 .and()
                 .equal(User_.password, password)
                 .build();
-
         return (User) query.findFirst();
+    }
+
+    //HEREDADOS DE BASEDAO
+    @Override
+    public User findFirst() {
+        return getBox().query().equal(User_.id, 1L).build().findFirst();
+    }
+    @Override
+    public User findById(long id) {
+        return getBox().query().equal(User_.id, id).build().findFirst();
+    }
+
+    public User findCurrentUser() {
+        return UserDao.getInstance().findById(App.getApp().getPreferencesHelper().getCurrentUserId());
     }
 
 }

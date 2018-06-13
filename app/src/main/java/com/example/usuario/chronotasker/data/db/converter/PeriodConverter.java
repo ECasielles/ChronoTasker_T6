@@ -11,12 +11,15 @@ public class PeriodConverter extends BaseObservable implements PropertyConverter
 
     @Override
     public Period convertToEntityProperty(Integer databaseValue) {
-        return new Period().plusMillis(databaseValue);
+        return databaseValue == null ?
+                new Period(0)   :
+                new Period().plusMillis(databaseValue);
     }
 
     @Override
     public Integer convertToDatabaseValue(Period entityProperty) {
-        return entityProperty.getMillis();
+        return entityProperty == null ? 0 :
+                entityProperty.getMillis();
     }
 
 }

@@ -13,6 +13,11 @@
             android:icon="@drawable/ic_action_alarm"
             android:title="@string/action_alarm"
             />
+        <item
+            android:id="@+id/action_game"
+            android:icon="@drawable/ic_action_game"
+            android:title="@string/action_game"
+            />
     </group>
 
     <!--Submenú-->

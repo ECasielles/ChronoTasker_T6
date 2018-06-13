@@ -2,19 +2,19 @@ package com.example.usuario.chronotasker.mvvm.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.app.App;
+import com.example.usuario.chronotasker.data.App;
 import com.example.usuario.chronotasker.mvvm.about.AboutActivity;
-import com.example.usuario.chronotasker.mvvm.activity.ActivityUtils;
 import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
 import com.example.usuario.chronotasker.mvvm.base.OnFragmentActionListener;
 import com.example.usuario.chronotasker.mvvm.base.ViewModelHolder;
 import com.example.usuario.chronotasker.mvvm.home.HomeActivity;
+import com.example.usuario.chronotasker.utils.ActivityUtils;
+
 
 /**
  * Clase Activity de la vista principal, Login, desde la que
@@ -25,6 +25,7 @@ import com.example.usuario.chronotasker.mvvm.home.HomeActivity;
  * @version 2.0
  * @see android.support.v7.app.AppCompatActivity
  * @see LoginViewModel
+ * @see OnFragmentActionListener
  */
 public class LoginActivity extends AppCompatActivity implements OnFragmentActionListener.FragmentEventHandler {
 
@@ -71,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements OnFragmentAction
         // Fetches a retained ViewModel from Fragment Manager
         ViewModelHolder<LoginViewModel> retainedViewModel =
                 (ViewModelHolder<LoginViewModel>) getSupportFragmentManager()
-                        .findFragmentByTag(LoginFragment.TAG);
+                        .findFragmentByTag(LoginViewModel.TAG);
         if (retainedViewModel != null && retainedViewModel.getViewmodel() != null) {
             // Returns retained ViewModel
             return retainedViewModel.getViewmodel();
@@ -81,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements OnFragmentAction
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(),
                     ViewModelHolder.createContainer(viewModel),
-                    LoginFragment.TAG
+                    LoginViewModel.TAG
             );
             return viewModel;
         }
@@ -123,33 +124,22 @@ public class LoginActivity extends AppCompatActivity implements OnFragmentAction
      * Asigna el Fragment en uso como seleccionado para comunicación
      * entre Fragment y Activity
      *
-     * @param selectedFragment
+     * @param listener
      */
     @Override
-    public void setSelectedFragment(OnFragmentActionListener selectedFragment) {
-        this.selectedFragment = selectedFragment;
+    public void setSelectedFragment(OnFragmentActionListener listener) {
+        selectedFragment = listener;
     }
 
+    //TODO: KILL
     @Override
-    public void launchFragment(OnFragmentActionListener listener) {
-        getSupportFragmentManager().popBackStack();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.frame_content, (Fragment) listener)
-                .commit();
-    }
-
+    public void launchFragment(OnFragmentActionListener listener) {    }
     @Override
-    public void addFragment(OnFragmentActionListener listener) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.frame_content, (Fragment) listener)
-                .commit();
-    }
+    public void addFragment(OnFragmentActionListener listener) {    }
 
     @Override
     public void popBackStack() {
         getSupportFragmentManager().popBackStack();
     }
+
 }

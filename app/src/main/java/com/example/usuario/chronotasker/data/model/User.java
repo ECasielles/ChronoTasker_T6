@@ -17,25 +17,35 @@ import io.objectbox.relation.ToMany;
 @Entity
 public class User extends BaseModel {
 
-    @Id
-    private long id;
+    @Id(assignable = true)
+    public long id;
+    @Backlink
+    public ToMany<Task> tasks;
+
     private String name;
     private String email;
     private String password;
-
-    @Backlink
-    private ToMany<Task> tasks;
+    private int imgProfile;
 
     public User() { }
     public User(String name, String password) {
         this.name = name;
         this.password = password;
     }
-    public User(long id, String name, String email, String password) {
+    public User(int id, String name, String email, String password, int imgProfile) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.imgProfile = imgProfile;
+    }
+    public User(long id, String name, String email, String password, int imgProfile, ToMany<Task> tasks) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.imgProfile = imgProfile;
+        this.tasks = tasks;
     }
 
     public long getId() {
@@ -62,12 +72,11 @@ public class User extends BaseModel {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    public ToMany<Task> getTasks() {
-        return tasks;
+    public int getImgProfile() {
+        return imgProfile;
     }
-    public void setTasks(ToMany<Task> tasks) {
-        this.tasks = tasks;
+    public void setImgProfile(int imgProfile) {
+        this.imgProfile = imgProfile;
     }
 
     @Override
@@ -75,6 +84,7 @@ public class User extends BaseModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id || user.name.equals(((User) o).name) && user.password.equals(((User) o).password);
+        return id == user.id || name.equals(user.name) && password.equals(user.password);
     }
+
 }

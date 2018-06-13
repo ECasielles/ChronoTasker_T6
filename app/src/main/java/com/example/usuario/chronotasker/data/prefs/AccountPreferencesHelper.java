@@ -1,4 +1,4 @@
-package com.example.usuario.chronotasker.app.prefs;
+package com.example.usuario.chronotasker.data.prefs;
 
 /**
  * Interfaz que contiene las constantes que se usan

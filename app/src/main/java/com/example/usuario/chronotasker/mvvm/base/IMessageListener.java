@@ -1,4 +1,4 @@
-package com.example.usuario.chronotasker.mvvm.activity;
+package com.example.usuario.chronotasker.mvvm.base;
 
 public interface IMessageListener {
     void show(String message);

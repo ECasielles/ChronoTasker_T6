@@ -65,7 +65,7 @@
     },
     {
       "id": "3:806148019075323788",
-      "lastPropertyId": "14:45837992967355296",
+      "lastPropertyId": "13:5540983385666483204",
       "name": "Task",
       "properties": [
         {
@@ -117,27 +117,23 @@
           "name": "alarm"
         },
         {
-          "id": "14:45837992967355296",
-          "indexId": "2:6165857795886742648",
-          "name": "userId"
+          "id": "13:5540983385666483204",
+          "indexId": "1:5252201536430935059",
+          "name": "ownerId"
         }
       ],
       "relations": []
     }
   ],
   "lastEntityId": "3:806148019075323788",
-  "lastIndexId": "2:6165857795886742648",
+  "lastIndexId": "1:5252201536430935059",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 4,
   "modelVersionParserMinimum": 4,
   "retiredEntityUids": [],
-  "retiredIndexUids": [
-    5252201536430935059
-  ],
-  "retiredPropertyUids": [
-    5540983385666483204
-  ],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
   "retiredRelationUids": [],
   "version": 1
 }

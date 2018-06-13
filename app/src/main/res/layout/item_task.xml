@@ -10,7 +10,7 @@
         <import type="com.example.usuario.chronotasker.utils.Common" />
         <import type="com.example.usuario.chronotasker.data.model.Category" />
         <variable name="task" type="com.example.usuario.chronotasker.data.model.Task" />
-        <variable name="listener" type="com.example.usuario.chronotasker.mvvm.activity.IMessageListener" />
+        <variable name="listener" type="com.example.usuario.chronotasker.mvvm.base.IMessageListener" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -47,7 +47,7 @@
                     android:paddingEnd="@dimen/margin_medium"
                     android:paddingStart="@dimen/margin_medium"
                     android:paddingTop="@dimen/margin_medium"
-                    bind:srcCompat="@{task.getIconId()}"
+                    bind:setSrcCompat="@{task.getIconId()}"
                     card_view:layout_constraintStart_toStartOf="parent"
                     card_view:layout_constraintTop_toTopOf="parent"
                     tools:src="@mipmap/ic_launcher"

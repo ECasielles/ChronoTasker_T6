@@ -1,4 +1,4 @@
-package com.example.usuario.chronotasker.mvvm.task.fragment;
+package com.example.usuario.chronotasker.mvvm.task.view;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,16 +14,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.app.App;
 import com.example.usuario.chronotasker.data.model.Category;
 import com.example.usuario.chronotasker.data.model.Task;
 import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
-import com.example.usuario.chronotasker.mvvm.home.HomeActivity;
 
 import org.joda.time.DateTime;
-import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.util.Objects;
 
 
 public class TaskViewFragment extends BaseFragment {
@@ -74,17 +73,14 @@ public class TaskViewFragment extends BaseFragment {
 
         //FloatingActionButton
         final int finalId = getArgumentsAndTaskId();
-        ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*
-                if (getArguments() == null)
-                    presenter.addTask(createTask(finalId));
-                else
-                    presenter.updateTask(createTask(finalId));
-                */
-            }
+        /*
+        ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener((View.OnClickListener) view1 -> {
+            if (getArguments() == null)
+                presenter.openTask(createTask(finalId));
+            else
+                presenter.updateTask(createTask(finalId));
         });
+        */
     }
 
     /**
@@ -122,19 +118,19 @@ public class TaskViewFragment extends BaseFragment {
         if (ckbUrgent.isChecked())
             category.setFlag(Category.CATEGORY_URGENT);
 
+        //TODO: Set user user at some point
         return new Task(
                 id,
-                tilTitle.getEditText().getText().toString(),
+                Objects.requireNonNull(tilTitle.getEditText()).getText().toString(),
                 mIcon,
                 new DateTime(txvDateTime.getText().toString()),
                 new DateTime(txvDateTime.getText().toString()),
                 category.getFlags(),
-                App.getApp().getPreferencesHelper().getCurrentUserId(),
-                tilDescription.getEditText().getText().toString(),
-                "",
-                "",//new Alarm(),
-                new Period(0),
-                ""
+                Objects.requireNonNull(tilDescription.getEditText()).getText().toString(),
+                null,
+                null,
+                null,
+                null
         );
     }
 

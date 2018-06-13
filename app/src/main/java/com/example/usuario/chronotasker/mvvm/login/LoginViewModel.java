@@ -2,8 +2,8 @@ package com.example.usuario.chronotasker.mvvm.login;
 
 import android.arch.lifecycle.MutableLiveData;
 
-import com.example.usuario.chronotasker.app.App;
-import com.example.usuario.chronotasker.app.prefs.PreferencesHelper;
+import com.example.usuario.chronotasker.data.App;
+import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.data.model.User;
 import com.example.usuario.chronotasker.data.repository.UserRepository;
 import com.example.usuario.chronotasker.mvvm.base.navigator.INavigator;
@@ -16,18 +16,48 @@ public class LoginViewModel extends NavigatorViewModel {
     //CONSTANTS
     public static String TAG = LoginViewModel.class.getSimpleName();
 
-    public MutableLiveData<String> name = new MutableLiveData<>();
-    public MutableLiveData<String> email = new MutableLiveData<>();
-    public MutableLiveData<String> password = new MutableLiveData<>();
-    public MutableLiveData<Boolean> checked = new MutableLiveData<>();
+    public final MutableLiveData<String> name = new MutableLiveData<>();
+    public final MutableLiveData<String> email = new MutableLiveData<>();
+    public final MutableLiveData<String> password = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> checked = new MutableLiveData<>();
 
     private LoginNavigator mNavigator;
 
     public LoginViewModel() {
         checked.setValue(Boolean.FALSE);
-        name.setValue("Usuario");
-        password.setValue("Pwd123");
-        email.setValue("example@test.com");
+
+        User testUser = UserRepository.getInstance().findFirstUser();
+        if(testUser != null) {
+            name.setValue(testUser.getName());
+            password.setValue(testUser.getPassword());
+            //TODO: FIX
+            email.setValue(testUser.getEmail());
+        }
+    }
+
+    public String getName() {
+        return name.getValue();
+    }
+    public String getPassword() {
+        return password.getValue();
+    }
+    public String getEmail() {
+        return email.getValue();
+    }
+    public boolean getChecked() {
+        return checked.getValue();
+    }
+    public void setName(String name) {
+        this.name.setValue(name);
+    }
+    public void setPassword(String password) {
+        this.password.setValue(password);
+    }
+    public void setEmail(String email) {
+        this.email.setValue(email);
+    }
+    public void setChecked(boolean checked) {
+        this.checked.setValue(checked);
     }
 
     @Override
@@ -35,10 +65,10 @@ public class LoginViewModel extends NavigatorViewModel {
         mNavigator = (LoginNavigator) navigator;
     }
 
-    //TODO: Move these two to LoginFragment to use DataBinding???
     public void onClickLogin() {
         validateFields(name.getValue(), password.getValue());
     }
+
     public void onClickSignup() {
         //Load fragment from View
     }
@@ -70,7 +100,11 @@ public class LoginViewModel extends NavigatorViewModel {
     }
 
     private boolean areFieldsEmpty(String name, String password) {
-        return name.isEmpty() || password.isEmpty();
+        if (name != null && password != null)
+            return name.isEmpty() || password.isEmpty();
+        else
+            return true;
+
     }
 
     private boolean isInvalidFieldLength(String name) {
@@ -80,5 +114,7 @@ public class LoginViewModel extends NavigatorViewModel {
     private boolean isInvalidPasswordFormat(String password) {
         return !Common.isValidPasswordFormat(password);
     }
+
+
 
 }

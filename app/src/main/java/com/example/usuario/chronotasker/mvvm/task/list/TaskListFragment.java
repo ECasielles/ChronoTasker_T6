@@ -1,5 +1,6 @@
-package com.example.usuario.chronotasker.mvvm.task.fragment;
+package com.example.usuario.chronotasker.mvvm.task.list;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,7 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,26 +17,33 @@ import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.model.Task;
+import com.example.usuario.chronotasker.databinding.FragmentTaskListBinding;
 import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
-import com.example.usuario.chronotasker.mvvm.home.HomeActivity;
+import com.example.usuario.chronotasker.mvvm.base.OnFragmentActionListener;
 import com.example.usuario.chronotasker.mvvm.task.adapter.OnTaskActionListener;
 import com.example.usuario.chronotasker.mvvm.task.adapter.RecyclerItemTouchHelper;
 import com.example.usuario.chronotasker.mvvm.task.adapter.TaskAdapter;
+import com.example.usuario.chronotasker.mvvm.task.view.TaskViewFragment;
 
 import java.util.Objects;
 
 /**
  * Fragment que muestra la lista de tareas
  */
-public class TaskListFragment extends BaseFragment
-        implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, OnTaskActionListener {
+public class TaskListFragment extends BaseFragment<FragmentTaskListBinding, TaskListViewModel>
+        implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, OnTaskActionListener, OnFragmentActionListener {
 
     //CONSTANTS
     public static String TAG = TaskListFragment.class.getSimpleName();
 
     private TaskAdapter adapter;
     private ViewGroup parent;
-    private RecyclerView recyclerView;
+
+
+    public static TaskListFragment newInstance() {
+        return new TaskListFragment();
+    }
+
 
     /**
      * Devuelve la instancia guardada de este Fragment o crea una nueva
@@ -48,10 +55,11 @@ public class TaskListFragment extends BaseFragment
     public static TaskListFragment getInstance(AppCompatActivity appCompatActivity) {
         TaskListFragment taskListFragment = (TaskListFragment)
                 appCompatActivity.getSupportFragmentManager().findFragmentByTag(TAG);
-        if (taskListFragment == null)
-            taskListFragment = new TaskListFragment();
-        return taskListFragment;
+        return taskListFragment == null ?
+                new TaskListFragment() :
+                taskListFragment;
     }
+
 
     /**
      * Inicializa los parámetros del Fragment
@@ -60,56 +68,52 @@ public class TaskListFragment extends BaseFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        fragmentEventHandler = (FragmentEventHandler) getActivity();
         setHasOptionsMenu(true);
         setRetainInstance(true);
     }
 
-    /**
-     * Inicializa los elementos de la vista del Fragment
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_task_list, container, false);
-        setupRecyclerView(view);
-        parent = view.findViewById(android.R.id.content);
-        return view;
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_task_list, container, false);
+        mBinding.setLifecycleOwner(this);
+        mBinding.setViewModel(mViewModel);
+
+        adapter = new TaskAdapter(R.layout.item_task, mViewModel.getTaskList());
+        mBinding.recyclerTaskList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBinding.recyclerTaskList.setAdapter(adapter);
+
+        if(mBinding.hasPendingBindings())
+            mBinding.executePendingBindings();
+
+        //setRetainInstance(false);
+        //mViewModel.setNavigator(this);
+
+        return mBinding.getRoot();
     }
 
-    /**
-     * Modifica los elementos de la vista una vez instanciados
-     * @param view
-     * @param savedInstanceState
-     */
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupRecyclerView(view);
+
+        //Guarda vista para Snackbar
+        parent = (ViewGroup) view.getParent();
+
+        //setupRecyclerView(view);
 
         //ItemTouchCallbackHelper controla la acción Swipe
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(
+        /*ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(
                 0, ItemTouchHelper.START | ItemTouchHelper.END, this);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-
-        ((HomeActivity) Objects.requireNonNull(getActivity())).floatingActionButton.setOnClickListener(view1 -> addTask(null));
-    }
-
-
-    private void setupRecyclerView(View view) {
-        recyclerView = view.findViewById(android.R.id.list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);*/
     }
 
     /**
      * Lanza TaskViewFragment
      * @param bundle
      */
-    private void addTask(Bundle bundle) {
+    private void openTask(Bundle bundle) {
         fragmentEventHandler.launchFragment(
                 TaskViewFragment.getInstance(
                         (AppCompatActivity) Objects.requireNonNull(getActivity()),
@@ -126,7 +130,7 @@ public class TaskListFragment extends BaseFragment
     public void onTaskClick(Task task) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Task.TAG, task);
-        addTask(bundle);
+        openTask(bundle);
     }
 
     @Override
@@ -143,7 +147,7 @@ public class TaskListFragment extends BaseFragment
      */
     public void onTaskDeleteEvent(final int position, final Task task) {
         //Notifica y permite deshacer la acción
-        Snackbar snackbar = Snackbar.make(recyclerView, task.getTitle() + " archivada", Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(getView(), task.getTitle() + " archivada", Snackbar.LENGTH_LONG);
         snackbar.addCallback(new Snackbar.Callback() {
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
@@ -151,11 +155,8 @@ public class TaskListFragment extends BaseFragment
                 //if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) presenter.deleteTask(task);
             }
         });
-        snackbar.setAction(getContext().getResources().getString(R.string.undo), new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //presenter.restoreTask(position, task);
-            }
+        snackbar.setAction(getContext().getResources().getString(R.string.undo), view -> {
+            //presenter.restoreTask(position, task);
         });
         snackbar.setActionTextColor(getContext().getResources().getColor(R.color.colorAccent));
         snackbar.show();

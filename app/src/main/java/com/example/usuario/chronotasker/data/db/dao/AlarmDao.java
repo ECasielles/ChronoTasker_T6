@@ -1,6 +1,6 @@
 package com.example.usuario.chronotasker.data.db.dao;
 
-import com.example.usuario.chronotasker.app.App;
+import com.example.usuario.chronotasker.data.App;
 import com.example.usuario.chronotasker.data.model.Alarm;
 import com.example.usuario.chronotasker.data.model.Alarm_;
 

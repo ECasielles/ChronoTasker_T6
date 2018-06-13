@@ -2,25 +2,30 @@ package com.example.usuario.chronotasker.mvvm.home;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.app.App;
-import com.example.usuario.chronotasker.databinding.ActivityBaseBinding;
-import com.example.usuario.chronotasker.mvvm.activity.IMessageListener;
+import com.example.usuario.chronotasker.data.App;
+import com.example.usuario.chronotasker.databinding.HeaderNavviewBinding;
 import com.example.usuario.chronotasker.mvvm.alarm.AlarmListFragment;
-import com.example.usuario.chronotasker.mvvm.base.BaseActivity;
+import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
+import com.example.usuario.chronotasker.mvvm.base.IMessageListener;
 import com.example.usuario.chronotasker.mvvm.base.OnFragmentActionListener;
+import com.example.usuario.chronotasker.mvvm.base.ViewModelHolder;
+import com.example.usuario.chronotasker.mvvm.game.Sketch;
 import com.example.usuario.chronotasker.mvvm.login.LoginActivity;
 import com.example.usuario.chronotasker.mvvm.settings.AccountSettingsActivity;
-import com.example.usuario.chronotasker.mvvm.task.fragment.TaskListFragment;
+import com.example.usuario.chronotasker.mvvm.task.list.TaskListFragment;
+import com.example.usuario.chronotasker.mvvm.task.list.TaskListViewModel;
+import com.example.usuario.chronotasker.utils.ActivityUtils;
 
 import java.util.Objects;
 
@@ -29,39 +34,29 @@ import java.util.Objects;
  * Activity que maneja el uso de la lista de tareas
  *
  * @author Enrique Casielles Lapeira
+ * @version 2.0
  */
-public class HomeActivity extends BaseActivity<ActivityBaseBinding, HomeViewModel>
+public class HomeActivity extends AppCompatActivity
         implements OnFragmentActionListener.FragmentEventHandler, HomeNavigator, IMessageListener {
 
-    public FloatingActionButton floatingActionButton;
     private OnFragmentActionListener selectedFragment;
     private DrawerLayout drawerLayout;
+    private HomeViewModel mViewModel;
+    private HeaderNavviewBinding headerNavviewBinding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
-        //Inicializa el ViewModel
-        mViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        //mViewModel.setNavigator(this);
-
-        floatingActionButton = findViewById(R.id.floationActionButton);
-        drawerLayout = findViewById(R.id.drawer_layout);
-
+        setupNavigationView();
+        setupViewModel();
         setupToolbar();
 
-        setupNavigationView();
-
-        addFragment(TaskListFragment.getInstance(this));
-    }
-
-
-    private void setupToolbar() {
-        setSupportActionBar(findViewById(R.id.toolbar));
-        Objects.requireNonNull(getSupportActionBar())
-                .setHomeAsUpIndicator(R.drawable.ic_action_home);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Links View and ViewModel
+        findOrCreateViewFragment().setViewModel(findOrCreateViewModel());
+        //addFragment(TaskListFragment.getInstance(this));
     }
 
 
@@ -71,8 +66,29 @@ public class HomeActivity extends BaseActivity<ActivityBaseBinding, HomeViewMode
      */
     private void setupNavigationView() {
         NavigationView navigationView = findViewById(R.id.navview);
+
+        headerNavviewBinding = DataBindingUtil.inflate(
+                getLayoutInflater(), R.layout.header_navview, navigationView, false);
+
+        navigationView.addHeaderView(headerNavviewBinding.getRoot());
         navigationView.setNavigationItemSelectedListener(this::navigationAction);
         navigationView.setCheckedItem(R.id.action_home);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+    }
+    /**
+     * Inicializa el ViewModel
+     */
+    private void setupViewModel() {
+        mViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        mViewModel.setNavigator(this);
+        headerNavviewBinding.setViewModel(mViewModel);
+    }
+    private void setupToolbar() {
+        setSupportActionBar(findViewById(R.id.toolbar));
+        Objects.requireNonNull(getSupportActionBar())
+                .setHomeAsUpIndicator(R.drawable.ic_action_home);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -89,10 +105,23 @@ public class HomeActivity extends BaseActivity<ActivityBaseBinding, HomeViewMode
                 launchFragment(AlarmListFragment.newInstance(this));
                 item.setChecked(true);
                 break;
-            case R.id.action_settings:  launchSettingsActivity();
+            case R.id.action_game:
+                getSupportFragmentManager().popBackStack();
+                getFragmentManager()
+                        .beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.frame_content, new Sketch())
+                        .commit();
+                //launchFragment(GameFragment.newInstance(this, mViewModel));
+                item.setChecked(true);
                 break;
-            case R.id.action_help:
+            case R.id.action_settings:  //launchSettingsActivity();
                 break;
+            case R.id.action_help:      //launchSettingsActivity();
+                break;
+            //TODO: launch AboutActivity
+            //case R.id.action_about:      //launchAboutActivity();
+            //    break;
             case R.id.action_logout:    navigateToLogin();
                 break;
         }
@@ -102,8 +131,48 @@ public class HomeActivity extends BaseActivity<ActivityBaseBinding, HomeViewMode
     }
 
 
+    private BaseFragment findOrCreateViewFragment() {
+        setSelectedFragment((OnFragmentActionListener)
+                getSupportFragmentManager().findFragmentById(R.id.frame_content));
+        if (selectedFragment == null) {
+            TaskListFragment taskListFragment = TaskListFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(
+                    getSupportFragmentManager(),
+                    taskListFragment,
+                    R.id.frame_content
+            );
+            setSelectedFragment(taskListFragment);
+        }
+        return (BaseFragment) selectedFragment;
+    }
+
+
+    /**
+     * Handles ViewModel retention in configuration changes
+     * @return Either returns currently retained ViewModel or creates a new one
+     */
+    private TaskListViewModel findOrCreateViewModel() {
+        // Fetches a retained ViewModel from Fragment Manager
+        ViewModelHolder<TaskListViewModel> retainedViewModel =
+                (ViewModelHolder<TaskListViewModel>) getSupportFragmentManager()
+                        .findFragmentByTag(TaskListViewModel.TAG);
+        if (retainedViewModel != null && retainedViewModel.getViewmodel() != null) {
+            // Returns retained ViewModel
+            return retainedViewModel.getViewmodel();
+        } else {
+            // Creates a new ViewModel and bind it to this Activity's lifecycle
+            TaskListViewModel viewModel = new TaskListViewModel();
+            ActivityUtils.addFragmentToActivity(
+                    getSupportFragmentManager(),
+                    ViewModelHolder.createContainer(viewModel),
+                    TaskListViewModel.TAG
+            );
+            return viewModel;
+        }
+    }
+
+
     private void launchSettingsActivity() {
-        //TODO: launch AboutActivity
         //TODO: launch GeneralSettingsActivity, change theme and language
         //TODO: launch AccountSettingsActivity, change profile settings
         startActivity(new Intent(this, AccountSettingsActivity.class));
@@ -119,6 +188,7 @@ public class HomeActivity extends BaseActivity<ActivityBaseBinding, HomeViewMode
 
     @Override
     public void launchFragment(OnFragmentActionListener listener) {
+        ((BaseFragment)listener).setViewModel(mViewModel);
         getSupportFragmentManager().popBackStack();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -130,6 +200,7 @@ public class HomeActivity extends BaseActivity<ActivityBaseBinding, HomeViewMode
 
     @Override
     public void addFragment(OnFragmentActionListener listener) {
+        ((BaseFragment)listener).setViewModel(mViewModel);
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.frame_content, (Fragment) listener)

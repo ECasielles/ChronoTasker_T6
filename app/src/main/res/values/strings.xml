@@ -54,5 +54,6 @@
     <string name="error_database_alarm_delete">Error. No se pudo eliminar la alarma.</string>
     <string name="error_user_not_found">Credenciales no válidos</string>
     <string name="login_title">ChronoTasker</string>
+    <string name="action_game">Mi pecera</string>
 
 </resources>

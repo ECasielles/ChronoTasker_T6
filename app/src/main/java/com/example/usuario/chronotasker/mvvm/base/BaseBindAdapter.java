@@ -1,6 +1,5 @@
 package com.example.usuario.chronotasker.mvvm.base;
 
-import android.database.DataSetObservable;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.annotation.LayoutRes;
@@ -14,9 +13,12 @@ import com.example.usuario.chronotasker.R;
 import java.util.List;
 
 
-public abstract class BaseBindAdapter<T> extends BaseQuickAdapter<T, BaseBindHolder> {
+public abstract class BaseBindAdapter<T ,DB extends ViewDataBinding>
+        extends BaseQuickAdapter<T, BaseBindHolder> {
 
-    private final DataSetObservable mDataSetObservable = new DataSetObservable();
+    //private final DataSetObservable mDataSetObservable = new DataSetObservable();
+
+    protected DB mBinding;
 
     public BaseBindAdapter(@LayoutRes int layoutResId, @Nullable List<T> data) {
         super(layoutResId, data);
@@ -24,14 +26,14 @@ public abstract class BaseBindAdapter<T> extends BaseQuickAdapter<T, BaseBindHol
 
     @Override
     protected View getItemView(int layoutResId, ViewGroup parent) {
-        ViewDataBinding binding = DataBindingUtil.inflate(mLayoutInflater, layoutResId, parent, false);
+        mBinding = DataBindingUtil.inflate(mLayoutInflater, layoutResId, parent, false);
 
-        if (binding == null) {
+        if (mBinding == null) {
             return super.getItemView(layoutResId, parent);
         }
 
-        View view = binding.getRoot();
-        view.setTag(R.id.BaseQuickAdapter_databinding_support, binding);
+        View view = mBinding.getRoot();
+        view.setTag(R.id.BaseQuickAdapter_databinding_support, mBinding);
 
         return view;
     }

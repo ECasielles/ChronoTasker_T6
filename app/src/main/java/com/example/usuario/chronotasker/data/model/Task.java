@@ -24,85 +24,22 @@ import io.objectbox.relation.ToOne;
  *
  * @author Enrique Casielles Lapeira
  * @version 2.0
+ * <link>http://objectbox.io/documentation/relations/</link>
  */
 @Entity
 public class Task extends BaseModel implements Parcelable, Comparable {
 
     //CONSTANTES
     public static final String TAG = "TaskEntries";
-    /**
-     * Comparator que devuelve la tarea más antigua
-     */
-    public static final Comparator<Task> COMPARATOR_ID = Task::compareTo;
-    /**
-     * Comparator que devuelve las tarea más próxima. Si empatan, la que termine antes.
-     * Si empatan, la que tenga menor id.
-     */
-    public static final Comparator<Task> COMPARATOR_START_DATE = (task, otherTask) -> {
-        int res = task.getStartDate().compareTo(otherTask.getStartDate());
-        if (res == 0)
-            res = task.compareTo(otherTask);
-        return res;
-    };
-    /**
-     * Comparator que devuelve la tarea más prioritaria
-     */
-    public static final Comparator<Task> COMPARATOR_PRIORITY = (task, otherTask) -> {
-        int res = task.getPriority() - otherTask.getPriority();
-        if (res == 0)
-            res = task.compareTo(otherTask);
-        return (res > 0) ? 1 : -1;
-    };
-    /**
-     * Comparator que devuelve la tarea más urgente.
-     * Si empatan, la más próxima. Si empatan, la de id inferior.
-     */
-    public static final Comparator<Task> COMPARATOR_URGENT = (task, otherTask) -> {
-        int priorityComparer = Category.comparer(task.getPriority(), otherTask.getPriority(),
-                Category.CATEGORY_URGENT);
-        if(priorityComparer != 0) {
-            int res = task.getStartDate().compareTo(otherTask.getStartDate());
-            if (res == 0)
-                res = task.compareTo(otherTask);
-            return res;
-        }
-        return priorityComparer;
-    };
-    /**
-     * Comparator que devuelve la tarea más importante.
-     * Si empatan, la más próxima. Si empatan, la de id inferior.
-     */
-    public static final Comparator<Task> COMPARATOR_IMPORTANT = (task, otherTask) -> {
-        int priorityComparer = Category.comparer(task.getPriority(), otherTask.getPriority(),
-                Category.CATEGORY_IMPORTANT);
-        if (priorityComparer != 0) {
-            int res = task.getStartDate().compareTo(otherTask.getStartDate());
-            if (res == 0)
-                res = task.compareTo(otherTask);
-            return res;
-        }
-        return priorityComparer;
-    };
-
-    public static final Creator<Task> CREATOR = new Creator<Task>() {
-        @Override
-        public Task createFromParcel(Parcel in) {
-            return new Task(in);
-        }
-
-        @Override
-        public Task[] newArray(int size) {
-            return new Task[size];
-        }
-    };
 
 
     //PARAMETROS
-    @Id
-    private long id;
+    @Id(assignable = true)
+    public long id;
+    public ToOne<User> user;
+
     private String title;
     private int iconId;
-    private ToOne<User> owner;
     @Convert(converter = DateTimeConverter.class, dbType = Long.class)
     private DateTime startDate;
     @Convert(converter = DateTimeConverter.class, dbType = Long.class)
@@ -118,6 +55,21 @@ public class Task extends BaseModel implements Parcelable, Comparable {
 
     //CONSTRUCTOR
     public Task() { }
+    public Task(String title, int iconId, @Nullable DateTime startDate,
+                @Nullable DateTime endDate, int priority, @Nullable String description,
+                @Nullable String location, @Nullable String alarm, @Nullable Period repetition,
+                @Nullable String reminder) {
+        this.title = title;
+        this.iconId = iconId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.priority = priority;
+        this.description = description;
+        this.location = location;
+        this.alarm = alarm;
+        this.repetition = repetition;
+        this.reminder = reminder;
+    }
     public Task(long id, String title, int iconId, @Nullable DateTime startDate,
                 @Nullable DateTime endDate, int priority, @Nullable String description,
                 @Nullable String location, @Nullable String alarm, @Nullable Period repetition,
@@ -134,52 +86,8 @@ public class Task extends BaseModel implements Parcelable, Comparable {
         this.repetition = repetition;
         this.reminder = reminder;
     }
-    public Task(long id, String title, int iconId, @Nullable DateTime startDate,
-                 @Nullable DateTime endDate, int priority, long ownerId, @Nullable String description,
-                 @Nullable String location, @Nullable String alarm, @Nullable Period repetition,
-                 @Nullable String reminder) {
-        this.id = id;
-        this.iconId = iconId;
-        this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.priority = priority;
-        this.owner.setTargetId(ownerId);
-        this.description = description;
-        this.location = location;
-        this.alarm = alarm;
-        this.repetition = repetition;
-        this.reminder = reminder;
-    }
 
-    //IMPLEMENTACION DE PARCELABLE
-    protected Task(Parcel in) {
-        id = in.readLong();
-        title = in.readString();
-        iconId = in.readInt();
-        priority = in.readInt();
-        description = in.readString();
-        location = in.readString();
-        alarm = in.readString();
-        reminder = in.readString();
-    }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(title);
-        dest.writeInt(iconId);
-        dest.writeInt(priority);
-        dest.writeString(description);
-        dest.writeString(location);
-        dest.writeString(alarm);
-        dest.writeString(reminder);
-    }
 
     //GETTERS Y SETTERS
     public long getId() {
@@ -218,12 +126,6 @@ public class Task extends BaseModel implements Parcelable, Comparable {
     public void setPriority(int priority) {
         this.priority = priority;
     }
-    public ToOne<User> getOwner() {
-        return owner;
-    }
-    public void setOwner(ToOne<User> owner) {
-        this.owner = owner;
-    }
     public String getDescription() {
         return description;
     }
@@ -255,6 +157,93 @@ public class Task extends BaseModel implements Parcelable, Comparable {
         this.reminder = reminder;
     }
 
+
+    //PARCELABLE
+    protected Task(Parcel in) {
+        id = in.readLong();
+        title = in.readString();
+        iconId = in.readInt();
+        priority = in.readInt();
+        description = in.readString();
+        location = in.readString();
+        alarm = in.readString();
+        reminder = in.readString();
+    }
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(title);
+        dest.writeInt(iconId);
+        dest.writeInt(priority);
+        dest.writeString(description);
+        dest.writeString(location);
+        dest.writeString(alarm);
+        dest.writeString(reminder);
+    }
+    public static final Creator<Task> CREATOR = new Creator<Task>() {
+        @Override
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
+        }
+        @Override
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
+
+
+    //COMPARATOR
+    /**
+     * Devuelve la tarea más antigua
+     */
+    public static final Comparator<Task> COMPARATOR_ID = Task::compareTo;
+    /**
+     * Devuelve las tarea más próxima. Si empatan, la que termine antes.
+     * Si empatan, la de id inferior.
+     */
+    public static final Comparator<Task> COMPARATOR_START_DATE = Task::compareTaskStartDate;
+    /**
+     * Devuelve la tarea más urgente. * Si empatan, la más próxima. Si empatan, la de id inferior.
+     */
+    public static final Comparator<Task> COMPARATOR_URGENT = (task, otherTask) ->
+            compareTaskCategory(task, otherTask, Category.CATEGORY_URGENT);
+    /**
+     * Comparator que devuelve la tarea más importante.
+     * Si empatan, la más próxima. Si empatan, la de id inferior.
+     */
+    public static final Comparator<Task> COMPARATOR_IMPORTANT = (task, otherTask) ->
+            compareTaskCategory(task, otherTask, Category.CATEGORY_IMPORTANT);
+    /**
+     * Devuelve la tarea con más prioridad.
+     */
+    public static final Comparator<Task> COMPARATOR_PRIORITY = Task::compareTaskPriority;
+
+
+    //METODOS DE COMPARATOR
+    private static int compareTaskStartDate(Task task, Task otherTask) {
+        int comparison = task.getStartDate().compareTo(otherTask.getStartDate());
+        return compareIdsIfNotEqual(task, otherTask, comparison);
+    }
+    private static int compareTaskCategory(Task task, Task otherTask, int category) {
+        int comparison = Category.compareFlagPriority(task.getPriority(), otherTask.getPriority(), category);
+        return compareStartDatesIfNotEqual(task, otherTask, comparison);
+    }
+    private static int compareTaskPriority(Task task, Task otherTask) {
+        int comparison = task.getPriority() - otherTask.getPriority();
+        return compareStartDatesIfNotEqual(task, otherTask, comparison);
+    }
+    private static int compareStartDatesIfNotEqual(Task task, Task otherTask, int comparison) {
+        return comparison != 0 ? comparison : compareTaskStartDate(task, otherTask);
+    }
+    private static int compareIdsIfNotEqual(Task task, Task otherTask, int comparison) {
+        return comparison != 0 ? comparison : task.compareTo(otherTask);
+    }
+
+
     //IMPLEMENTACION DE COMPARABLE
     /**
      * Implementación de la interfaz Comparable.
@@ -270,7 +259,6 @@ public class Task extends BaseModel implements Parcelable, Comparable {
             throw new ClassCastException("Parameter must be of TaskEntries class");
         }
     }
-
     /**
      * Dos tareas son iguales si tienen el mismo id.
      */
@@ -281,14 +269,14 @@ public class Task extends BaseModel implements Parcelable, Comparable {
         Task task = (Task) o;
         return id == task.id;
     }
-
     @Override
     public int hashCode() {
         return (int) id;
     }
-
     @Override
     public String toString() {
         return title;
     }
+
+
 }

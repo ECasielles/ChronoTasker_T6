@@ -1,5 +1,6 @@
 package com.example.usuario.chronotasker.data.repository;
 
+import com.example.usuario.chronotasker.data.App;
 import com.example.usuario.chronotasker.data.db.dao.UserDao;
 import com.example.usuario.chronotasker.data.model.User;
 
@@ -30,6 +31,15 @@ public class UserRepository {
 
     public User findUser(String name, String password) {
         return userDao.find(name, password);
+    }
+
+    public User findFirstUser() {
+        return userDao.findFirst();
+    }
+
+    public User findCurrentUser() {
+        long userId = App.getApp().getPreferencesHelper().getCurrentUserId();
+        return userDao.findById(userId);
     }
 
 }

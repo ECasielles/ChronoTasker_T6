@@ -21,9 +21,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.usuario.chronotasker.R;
-import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
 import com.example.usuario.chronotasker.data.model.Alarm;
-import com.example.usuario.chronotasker.mvvm.home.HomeActivity;
+import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
 
 import org.joda.time.DateTime;
 
@@ -71,12 +70,7 @@ public class AlarmListFragment extends BaseFragment implements OnAlarmActionList
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        ((HomeActivity) getActivity()).floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setAlarmText(null);
-            }
-        });
+        //((HomeActivity) getActivity()).floatingActionButton.setOnClickListener((View.OnClickListener) view1 -> setAlarmText(null));
     }
 
     @Override

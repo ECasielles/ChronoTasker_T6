@@ -1,6 +1,6 @@
 package com.example.usuario.chronotasker.mvvm.base;
 
-import com.example.usuario.chronotasker.app.App;
+import com.example.usuario.chronotasker.data.App;
 
 import java.util.Collection;
 import java.util.List;

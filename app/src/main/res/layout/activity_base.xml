@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".mvvm.base.BaseActivity"
+    tools:context=".mvvm.home.HomeActivity"
     >
 
     <data>
-        <variable name="mViewModel" type="com.example.usuario.chronotasker.mvvm.base.BaseViewModel"/>
+        <variable name="viewModel" type="com.example.usuario.chronotasker.mvvm.home.HomeViewModel"/>
     </data>
 
 <android.support.v4.widget.DrawerLayout
@@ -27,9 +27,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:headerLayout="@layout/header_navview"
         app:menu="@menu/menu_navview"
         />
+
+    <!--app:headerLayout="@layout/header_navview"-->
 
 </android.support.v4.widget.DrawerLayout>
 

@@ -1,10 +1,10 @@
-package com.example.usuario.chronotasker.app.prefs;
+package com.example.usuario.chronotasker.data.prefs;
 
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.usuario.chronotasker.app.App;
+import com.example.usuario.chronotasker.data.App;
 import com.google.gson.Gson;
 
 /**
