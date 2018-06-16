@@ -17,7 +17,6 @@ import com.example.usuario.chronotasker.data.App;
 import com.example.usuario.chronotasker.databinding.HeaderNavviewBinding;
 import com.example.usuario.chronotasker.mvvm.alarm.AlarmListFragment;
 import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
-import com.example.usuario.chronotasker.mvvm.base.IMessageListener;
 import com.example.usuario.chronotasker.mvvm.base.OnFragmentActionListener;
 import com.example.usuario.chronotasker.mvvm.base.ViewModelHolder;
 import com.example.usuario.chronotasker.mvvm.game.Sketch;
@@ -37,7 +36,7 @@ import java.util.Objects;
  * @version 2.0
  */
 public class HomeActivity extends AppCompatActivity
-        implements OnFragmentActionListener.FragmentEventHandler, HomeNavigator, IMessageListener {
+        implements OnFragmentActionListener.FragmentEventHandler, HomeNavigator {
 
     private OnFragmentActionListener selectedFragment;
     private DrawerLayout drawerLayout;
@@ -48,7 +47,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_home);
 
         setupNavigationView();
         setupViewModel();
@@ -63,6 +62,7 @@ public class HomeActivity extends AppCompatActivity
     /**
      * Método que inicializa el Listener NavigationItemSelected, y envía la opción
      * seleccionada al método navigationAction.
+     * Se infla desde HeaderNavviewBinding
      */
     private void setupNavigationView() {
         NavigationView navigationView = findViewById(R.id.navview);
@@ -75,6 +75,8 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setCheckedItem(R.id.action_home);
 
         drawerLayout = findViewById(R.id.drawer_layout);
+
+        headerNavviewBinding.executePendingBindings();
     }
     /**
      * Inicializa el ViewModel
@@ -263,10 +265,9 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-
-    @Override
     public void show(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
 
 }

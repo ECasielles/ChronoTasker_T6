@@ -4,11 +4,15 @@ import com.example.usuario.chronotasker.data.App;
 import com.example.usuario.chronotasker.data.model.User;
 import com.example.usuario.chronotasker.data.model.User_;
 
-import io.objectbox.Box;
 import io.objectbox.query.Query;
 
 /**
- * Singleton con acceso a la base de datos local de usuarios.
+ * Clase que maneja las llamadas a BD
+ * según la consulta indicada por cada función
+ *
+ * @version 2.0
+ * @see BaseDao
+ * @see User
  */
 public class UserDao extends BaseDao<User> {
 
@@ -24,16 +28,8 @@ public class UserDao extends BaseDao<User> {
         return sInstance;
     }
 
-    public Box<User> getUserBox() {
-        return App.getApp().getBoxStore().boxFor(User.class);
-    }
-
-    public void deleteAllUsers() {
-        getUserBox().removeAll();
-    }
-
     public long count() {
-        return getUserBox().count();
+        return getBox().count();
     }
 
     public User find(String name, String password) {
@@ -54,7 +50,6 @@ public class UserDao extends BaseDao<User> {
     public User findById(long id) {
         return getBox().query().equal(User_.id, id).build().findFirst();
     }
-
     public User findCurrentUser() {
         return UserDao.getInstance().findById(App.getApp().getPreferencesHelper().getCurrentUserId());
     }

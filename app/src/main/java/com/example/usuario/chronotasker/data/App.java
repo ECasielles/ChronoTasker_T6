@@ -81,19 +81,29 @@ public class App extends Application {
 
             UserDao.getInstance().insert(user);
 
-            user.tasks.add(new Task("No perder el bus: " + 0, mIcon,
+            user.tasks.add(new Task("No perder el bus", mIcon,
                     new DateTime(), new DateTime(), (int) (1 + Math.random() * 31),
                     "Salida a las 8:05", null,
                     null, null, null));
             user.tasks.applyChangesToDb();
-            user.tasks.add(new Task("No perder las llaves: " + 1, mIcon,
+            user.tasks.add(new Task("No perder las llaves", mIcon,
                             new DateTime(), new DateTime(), (int) (1 + Math.random() * 31),
-                            "Salida a las 8:05", null,
+                            "Están donde siempre", null,
                             null, null, null));
             user.tasks.applyChangesToDb();
-            user.tasks.add(new Task("No perder el juicio: " + 2, mIcon,
+            user.tasks.add(new Task("No perder el juicio", mIcon,
                             new DateTime(), new DateTime(), (int) (1 + Math.random() * 31),
-                            "Salida a las 8:05", null,
+                            "Ala norte de psiquatría", null,
+                            null, null, null));
+            user.tasks.applyChangesToDb();
+            user.tasks.add(new Task("Ir al médico", mIcon,
+                            new DateTime(), new DateTime(), (int) (1 + Math.random() * 31),
+                            "Después del dentista", null,
+                            null, null, null));
+            user.tasks.applyChangesToDb();
+            user.tasks.add(new Task("Ir al dentista", mIcon,
+                            new DateTime(), new DateTime(), (int) (1 + Math.random() * 31),
+                            "Después del juicio", null,
                             null, null, null));
             user.tasks.applyChangesToDb();
 

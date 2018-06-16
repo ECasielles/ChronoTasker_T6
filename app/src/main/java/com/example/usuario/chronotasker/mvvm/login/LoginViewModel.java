@@ -65,12 +65,16 @@ public class LoginViewModel extends NavigatorViewModel {
         mNavigator = (LoginNavigator) navigator;
     }
 
-    public void onClickLogin() {
+    //OnClick methods must return true because of reasons.
+    //See this: https://n8ebel.github.io/2017-07-27-bug-busting-databinding-onLongClick/
+    public boolean onClickLogin() {
         validateFields(name.getValue(), password.getValue());
+        return true;
     }
-
-    public void onClickSignup() {
+    public boolean onClickSignup() {
         //Load fragment from View
+        //TODO
+        return true;
     }
 
 

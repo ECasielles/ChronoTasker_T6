@@ -2,15 +2,11 @@ package com.example.usuario.chronotasker.data.repository;
 
 import android.arch.lifecycle.MutableLiveData;
 
-import com.example.usuario.chronotasker.data.model.Alarm;
 import com.example.usuario.chronotasker.data.db.dao.AlarmDao;
+import com.example.usuario.chronotasker.data.model.Alarm;
 
 import java.util.Collection;
 import java.util.List;
-
-import io.objectbox.android.ObjectBoxLiveData;
-import io.objectbox.reactive.DataObserver;
-import io.objectbox.reactive.DataSubscription;
 
 
 /**
@@ -23,7 +19,11 @@ import io.objectbox.reactive.DataSubscription;
 public class AlarmRepository {
 
     private static AlarmRepository instance;
-    private static AlarmDao alarmDao = AlarmDao.getInstance();
+    private AlarmDao alarmDao;
+
+    public AlarmRepository() {
+        alarmDao = AlarmDao.getInstance();
+    }
 
     public static AlarmRepository getInstance() {
         if (instance == null)
@@ -31,13 +31,14 @@ public class AlarmRepository {
         return instance;
     }
 
-    public DataSubscription subscribeToAlarmList(DataObserver<List<Alarm>> observer) {
-        return alarmDao.subscribeToAlarmList(observer);
+    public List<Alarm> getAlarmsLiveData() {
+        return alarmDao.getAllAlarmsOrderById();
     }
 
-    public DataSubscription subscribeToAlarm(DataObserver<Alarm> observer, long id, boolean singleUpdate) {
-        return alarmDao.subscribeToAlarm(observer, id, singleUpdate);
+    public Alarm findAlarmById(long id) {
+        return alarmDao.findById(id);
     }
+
     public void addAlarmCollection(Collection<Alarm> alarms) {
         alarmDao.insertAlarms(alarms);
     }
@@ -49,8 +50,5 @@ public class AlarmRepository {
         }
     }
 
-    public ObjectBoxLiveData<Alarm> getAlarmsLiveData() {
-        return alarmDao.getAllAlarmsById();
-    }
 
 }

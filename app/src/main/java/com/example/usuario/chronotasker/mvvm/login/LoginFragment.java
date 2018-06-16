@@ -38,8 +38,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, LoginViewM
         mBinding.setLifecycleOwner(this);
         mBinding.setViewModel(mViewModel);
 
-        if(mBinding.hasPendingBindings())
-            mBinding.executePendingBindings();
+        mBinding.executePendingBindings();
 
         //setRetainInstance(false);
         mViewModel.setNavigator(this);

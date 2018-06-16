@@ -9,8 +9,10 @@
     <data>
         <import type="com.example.usuario.chronotasker.utils.Common" />
         <import type="com.example.usuario.chronotasker.data.model.Category" />
+        <import type="android.view.View"/>
+        <variable name="viewModel" type="com.example.usuario.chronotasker.mvvm.task.list.TaskListViewModel" />
         <variable name="task" type="com.example.usuario.chronotasker.data.model.Task" />
-        <variable name="listener" type="com.example.usuario.chronotasker.mvvm.base.IMessageListener" />
+        <variable name="position" type="int" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -26,7 +28,8 @@
             android:layout_marginEnd="@dimen/margin_small"
             android:layout_marginStart="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_small"
-            bind:onClick="@{() -> listener.show(task.getDescription)}"
+            bind:onClick="@{() -> viewModel.changeDisplay(position)}"
+            bind:onLongClick="@{() -> viewModel.openTaskView(task)}"
             card_view:cardCornerRadius="@dimen/card_corner_radius"
             card_view:cardElevation="@dimen/card_elevation"
             card_view:layout_constraintEnd_toEndOf="parent"
@@ -43,15 +46,15 @@
                     android:id="@+id/imageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/margin_medium"
-                    android:paddingEnd="@dimen/margin_medium"
                     android:paddingStart="@dimen/margin_medium"
                     android:paddingTop="@dimen/margin_medium"
+                    android:paddingEnd="@dimen/margin_medium"
+                    android:paddingBottom="@dimen/margin_medium"
                     bind:setSrcCompat="@{task.getIconId()}"
+                    card_view:layout_constraintBottom_toBottomOf="@+id/txvCategory"
                     card_view:layout_constraintStart_toStartOf="parent"
                     card_view:layout_constraintTop_toTopOf="parent"
-                    tools:src="@mipmap/ic_launcher"
-                    />
+                    tools:src="@mipmap/ic_launcher" />
 
                 <TextView
                     android:id="@+id/txvTitle"
@@ -62,6 +65,7 @@
                     android:paddingStart="@dimen/margin_medium"
                     android:paddingTop="@dimen/margin_medium"
                     android:text="@{task.getTitle()}"
+                    android:textAlignment="textEnd"
                     card_view:layout_constraintBottom_toBottomOf="@id/txvDate"
                     card_view:layout_constraintEnd_toStartOf="@+id/txvDate"
                     card_view:layout_constraintStart_toEndOf="@+id/imageView"
@@ -78,6 +82,7 @@
                     android:paddingStart="@dimen/margin_medium"
                     android:paddingTop="@dimen/margin_medium"
                     android:text="@{Common.formatJodaTime(task.getStartDate())}"
+                    android:textAlignment="textEnd"
                     card_view:layout_constraintBaseline_toBaselineOf="@+id/txvTitle"
                     card_view:layout_constraintEnd_toEndOf="parent"
                     card_view:layout_constraintStart_toEndOf="@id/txvTitle"
@@ -94,9 +99,27 @@
                     android:paddingStart="@dimen/margin_medium"
                     android:paddingTop="@dimen/margin_medium"
                     android:text="@{Category.getCategoryName(task.getPriority())}"
+                    android:textAlignment="textEnd"
                     card_view:layout_constraintEnd_toEndOf="parent"
                     card_view:layout_constraintTop_toBottomOf="@+id/txvDate"
                     tools:text="Category"
+                    />
+
+                <TextView
+                    android:id="@+id/txvDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/margin_medium"
+                    android:paddingTop="@dimen/margin_medium"
+                    android:paddingEnd="@dimen/margin_medium"
+                    android:paddingBottom="@dimen/margin_medium"
+                    android:text="@{task.getDescription()}"
+                    android:textAlignment="textStart"
+                    card_view:layout_constraintStart_toStartOf="parent"
+                    card_view:layout_constraintEnd_toEndOf="parent"
+                    card_view:layout_constraintTop_toBottomOf="@+id/txvCategory"
+                    tools:text="Description"
+                    android:visibility="@{viewModel.isDisplayed(position) ? View.VISIBLE : View.GONE}"
                     />
 
             </android.support.constraint.ConstraintLayout>
