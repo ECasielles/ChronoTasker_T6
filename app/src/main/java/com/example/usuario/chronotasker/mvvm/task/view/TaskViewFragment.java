@@ -50,6 +50,11 @@ public class TaskViewFragment extends BaseFragment {
         setRetainInstance(true);
     }
 
+    @Override
+    public TaskViewModel makeViewModel() {
+        return new TaskViewModel();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

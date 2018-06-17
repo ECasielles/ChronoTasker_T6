@@ -28,11 +28,12 @@ public class TaskListViewModel extends NavigatorViewModel {
         mNavigator = (TaskListNavigator) navigator;
     }
 
+    public TaskListViewModel() {
+        displayedArray.setValue(new SparseBooleanArray());
+    }
 
     public List<Task> getTaskList() {
-        List<Task> tasks = TaskRepository.getInstance().findCurrentUserTaskList();
-        displayedArray.setValue(new SparseBooleanArray(tasks.size()));
-        return tasks;
+        return TaskRepository.getInstance().findCurrentUserTaskList();
     }
 
 
@@ -48,39 +49,43 @@ public class TaskListViewModel extends NavigatorViewModel {
         return true;
     }
     public boolean changeDisplay(int position) {
-        displayedArray.getValue().put(position, !Objects.requireNonNull(displayedArray.getValue()).get(position));
-        mNavigator.adapterNotifyChange(position);
+        boolean value = displayedArray.getValue().get(position);
+        displayedArray.getValue().put(position, !value);
+        mNavigator.adapterNotifyItemChanged(position);
         return true;
     }
 
 
     //VISIBILITY
     public boolean isDisplayed(int position) {
-        if (displayedArray != null)
-            return Objects.requireNonNull(displayedArray.getValue()).valueAt(position);
-        else return false;
+        return displayedArray.getValue().valueAt(position);
     }
 
 
     //TASK REMOVAL
     public void removeState(int position) {
-        tempDisplayArray = displayedArray.getValue();
-        int count = Objects.requireNonNull(tempDisplayArray).size();
-        if(position <= count) {
-            for (int i = position; i < count; i++) {
-                if (i == position)
-                    Objects.requireNonNull(displayedArray.getValue()).delete(position);
-                else {
-                    boolean value = Objects.requireNonNull(displayedArray.getValue()).get(i);
-                    Objects.requireNonNull(displayedArray.getValue()).put(i - 1, value);
-                    Objects.requireNonNull(displayedArray.getValue()).delete(i);
-                }
-            }
+        tempDisplayArray = Objects.requireNonNull(displayedArray.getValue()).clone();
+
+        SparseBooleanArray localArray = displayedArray.getValue();
+
+        int start = localArray.indexOfKey(position);
+        localArray.delete(position);
+        int count = localArray.size();
+
+        for (int i = start; i < count; i++) {
+            int key = localArray.keyAt(i);
+            boolean value = localArray.valueAt(i);
+            localArray.delete(key);
+            localArray.put(key - 1, value);
         }
+
+        displayedArray.setValue(localArray);
+        mNavigator.adapterNotifyItemRemoved(position);
     }
     public void restoreState() {
         displayedArray.setValue(tempDisplayArray);
         tempDisplayArray = null;
+        mNavigator.adapterNotifySetChanged();
     }
     public void deleteTask(Task task) {
         TaskRepository.getInstance().deleteTask(task);
@@ -88,4 +93,8 @@ public class TaskListViewModel extends NavigatorViewModel {
         tempDisplayArray = null;
     }
 
+    @Override
+    public String getTag() {
+        return TAG;
+    }
 }

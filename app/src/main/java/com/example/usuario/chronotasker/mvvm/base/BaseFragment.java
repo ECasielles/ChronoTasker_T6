@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+
+import com.example.usuario.chronotasker.utils.ActivityUtils;
 
 import static android.support.v4.util.Preconditions.checkNotNull;
 
@@ -32,6 +36,7 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends BaseVi
         setArguments(new Bundle());
     }
 
+
     /**
      * Instancia el objeto callback que maneja la comunicación entre
      * Fragment y Activity para los eventos de botón Back.
@@ -46,7 +51,12 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends BaseVi
         } else {
             fragmentEventHandler = (FragmentEventHandler) getActivity();
         }
-        //addObserver();
+    }
+
+    public abstract VM makeViewModel();
+
+    public VM getViewModel() {
+        return mViewModel;
     }
 
     @SuppressLint("RestrictedApi")
@@ -73,26 +83,58 @@ public abstract class BaseFragment<DB extends ViewDataBinding, VM extends BaseVi
     public void onDestroy() {
         super.onDestroy();
         mBinding = null;
-        //mRootView = null;
-        //removeObserver();
         mViewModel = null;
     }
 
-/*
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return initView(inflater, container, savedInstanceState);
+
+    public static BaseFragment getInstance(AppCompatActivity appCompatActivity,
+                                           Class<? extends BaseFragment> fragmentClass,
+                                           Class<? extends BaseViewModel> viewModelClass) {
+
+        FragmentManager manager = appCompatActivity.getSupportFragmentManager();
+
+        BaseFragment fragmentByTag = (BaseFragment) manager.findFragmentByTag(fragmentClass.getSimpleName());
+
+        try {
+
+            fragmentByTag = fragmentByTag == null ? fragmentClass.newInstance() : fragmentByTag;
+
+            fragmentByTag.fetchViewModel(manager, fragmentByTag, viewModelClass.getSimpleName());
+
+            return fragmentByTag;
+
+        } catch (java.lang.InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
-    private void addObserver() {
-        if (mViewModel != null)  getLifecycle().addObserver((LifecycleObserver) mViewModel);
-    }
+
+    public void fetchViewModel(FragmentManager manager, BaseFragment baseFragment, String VmTag) {
+        Fragment fragmentByTag = manager.findFragmentByTag(VmTag);
 
 
-    private void removeObserver() {
-        if (mViewModel != null) getLifecycle().removeObserver((LifecycleObserver) mViewModel);
+        if ((fragmentByTag != null) && !(fragmentByTag instanceof ViewModelHolder<?>))
+            throw new ClassCastException(fragmentByTag + " not an instance of ViewModelHolder<?>");
+
+        ViewModelHolder<VM> retainedViewModel = (ViewModelHolder<VM>) fragmentByTag;
+
+        // Returns retained ViewModel
+        if (retainedViewModel != null && retainedViewModel.getViewmodel() != null) {
+            setViewModel(retainedViewModel.getViewmodel());
+        } else {
+            // Creates a new ViewModel and binds it to this Activity's lifecycle
+            BaseViewModel viewModel = baseFragment.makeViewModel();
+            ActivityUtils.addFragmentToActivity(
+                    manager,
+                    ViewModelHolder.createContainer(viewModel),
+                    VmTag
+            );
+            setViewModel((VM) viewModel);
+        }
     }
-*/
 
 }

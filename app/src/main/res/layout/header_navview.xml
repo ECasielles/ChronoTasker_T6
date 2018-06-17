@@ -8,7 +8,7 @@
     >
 
     <data>
-        <variable name="viewModel" type="com.example.usuario.chronotasker.mvvm.home.HomeViewModel"/>
+        <variable name="viewModel" type="com.example.usuario.chronotasker.mvvm.home.DrawerViewModel"/>
     </data>
 
     <android.support.constraint.ConstraintLayout

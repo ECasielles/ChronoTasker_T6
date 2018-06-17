@@ -5,6 +5,8 @@ import com.example.usuario.chronotasker.mvvm.base.navigator.NavigatorViewModel;
 
 public class AlarmViewModel extends NavigatorViewModel {
 
+    public static final String TAG = AlarmViewModel.class.getSimpleName();
+
     private AlarmNavigator mNavigator;
 
     public AlarmViewModel() {
@@ -16,4 +18,9 @@ public class AlarmViewModel extends NavigatorViewModel {
         mNavigator = (AlarmNavigator) navigator;
     }
 
+    @Override
+    public String getTag() {
+        return TAG;
+    }
+    
 }

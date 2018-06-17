@@ -6,7 +6,10 @@ import com.example.usuario.chronotasker.mvvm.base.navigator.INavigator;
 public interface TaskListNavigator extends INavigator {
 
     void openTask(Task task);
-    void adapterNotifyChange(int position);
     void onDeleteTaskInfo(String title);
+    void adapterNotifyItemChanged(int position);
+    void adapterNotifyRangeChanged(int startPosition);
+    void adapterNotifySetChanged();
+    void adapterNotifyItemRemoved(int position);
 
 }

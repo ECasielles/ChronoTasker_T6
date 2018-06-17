@@ -5,20 +5,22 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.App;
 import com.example.usuario.chronotasker.databinding.HeaderNavviewBinding;
 import com.example.usuario.chronotasker.mvvm.alarm.AlarmListFragment;
-import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
+import com.example.usuario.chronotasker.mvvm.alarm.AlarmViewModel;
 import com.example.usuario.chronotasker.mvvm.base.OnFragmentActionListener;
-import com.example.usuario.chronotasker.mvvm.base.ViewModelHolder;
+import com.example.usuario.chronotasker.mvvm.calendar.CalendarFragment;
+import com.example.usuario.chronotasker.mvvm.calendar.CalendarViewModel;
 import com.example.usuario.chronotasker.mvvm.game.Sketch;
 import com.example.usuario.chronotasker.mvvm.login.LoginActivity;
 import com.example.usuario.chronotasker.mvvm.settings.AccountSettingsActivity;
@@ -40,7 +42,7 @@ public class HomeActivity extends AppCompatActivity
 
     private OnFragmentActionListener selectedFragment;
     private DrawerLayout drawerLayout;
-    private HomeViewModel mViewModel;
+    private DrawerViewModel mViewModel;
     private HeaderNavviewBinding headerNavviewBinding;
 
 
@@ -54,8 +56,8 @@ public class HomeActivity extends AppCompatActivity
         setupToolbar();
 
         // Links View and ViewModel
-        findOrCreateViewFragment().setViewModel(findOrCreateViewModel());
-        //addFragment(TaskListFragment.getInstance(this));
+        addFragment(TaskListFragment.getInstance(this,
+                    TaskListFragment.class, TaskListViewModel.class));
     }
 
 
@@ -82,7 +84,7 @@ public class HomeActivity extends AppCompatActivity
      * Inicializa el ViewModel
      */
     private void setupViewModel() {
-        mViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(DrawerViewModel.class);
         mViewModel.setNavigator(this);
         headerNavviewBinding.setViewModel(mViewModel);
     }
@@ -98,13 +100,22 @@ public class HomeActivity extends AppCompatActivity
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
 
+        popBackStack();
+
         switch (item.getItemId()) {
             case R.id.action_home:
-                popBackStack();
+                launchFragment(TaskListFragment.getInstance(this,
+                        TaskListFragment.class, TaskListViewModel.class));
                 item.setChecked(true);
                 break;
             case R.id.action_alarm:
-                launchFragment(AlarmListFragment.newInstance(this));
+                launchFragment(AlarmListFragment.getInstance(this,
+                        AlarmListFragment.class, AlarmViewModel.class));
+                item.setChecked(true);
+                break;
+            case R.id.action_calendar:
+                launchFragment(CalendarFragment.getInstance(this,
+                        CalendarFragment.class, CalendarViewModel.class));
                 item.setChecked(true);
                 break;
             case R.id.action_game:
@@ -114,7 +125,7 @@ public class HomeActivity extends AppCompatActivity
                         .addToBackStack(null)
                         .replace(R.id.frame_content, new Sketch())
                         .commit();
-                //launchFragment(GameFragment.newInstance(this, mViewModel));
+                //launchFragment(GameFragment.getInstance(this, mViewModel));
                 item.setChecked(true);
                 break;
             case R.id.action_settings:  //launchSettingsActivity();
@@ -124,54 +135,53 @@ public class HomeActivity extends AppCompatActivity
             //TODO: launch AboutActivity
             //case R.id.action_about:      //launchAboutActivity();
             //    break;
-            case R.id.action_logout:    navigateToLogin();
+            case R.id.action_logout:
+                navigateToLogin();
                 break;
         }
 
-        getSupportActionBar().setTitle(item.getTitle());
+        Objects.requireNonNull(getSupportActionBar()).setTitle(item.getTitle());
+
         return true;
     }
 
 
-    private BaseFragment findOrCreateViewFragment() {
-        setSelectedFragment((OnFragmentActionListener)
-                getSupportFragmentManager().findFragmentById(R.id.frame_content));
-        if (selectedFragment == null) {
-            TaskListFragment taskListFragment = TaskListFragment.newInstance();
-            ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(),
-                    taskListFragment,
-                    R.id.frame_content
-            );
-            setSelectedFragment(taskListFragment);
-        }
-        return (BaseFragment) selectedFragment;
+    //INICIALIZA EL FRAGMENT EN CAMBIOS DE CONFIGURACION E INICIO
+    /*private void findOrCreateViewFragment() {
+        BaseFragment fragment =
+                (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.frame_content);
+        setSelectedFragment(fragment == null ? TaskListFragment.newInstance() : fragment);
+        addFragment(selectedFragment);
     }
-
-
-    /**
+    *//**
      * Handles ViewModel retention in configuration changes
      * @return Either returns currently retained ViewModel or creates a new one
-     */
-    private TaskListViewModel findOrCreateViewModel() {
+     *//*
+    private BaseViewModel findOrCreateViewModel() {
         // Fetches a retained ViewModel from Fragment Manager
-        ViewModelHolder<TaskListViewModel> retainedViewModel =
-                (ViewModelHolder<TaskListViewModel>) getSupportFragmentManager()
-                        .findFragmentByTag(TaskListViewModel.TAG);
+        ViewModelHolder<?> retainedViewModel
+                = (ViewModelHolder<?>) getRetainedViewModel((BaseFragment) selectedFragment);
+
+        // Returns retained ViewModel
         if (retainedViewModel != null && retainedViewModel.getViewmodel() != null) {
-            // Returns retained ViewModel
-            return retainedViewModel.getViewmodel();
+            return (BaseViewModel) retainedViewModel.getViewmodel();
         } else {
-            // Creates a new ViewModel and bind it to this Activity's lifecycle
-            TaskListViewModel viewModel = new TaskListViewModel();
+            // Creates a new ViewModel and binds it to this Activity's lifecycle
+            BaseViewModel viewModel = ((BaseFragment) selectedFragment).makeViewModel();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(),
                     ViewModelHolder.createContainer(viewModel),
-                    TaskListViewModel.TAG
+                    viewModel.getTag()
             );
             return viewModel;
         }
     }
+    private Fragment getRetainedViewModel(@Nullable BaseFragment baseFragment) {
+        return baseFragment != null && baseFragment.getViewModel() != null ?
+                getSupportFragmentManager().findFragmentByTag(
+                        baseFragment.getViewModel().getTag()
+                ) : null;
+    }*/
 
 
     private void launchSettingsActivity() {
@@ -190,23 +200,22 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void launchFragment(OnFragmentActionListener listener) {
-        ((BaseFragment)listener).setViewModel(mViewModel);
-        getSupportFragmentManager().popBackStack();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.frame_content, (Fragment) listener)
-                .commit();
+        setSelectedFragment(listener);
+        ActivityUtils.replaceFragmentInActivity(
+                getSupportFragmentManager(),
+                (Fragment) listener,
+                R.id.frame_content
+        );
     }
-
 
     @Override
     public void addFragment(OnFragmentActionListener listener) {
-        ((BaseFragment)listener).setViewModel(mViewModel);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.frame_content, (Fragment) listener)
-                .commit();
+        setSelectedFragment(listener);
+        ActivityUtils.addFragmentToActivity(
+                getSupportFragmentManager(),
+                (Fragment) listener,
+                R.id.frame_content
+        );
     }
 
 
@@ -230,11 +239,11 @@ public class HomeActivity extends AppCompatActivity
      * Asigna el Fragment en uso como seleccionado para comunicación
      * entre Fragment y Activity
      *
-     * @param selectedFragment
+     * @param listener
      */
     @Override
-    public void setSelectedFragment(OnFragmentActionListener selectedFragment) {
-        this.selectedFragment = selectedFragment;
+    public void setSelectedFragment(OnFragmentActionListener listener) {
+        selectedFragment = listener;
     }
 
 
@@ -265,8 +274,10 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    public void show(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+
+    private void showError(String e) {
+        Snackbar.make((View) selectedFragment, "Error: "  + e, Snackbar.LENGTH_LONG);
     }
 
 

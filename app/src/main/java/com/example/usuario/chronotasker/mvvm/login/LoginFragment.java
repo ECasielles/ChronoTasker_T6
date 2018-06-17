@@ -30,6 +30,11 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, LoginViewM
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    public LoginViewModel makeViewModel() {
+        return new LoginViewModel();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

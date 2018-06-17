@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 import static android.support.v4.util.Preconditions.checkNotNull;
 
@@ -19,9 +18,9 @@ public class ActivityUtils {
                                               @NonNull Fragment fragment, int frameId) {
         checkNotNull(fragmentManager);
         checkNotNull(fragment);
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(frameId, fragment);
-        transaction.commit();
+        fragmentManager.beginTransaction()
+                .add(frameId, fragment)
+                .commit();
     }
 
     @SuppressLint("RestrictedApi")
@@ -29,9 +28,33 @@ public class ActivityUtils {
                                               @NonNull Fragment fragment, String tag) {
         checkNotNull(fragmentManager);
         checkNotNull(fragment);
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(fragment, tag);
-        transaction.commit();
+        fragmentManager.beginTransaction()
+                .add(fragment, tag)
+                .commit();
+    }
+
+    @SuppressLint("RestrictedApi")
+    public static void replaceFragmentInActivity (@NonNull FragmentManager fragmentManager,
+                                              @NonNull Fragment fragment, int frameId) {
+        checkNotNull(fragmentManager);
+        checkNotNull(fragment);
+        fragmentManager.popBackStack();
+        fragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(frameId, fragment)
+                .commit();
+    }
+
+    @SuppressLint("RestrictedApi")
+    public static void replaceFragmentInActivity (@NonNull FragmentManager fragmentManager,
+                                              @NonNull Fragment fragment, int frameId, String tag) {
+        checkNotNull(fragmentManager);
+        checkNotNull(fragment);
+        fragmentManager.popBackStack();
+        fragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(frameId, fragment, tag)
+                .commit();
     }
 
 }

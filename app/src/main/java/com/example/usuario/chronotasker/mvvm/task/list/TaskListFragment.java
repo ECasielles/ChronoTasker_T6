@@ -32,8 +32,7 @@ import java.util.Objects;
 /**
  * Fragment que muestra la lista de tareas
  */
-public class TaskListFragment
-        extends BaseFragment<FragmentTaskListBinding, TaskListViewModel>
+public class TaskListFragment extends BaseFragment<FragmentTaskListBinding, TaskListViewModel>
         implements TaskListNavigator, OnFragmentActionListener {
 
     //CONSTANTES
@@ -45,19 +44,6 @@ public class TaskListFragment
 
     public static TaskListFragment newInstance() {
         return new TaskListFragment();
-    }
-
-
-    /**
-     * Devuelve la instancia guardada de este Fragment o crea una nueva
-     * si no existe.
-     */
-    public static TaskListFragment getInstance(AppCompatActivity appCompatActivity) {
-        TaskListFragment taskListFragment = (TaskListFragment)
-                appCompatActivity.getSupportFragmentManager().findFragmentByTag(TAG);
-        return taskListFragment == null ?
-                new TaskListFragment() :
-                taskListFragment;
     }
 
 
@@ -74,8 +60,12 @@ public class TaskListFragment
 
         mViewModel.setNavigator(this);
 
-        mAdapter = new TaskListAdapter(R.layout.item_task, mViewModel.getTaskList());
-        mAdapter.setViewModel(mViewModel);
+        mAdapter = new TaskListAdapter(R.layout.item_task, mViewModel.getTaskList(), mViewModel);
+    }
+
+    @Override
+    public TaskListViewModel makeViewModel() {
+        return new TaskListViewModel();
     }
 
 
@@ -109,6 +99,7 @@ public class TaskListFragment
 
         //Guarda vista para Snackbar
         parent = (ViewGroup) view.getParent();
+        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -153,8 +144,9 @@ public class TaskListFragment
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
-                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
+                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
                     mViewModel.deleteTask(task);
+                }
             }
         });
         snackbar.setAction(Objects.requireNonNull(getContext()).getResources().getString(R.string.undo), view -> restoreTask(position, task));
@@ -194,8 +186,27 @@ public class TaskListFragment
     }
 
 
-    public void adapterNotifyChange(int position) {
+    @Override
+    public void adapterNotifyItemChanged(int position) {
         mAdapter.notifyItemChanged(position);
+    }
+
+
+    @Override
+    public void adapterNotifyItemRemoved(int position) {
+        mAdapter.notifyItemRemoved(position);
+    }
+
+
+    @Override
+    public void adapterNotifyRangeChanged(int startPosition) {
+        mAdapter.notifyItemRangeChanged(startPosition, mAdapter.getItemCount());
+    }
+
+
+    @Override
+    public void adapterNotifySetChanged() {
+        mAdapter.notifyDataSetChanged();
     }
 
 

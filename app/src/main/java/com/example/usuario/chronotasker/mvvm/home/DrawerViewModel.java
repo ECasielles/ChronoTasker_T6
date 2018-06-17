@@ -7,10 +7,9 @@ import com.example.usuario.chronotasker.data.repository.UserRepository;
 import com.example.usuario.chronotasker.mvvm.base.navigator.INavigator;
 import com.example.usuario.chronotasker.mvvm.base.navigator.NavigatorViewModel;
 
-public class HomeViewModel extends NavigatorViewModel {
+public class DrawerViewModel extends NavigatorViewModel {
 
-    //CONSTANTS
-    public static String TAG = HomeViewModel.class.getSimpleName();
+    private static final String TAG = DrawerViewModel.class.getSimpleName();
 
     public final MutableLiveData<User> user = new MutableLiveData<>();
 
@@ -22,7 +21,7 @@ public class HomeViewModel extends NavigatorViewModel {
 
     public HomeNavigator mNavigator;
 
-    public HomeViewModel() {
+    public DrawerViewModel() {
         User currentUser = UserRepository.getInstance().findCurrentUser();
         if (currentUser == null)
             currentUser = UserRepository.getInstance().findFirstUser();
@@ -57,4 +56,8 @@ public class HomeViewModel extends NavigatorViewModel {
     }
 
 
+    @Override
+    public String getTag() {
+        return TAG;
+    }
 }

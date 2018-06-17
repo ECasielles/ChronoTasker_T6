@@ -10,9 +10,6 @@
         <variable
             name="viewModel"
             type="com.example.usuario.chronotasker.mvvm.task.list.TaskListViewModel"/>
-        <!--<variable
-            name="taskListAdapter"
-            type="com.example.usuario.chronotasker.mvvm.task.list.TaskListAdapter"/>-->
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -27,8 +24,6 @@
             android:scrollbars="vertical"
             tools:listitem="@layout/item_task"
             />
-
-        <!--bind:adapter="@{taskListAdapter}"-->
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floationActionButton"

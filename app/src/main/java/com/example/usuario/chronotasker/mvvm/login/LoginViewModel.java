@@ -120,5 +120,8 @@ public class LoginViewModel extends NavigatorViewModel {
     }
 
 
-
+    @Override
+    public String getTag() {
+        return TAG;
+    }
 }

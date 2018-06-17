@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.model.Alarm;
 import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
+import com.example.usuario.chronotasker.mvvm.calendar.CalendarViewModel;
 
 import org.joda.time.DateTime;
 
@@ -35,12 +36,18 @@ import static android.content.Context.ALARM_SERVICE;
  */
 
 public class AlarmListFragment extends BaseFragment implements OnAlarmActionListener {
-    private static final String TAG = "AlarmListFragment";
+    public static final String TAG = AlarmListFragment.class.getSimpleName();
+
     private RecyclerView recyclerView;
     private ViewGroup parent;
     private AlarmAdapter adapter;
 
-    public static AlarmListFragment newInstance(AppCompatActivity appCompatActivity) {
+    public static AlarmListFragment newInstance() {
+        return new AlarmListFragment();
+    }
+
+
+    public static AlarmListFragment getInstance(AppCompatActivity appCompatActivity) {
         AlarmListFragment alarmListFragment = (AlarmListFragment)
                 appCompatActivity.getSupportFragmentManager().findFragmentByTag(TAG);
         if (alarmListFragment == null)
@@ -52,6 +59,11 @@ public class AlarmListFragment extends BaseFragment implements OnAlarmActionList
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+    }
+
+    @Override
+    public AlarmViewModel makeViewModel() {
+        return new AlarmViewModel();
     }
 
     @Nullable

@@ -26,4 +26,8 @@ public class SignupFragment extends BaseFragment {
         return false;
     }
 
+    @Override
+    public SignupViewModel makeViewModel() {
+        return new SignupViewModel();
+    }
 }

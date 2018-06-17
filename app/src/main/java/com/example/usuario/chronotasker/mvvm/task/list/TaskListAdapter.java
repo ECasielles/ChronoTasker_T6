@@ -18,11 +18,8 @@ public class TaskListAdapter extends BaseBindAdapter<Task, ItemTaskBinding> {
 
     private TaskListViewModel mViewModel;
 
-    public TaskListAdapter(int layoutResId, @Nullable List<Task> data) {
+    public TaskListAdapter(int layoutResId, @Nullable List<Task> data, TaskListViewModel viewModel) {
         super(layoutResId, data);
-    }
-
-    public void setViewModel(TaskListViewModel viewModel) {
         mViewModel = viewModel;
     }
 
