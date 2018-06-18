@@ -8,6 +8,7 @@ import com.example.usuario.chronotasker.data.App;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+
 /**
  * Representa las categorías que caracterizan las tareas.
  * Se comportan como flags y el IDE las reconoce de forma
@@ -27,7 +28,7 @@ public class Category {
     //LINTING
     @IntDef(flag = true,
             value = {
-            CATEGORY_ARCHIVED, CATEGORY_INFORMAL, CATEGORY_DEFAULT, CATEGORY_IMPORTANT, CATEGORY_URGENT
+            CATEGORY_ARCHIVED, CATEGORY_INFORMAL, CATEGORY_NORMAL, CATEGORY_IMPORTANT, CATEGORY_URGENT
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface DisplayOptions { }
@@ -36,13 +37,13 @@ public class Category {
     //CONSTANTES
     public static final int ARCHIVED_NAME = R.string.category_archived;
     public static final int INFORMAL_NAME = R.string.category_informal;
-    public static final int DEFAULT_NAME = R.string.category_default;
+    public static final int NORMAL_NAME = R.string.category_default;
     public static final int IMPORTANT_NAME = R.string.category_important;
     public static final int URGENT_NAME = R.string.category_urgent;
 
     public static final int CATEGORY_ARCHIVED = 0x01;
     public static final int CATEGORY_INFORMAL = 0x01 << 1;
-    public static final int CATEGORY_DEFAULT = 0x01 << 2;
+    public static final int CATEGORY_NORMAL = 0x01 << 2;
     public static final int CATEGORY_IMPORTANT = 0x01 << 3;
     public static final int CATEGORY_URGENT = 0x01 << 4;
     public static final int MAX_PRIORITY = (0x01 << 5) - 1;
@@ -54,7 +55,7 @@ public class Category {
 
     //CONSTRUCTORES
     public Category() {
-        setFlag(CATEGORY_DEFAULT);
+        setFlag(CATEGORY_NORMAL);
     }
     /**
      * Pide las opciones que se han declarado arriba
@@ -90,7 +91,7 @@ public class Category {
 
 
     //MANEJO DE FLAGS
-    public int getFlags() {
+    public int getPriority() {
         return flags;
     }
     /**
@@ -118,7 +119,7 @@ public class Category {
         //TODO: Use Dictionary here
         if(hasFlag(priority, CATEGORY_URGENT))          return URGENT_NAME;
         if(hasFlag(priority, CATEGORY_IMPORTANT))       return IMPORTANT_NAME;
-        if(hasFlag(priority, CATEGORY_DEFAULT))         return DEFAULT_NAME;
+        if(hasFlag(priority, CATEGORY_NORMAL))         return NORMAL_NAME;
         if(hasFlag(priority, CATEGORY_INFORMAL))        return INFORMAL_NAME;
                                                         return ARCHIVED_NAME;
     }

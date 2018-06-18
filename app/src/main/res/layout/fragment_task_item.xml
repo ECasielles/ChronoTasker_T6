@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.usuario.chronotasker.mvvm.task.item.TaskItemViewModel"
+            />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/edt_title"
+            android:background="@drawable/shape_edt"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="@={viewModel.title}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/edtDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/shape_edt"
+            android:hint="@string/edt_description"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:text="@={viewModel.description}"
+            app:layout_constraintEnd_toEndOf="@+id/edtTitle"
+            app:layout_constraintStart_toStartOf="@+id/edtTitle"
+            app:layout_constraintTop_toBottomOf="@+id/edtTitle"
+            />
+
+        <CheckBox
+            android:id="@+id/ckbInformal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/shape_edt"
+            android:checked="@={viewModel.informal}"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/ckbInformal"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="@+id/btnEndDate"
+            app:layout_constraintStart_toStartOf="@+id/btnStartDate"
+            app:layout_constraintTop_toBottomOf="@+id/btnStartDate"
+            />
+
+        <CheckBox
+            android:id="@+id/ckbDefault"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/shape_edt"
+            android:checked="@={viewModel.normal}"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/ckbDefault"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="@+id/ckbInformal"
+            app:layout_constraintStart_toStartOf="@+id/ckbInformal"
+            app:layout_constraintTop_toBottomOf="@+id/ckbInformal"
+            />
+
+        <CheckBox
+            android:id="@+id/ckbImportant"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/shape_edt"
+            android:checked="@={viewModel.important}"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/ckbImportant"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="@+id/ckbDefault"
+            app:layout_constraintStart_toStartOf="@+id/ckbDefault"
+            app:layout_constraintTop_toBottomOf="@+id/ckbDefault"
+            />
+
+        <CheckBox
+            android:id="@+id/ckbUrgent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/shape_edt"
+            android:checked="@={viewModel.urgent}"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/ckbUrgent"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="@+id/ckbImportant"
+            app:layout_constraintStart_toStartOf="@+id/ckbImportant"
+            app:layout_constraintTop_toBottomOf="@+id/ckbImportant"
+            />
+
+        <Button
+            android:id="@+id/btnStartDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@{viewModel.startDateText}"
+            app:layout_constraintStart_toStartOf="@+id/edtDescription"
+            app:layout_constraintTop_toBottomOf="@+id/edtDescription"
+            bind:onClick="@{() -> viewModel.onStartDateClick()}"
+            />
+
+        <Button
+            android:id="@+id/btnEndDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@{viewModel.endDateText}"
+            app:layout_constraintEnd_toEndOf="@+id/edtDescription"
+            app:layout_constraintTop_toBottomOf="@+id/edtDescription"
+            bind:onClick="@{() -> viewModel.onEndDateClick()}"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floationActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:src="@drawable/ic_add_task_default"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:pressedTranslationZ="@dimen/fab_pressed_translation_z"
+            bind:onClick="@{() -> viewModel.addTask()}"
+            />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

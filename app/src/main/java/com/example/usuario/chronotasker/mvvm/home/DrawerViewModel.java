@@ -1,13 +1,12 @@
 package com.example.usuario.chronotasker.mvvm.home;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
 
 import com.example.usuario.chronotasker.data.model.User;
 import com.example.usuario.chronotasker.data.repository.UserRepository;
-import com.example.usuario.chronotasker.mvvm.base.navigator.INavigator;
-import com.example.usuario.chronotasker.mvvm.base.navigator.NavigatorViewModel;
 
-public class DrawerViewModel extends NavigatorViewModel {
+public class DrawerViewModel extends ViewModel {
 
     private static final String TAG = DrawerViewModel.class.getSimpleName();
 
@@ -18,8 +17,6 @@ public class DrawerViewModel extends NavigatorViewModel {
     public final MutableLiveData<String> email = new MutableLiveData<>();
 
     public final MutableLiveData<Integer> imageId = new MutableLiveData<>();
-
-    public HomeNavigator mNavigator;
 
     public DrawerViewModel() {
         User currentUser = UserRepository.getInstance().findCurrentUser();
@@ -50,14 +47,5 @@ public class DrawerViewModel extends NavigatorViewModel {
                 val.intValue();
     }
 
-    @Override
-    public void setNavigator(INavigator navigator) {
-        mNavigator = (HomeNavigator) navigator;
-    }
 
-
-    @Override
-    public String getTag() {
-        return TAG;
-    }
 }

@@ -2,6 +2,7 @@ package com.example.usuario.chronotasker.mvvm.login;
 
 import android.arch.lifecycle.MutableLiveData;
 
+import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.App;
 import com.example.usuario.chronotasker.data.prefs.PreferencesHelper;
 import com.example.usuario.chronotasker.data.model.User;
@@ -23,6 +24,8 @@ public class LoginViewModel extends NavigatorViewModel {
 
     private LoginNavigator mNavigator;
 
+
+
     public LoginViewModel() {
         checked.setValue(Boolean.FALSE);
 
@@ -30,10 +33,10 @@ public class LoginViewModel extends NavigatorViewModel {
         if(testUser != null) {
             name.setValue(testUser.getName());
             password.setValue(testUser.getPassword());
-            //TODO: FIX
             email.setValue(testUser.getEmail());
         }
     }
+
 
     public String getName() {
         return name.getValue();
@@ -60,39 +63,57 @@ public class LoginViewModel extends NavigatorViewModel {
         this.checked.setValue(checked);
     }
 
+
     @Override
     public void setNavigator(INavigator navigator) {
         mNavigator = (LoginNavigator) navigator;
     }
 
+
     //OnClick methods must return true because of reasons.
     //See this: https://n8ebel.github.io/2017-07-27-bug-busting-databinding-onLongClick/
     public boolean onClickLogin() {
-        validateFields(name.getValue(), password.getValue());
+        validateLoginFields();
         return true;
     }
     public boolean onClickSignup() {
-        //Load fragment from View
-        //TODO
+        mNavigator.openSignup();
+        return true;
+    }
+    public boolean onClickNewUser() {
+        validateSignupFields();
         return true;
     }
 
 
-    public void validateFields(String name, String password) {
-        if (areFieldsEmpty(name, password))             mNavigator.errorEmptyField();
-        else if (isInvalidFieldLength(name))            mNavigator.errorNameLengthInvalid();
-        else if (isInvalidFieldLength(password))        mNavigator.errorPasswordLengthInvalid();
-        else if (isInvalidPasswordFormat(password))     mNavigator.errorPasswordFormatInvalid();
-        else                                            loginUser(name, password);
-    }
-
-    private void loginUser(String name, String password) {
-        User user = UserRepository.getInstance().findUser(name, password);
+    private void loginUser() {
+        User user = findUserLogin();
         if(user != null)
             onUserFound(user);
         else
             mNavigator.onUserNotFound();
     }
+    private void signupUser() {
+        User user = findUserExists();
+        if(user == null) {
+            addNewUser(new User(0, getName(), getEmail(), getPassword(), R.drawable.profile));
+            onUserFound(findUserLogin());
+        } else
+            mNavigator.onUserNotFound();
+    }
+
+    private void addNewUser(User user) {
+        UserRepository.getInstance().insertUser(user);
+    }
+
+
+    private User findUserLogin() {
+        return UserRepository.getInstance().findUserLogin(getName(), getPassword());
+    }
+    private User findUserExists() {
+        return UserRepository.getInstance().findUserExists(getName(), getEmail());
+    }
+
 
     private void onUserFound(User user) {
         PreferencesHelper helper = App.getApp().getPreferencesHelper();
@@ -103,25 +124,60 @@ public class LoginViewModel extends NavigatorViewModel {
         mNavigator.onUserFound();
     }
 
-    private boolean areFieldsEmpty(String name, String password) {
-        if (name != null && password != null)
-            return name.isEmpty() || password.isEmpty();
+
+    //Validacion
+    private void validateLoginFields() {
+        if (areLoginFieldsEmpty())                          mNavigator.errorEmptyField();
+        else if (isInvalidFieldLength(getName()))           mNavigator.errorNameLengthInvalid();
+        else if (isInvalidFieldLength(getPassword()))       mNavigator.errorPasswordLengthInvalid();
+        else if (isInvalidPasswordFormat())                 mNavigator.errorPasswordFormatInvalid();
         else
-            return true;
-
+            loginUser();
+    }
+    private void validateSignupFields() {
+        if(areSignupFieldsEmpty())                          mNavigator.errorEmptyField();
+        else if (isInvalidFieldLength(getEmail()))          mNavigator.errorEmailLengthInvalid();
+        else if (isInvalidFieldLength(getName()))           mNavigator.errorNameLengthInvalid();
+        else if (isInvalidFieldLength(getPassword()))       mNavigator.errorPasswordLengthInvalid();
+        else if (isInvalidPasswordFormat())                 mNavigator.errorPasswordFormatInvalid();
+        else if (isInvalidEmailFormat())                    mNavigator.errorEmailFormatInvalid();
+        else
+            signupUser();
     }
 
-    private boolean isInvalidFieldLength(String name) {
-        return !Common.isValidFieldLength(name);
+
+    private boolean areLoginFieldsEmpty() {
+        return isNameFieldEmpty() || isPasswordFieldEmpty();
+    }
+    private boolean areSignupFieldsEmpty() {
+        return isEmailFieldEmpty() || areLoginFieldsEmpty();
     }
 
-    private boolean isInvalidPasswordFormat(String password) {
-        return !Common.isValidPasswordFormat(password);
+
+    private boolean isNameFieldEmpty() {
+        return getName() == null || getName().isEmpty();
+    }
+    private boolean isPasswordFieldEmpty() {
+        return getPassword() == null || getPassword().isEmpty();
+    }
+    private boolean isEmailFieldEmpty() {
+        return getEmail() == null || getEmail().isEmpty();
+    }
+
+
+    private boolean isInvalidFieldLength(String text) {
+        return !Common.isValidFieldLength(text);
+    }
+    private boolean isInvalidPasswordFormat() {
+        return !Common.isValidPasswordFormat(getPassword());
+    }
+    private boolean isInvalidEmailFormat() {
+        return !Common.isValidEmailFormat(getEmail());
     }
 
 
     @Override
-    public String getTag() {
-        return TAG;
+    public void reset() {
+
     }
 }

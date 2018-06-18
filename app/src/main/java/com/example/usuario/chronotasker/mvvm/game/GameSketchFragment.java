@@ -1,9 +1,17 @@
 package com.example.usuario.chronotasker.mvvm.game;
 
+import android.util.DisplayMetrics;
+
+import com.example.usuario.chronotasker.mvvm.base.OnFragmentActionListener;
+
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class Sketch extends PApplet implements GameNavigator {
+public class GameSketchFragment extends PApplet implements GameNavigator, OnFragmentActionListener { //
+
+    public static final String TAG = GameSketchFragment.class.getSimpleName();
+
+    private GameViewModel mViewModel;
 
     private Population population;
     private static final int POPULATION_SIZE = 50;
@@ -20,15 +28,44 @@ public class Sketch extends PApplet implements GameNavigator {
     private PVector target;
     private Rocket bestRocket;
 
-    //TODO: Set ViewModel to save game state
+
+
+    public GameViewModel makeViewModel() {
+        return new GameViewModel();
+    }
+
+
+    public void setViewModel(GameViewModel viewmodel) {
+        mViewModel = viewmodel;
+    }
+
+    @Override
+    public void onBackPressed() {
+        getActivity().onBackPressed();
+        super.onBackPressed();
+    }
+
+
+    @Override
+    public String getViewModelTag() {
+        return GameViewModel.TAG;
+    }
+
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
+    }
+
 
     public void settings() {
-        fullScreen();
-            /*DisplayMetrics displayMetrics = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            windowHeight = displayMetrics.heightPixels;
-            windowWidth = displayMetrics.widthPixels;
-            size(windowWidth, windowHeight);*/
+
+        //fullScreen();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        windowHeight = displayMetrics.heightPixels;
+        windowWidth = displayMetrics.widthPixels;
+        size(windowWidth, windowHeight);
     }
 
     public void setup() {
@@ -126,7 +163,7 @@ public class Sketch extends PApplet implements GameNavigator {
         //Picks a random rocket for gene crossover
         //The most fit have exponentially greater chances to
         //be selected here
-        //Returns the id of the selected parent
+        //Returns the id of the selected mParent
         public int pickparent() {
             float selectedscore = random(0, totalfit);
             float currentscore = rockets[0].fitness;

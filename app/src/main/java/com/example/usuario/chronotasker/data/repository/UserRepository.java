@@ -29,8 +29,11 @@ public class UserRepository {
         return instance;
     }
 
-    public User findUser(String name, String password) {
-        return userDao.find(name, password);
+    public User findUserLogin(String name, String password) {
+        return userDao.findUserLogin(name, password);
+    }
+    public User findUserExists(String name, String email) {
+        return userDao.findUserExists(name, email);
     }
 
     public User findFirstUser() {
@@ -38,8 +41,12 @@ public class UserRepository {
     }
 
     public User findCurrentUser() {
-        long userId = App.getApp().getPreferencesHelper().getCurrentUserId();
-        return userDao.findById(userId);
+        return userDao.findById(App.getApp().getPreferencesHelper().getCurrentUserId());
     }
+
+    public void insertUser(User user) {
+        userDao.insert(user);
+    }
+
 
 }

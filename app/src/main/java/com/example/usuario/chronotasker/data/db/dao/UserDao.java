@@ -32,14 +32,24 @@ public class UserDao extends BaseDao<User> {
         return getBox().count();
     }
 
-    public User find(String name, String password) {
+    public User findUserLogin(String name, String password) {
         Query query = getBox().query()
-                .equal(User_.name, name)
-                .and()
+                //Debe coincidir la contraseña
                 .equal(User_.password, password)
+                //El texto coincide con el usuario o su email
+                .equal(User_.name, name).or().equal(User_.email, name)
                 .build();
         return (User) query.findFirst();
     }
+
+    public User findUserExists(String name, String email) {
+        Query query = getBox().query()
+                .equal(User_.name, name).or().equal(User_.email, email)
+                .build();
+        return (User) query.findFirst();
+    }
+
+
 
     //HEREDADOS DE BASEDAO
     @Override

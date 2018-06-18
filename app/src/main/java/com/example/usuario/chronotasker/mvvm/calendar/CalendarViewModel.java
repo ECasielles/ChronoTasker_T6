@@ -38,8 +38,9 @@ public class CalendarViewModel extends NavigatorViewModel {
         mNavigator = (CalendarNavigator) navigator;
     }
 
+
     @Override
-    public String getTag() {
-        return TAG;
+    public void reset() {
+
     }
 }

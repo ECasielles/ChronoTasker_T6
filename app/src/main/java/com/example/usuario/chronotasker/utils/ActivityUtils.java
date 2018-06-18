@@ -18,7 +18,8 @@ public class ActivityUtils {
                                               @NonNull Fragment fragment, int frameId) {
         checkNotNull(fragmentManager);
         checkNotNull(fragment);
-        fragmentManager.beginTransaction()
+        fragmentManager
+                .beginTransaction()
                 .add(frameId, fragment)
                 .commit();
     }
@@ -28,8 +29,20 @@ public class ActivityUtils {
                                               @NonNull Fragment fragment, String tag) {
         checkNotNull(fragmentManager);
         checkNotNull(fragment);
-        fragmentManager.beginTransaction()
+        fragmentManager
+                .beginTransaction()
                 .add(fragment, tag)
+                .commit();
+    }
+
+    @SuppressLint("RestrictedApi")
+    public static void addFragmentToActivity (@NonNull FragmentManager fragmentManager,
+                                              @NonNull Fragment fragment, int frameId, String tag) {
+        checkNotNull(fragmentManager);
+        checkNotNull(fragment);
+        fragmentManager
+                .beginTransaction()
+                .add(frameId, fragment, tag)
                 .commit();
     }
 
@@ -38,8 +51,8 @@ public class ActivityUtils {
                                               @NonNull Fragment fragment, int frameId) {
         checkNotNull(fragmentManager);
         checkNotNull(fragment);
-        fragmentManager.popBackStack();
-        fragmentManager.beginTransaction()
+        fragmentManager
+                .beginTransaction()
                 .addToBackStack(null)
                 .replace(frameId, fragment)
                 .commit();
@@ -50,8 +63,8 @@ public class ActivityUtils {
                                               @NonNull Fragment fragment, int frameId, String tag) {
         checkNotNull(fragmentManager);
         checkNotNull(fragment);
-        fragmentManager.popBackStack();
-        fragmentManager.beginTransaction()
+        fragmentManager
+                .beginTransaction()
                 .addToBackStack(null)
                 .replace(frameId, fragment, tag)
                 .commit();

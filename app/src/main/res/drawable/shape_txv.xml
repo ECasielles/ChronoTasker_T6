@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval"
+    >
+    <solid android:color="@color/colorSecondaryLight" />
+    <gradient
+        android:centerColor="@color/colorAccent"
+        android:endColor="@color/colorPrimaryLight"
+        android:startColor="@color/colorPrimaryLight"
+        android:angle="90"
+
+        />
+    <stroke
+        android:width="2dp"
+        android:color="@color/colorPrimaryLight"/>
+
+</shape>

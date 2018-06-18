@@ -12,6 +12,7 @@ import io.objectbox.annotation.Convert;
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
 
+
 @Entity
 public class Alarm extends BaseModel implements Parcelable {
 

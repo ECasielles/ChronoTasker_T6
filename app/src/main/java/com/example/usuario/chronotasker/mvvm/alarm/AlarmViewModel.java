@@ -18,9 +18,9 @@ public class AlarmViewModel extends NavigatorViewModel {
         mNavigator = (AlarmNavigator) navigator;
     }
 
+
     @Override
-    public String getTag() {
-        return TAG;
+    public void reset() {
+
     }
-    
 }

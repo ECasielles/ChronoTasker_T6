@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -24,28 +23,27 @@ import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.model.Task;
 import com.example.usuario.chronotasker.databinding.FragmentTaskListBinding;
 import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
-import com.example.usuario.chronotasker.mvvm.base.OnFragmentActionListener;
-import com.example.usuario.chronotasker.mvvm.task.view.TaskViewFragment;
+import com.example.usuario.chronotasker.mvvm.task.item.TaskItemFragment;
 
 import java.util.Objects;
+
 
 /**
  * Fragment que muestra la lista de tareas
  */
 public class TaskListFragment extends BaseFragment<FragmentTaskListBinding, TaskListViewModel>
-        implements TaskListNavigator, OnFragmentActionListener {
+        implements TaskListNavigator {
 
     //CONSTANTES
     public static String TAG = TaskListFragment.class.getSimpleName();
 
+
     private TaskListAdapter mAdapter;
-    private ViewGroup parent;
 
 
-    public static TaskListFragment newInstance() {
+    public static TaskListFragment getInstance() {
         return new TaskListFragment();
     }
-
 
     /**
      * Inicializa los parámetros del Fragment
@@ -53,19 +51,9 @@ public class TaskListFragment extends BaseFragment<FragmentTaskListBinding, Task
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setHasOptionsMenu(true);
-        setRetainInstance(true);
-
-        fragmentEventHandler = (FragmentEventHandler) getActivity();
-
-        mViewModel.setNavigator(this);
-
         mAdapter = new TaskListAdapter(R.layout.item_task, mViewModel.getTaskList(), mViewModel);
-    }
-
-    @Override
-    public TaskListViewModel makeViewModel() {
-        return new TaskListViewModel();
     }
 
 
@@ -93,15 +81,6 @@ public class TaskListFragment extends BaseFragment<FragmentTaskListBinding, Task
     }
 
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        //Guarda vista para Snackbar
-        parent = (ViewGroup) view.getParent();
-        mAdapter.notifyDataSetChanged();
-    }
-
 
     private void setupDraggableAdapter() {
         mAdapter.enableSwipeItem();
@@ -122,6 +101,7 @@ public class TaskListFragment extends BaseFragment<FragmentTaskListBinding, Task
     }
 
 
+
     private void onTaskSwiped(RecyclerView.ViewHolder viewHolder) {
         int index = viewHolder.getAdapterPosition();
         Task task = mAdapter.getItem(index);
@@ -138,15 +118,13 @@ public class TaskListFragment extends BaseFragment<FragmentTaskListBinding, Task
      * según el Snackbar que muestra.
      */
     public void onTaskDeleteEvent(final int position, final Task task) {
-
-        Snackbar snackbar = Snackbar.make(parent, task.getTitle() + " archivada", Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(mParent, task.getTitle() + " archivada", Snackbar.LENGTH_LONG);
         snackbar.addCallback(new Snackbar.Callback() {
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
-                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
+                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT)
                     mViewModel.deleteTask(task);
-                }
             }
         });
         snackbar.setAction(Objects.requireNonNull(getContext()).getResources().getString(R.string.undo), view -> restoreTask(position, task));
@@ -161,28 +139,26 @@ public class TaskListFragment extends BaseFragment<FragmentTaskListBinding, Task
     public void restoreTask(int position, Task task) {
         mAdapter.addData(position, task);
         mViewModel.restoreState();
-        Snackbar.make(parent, task.getTitle() + " " + getResources().getString(R.string.info_task_restored), Toast.LENGTH_SHORT).show();
+        Snackbar.make(mParent, task.getTitle() + " " + getResources().getString(R.string.info_task_restored), Toast.LENGTH_SHORT).show();
     }
-
 
     /**
      * Notifica que la tarea ha sido eliminada
      */
     @Override
     public void onDeleteTaskInfo(String title) {
-        Snackbar.make(parent, title + " " + getResources().getString(R.string.info_task_deleted), Toast.LENGTH_SHORT).show();
+        Snackbar.make(mParent, title + " " + getResources().getString(R.string.info_task_deleted), Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public void openTask(Task task) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(Task.TAG, task);
-        fragmentEventHandler.launchFragment(
-                TaskViewFragment.getInstance(
-                        (AppCompatActivity) Objects.requireNonNull(getActivity()),
-                        bundle
-                ));
+        Bundle bundle = null;
+        if(task != null) {
+            bundle = new Bundle();
+            bundle.putParcelable(Task.TAG, task);
+        }
+        mFragmentEventHandler.stackFragment(TaskItemFragment.getInstance(bundle));
     }
 
 
@@ -217,26 +193,29 @@ public class TaskListFragment extends BaseFragment<FragmentTaskListBinding, Task
     }
 
 
-    /**
-     * Al pulsar Back, envía a la Activity la orden de cerrar
-     */
-    @Override
-    public boolean onBackPressed() {
-        fragmentEventHandler.setSelectedFragment(null);
-        return false;
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         mAdapter = null;
     }
+
+
+    @Override
+    public TaskListViewModel makeViewModel() {
+        return new TaskListViewModel();
+    }
+
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
+    }
+
+
+    @Override
+    public String getViewModelTag() {
+        return TaskListViewModel.TAG;
+    }
+
 
 }

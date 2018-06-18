@@ -22,12 +22,4 @@ public class BindingAdapter {
         view.setClickable(true);
     }
 
-    /*
-    @android.databinding.BindingAdapter({"bind:adapter"})
-    public static void bindRecyclerAdapter(RecyclerView view, RecyclerView.Adapter<BaseBindHolder> adapter) {
-    //public static void bindRecyclerAdapter(RecyclerView view, RecyclerView.Adapter adapter) {
-        view.setAdapter(adapter);
-    }
-    */
-
 }

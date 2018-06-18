@@ -5,12 +5,12 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.example.usuario.chronotasker.R;
 import com.example.usuario.chronotasker.data.model.Alarm;
 import com.example.usuario.chronotasker.mvvm.base.BaseFragment;
-import com.example.usuario.chronotasker.mvvm.calendar.CalendarViewModel;
 
 import org.joda.time.DateTime;
 
@@ -35,25 +34,19 @@ import static android.content.Context.ALARM_SERVICE;
  * Created by icenri on 2/25/18.
  */
 
-public class AlarmListFragment extends BaseFragment implements OnAlarmActionListener {
+public class AlarmListFragment extends BaseFragment<ViewDataBinding, AlarmViewModel> implements OnAlarmActionListener, AlarmNavigator {
+
     public static final String TAG = AlarmListFragment.class.getSimpleName();
 
     private RecyclerView recyclerView;
     private ViewGroup parent;
     private AlarmAdapter adapter;
 
-    public static AlarmListFragment newInstance() {
+
+    public static AlarmListFragment getInstance() {
         return new AlarmListFragment();
     }
 
-
-    public static AlarmListFragment getInstance(AppCompatActivity appCompatActivity) {
-        AlarmListFragment alarmListFragment = (AlarmListFragment)
-                appCompatActivity.getSupportFragmentManager().findFragmentByTag(TAG);
-        if (alarmListFragment == null)
-            alarmListFragment = new AlarmListFragment();
-        return alarmListFragment;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,7 +66,6 @@ public class AlarmListFragment extends BaseFragment implements OnAlarmActionList
         parent = view.findViewById(android.R.id.content);
         recyclerView = view.findViewById(android.R.id.list);
         adapter = new AlarmAdapter(getContext(), this);
-        //presenter.loadAlarms();
         return view;
     }
 
@@ -82,7 +74,6 @@ public class AlarmListFragment extends BaseFragment implements OnAlarmActionList
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        //((HomeActivity) getActivity()).floatingActionButton.setOnClickListener((View.OnClickListener) view1 -> setAlarmText(null));
     }
 
     @Override
@@ -191,21 +182,27 @@ public class AlarmListFragment extends BaseFragment implements OnAlarmActionList
         adapter.addAll(alarms);
     }
 
-    /**
-     * Al pulsar Back, envía a la Activity la orden de cerrar
-     */
-    @Override
-    public boolean onBackPressed() {
-        fragmentEventHandler.setSelectedFragment(null);
-        return false;
-    }
+
 
     public void onAlarmUpdated(String title) {
         Toast.makeText(getContext(), title + " " + getResources().getString(R.string.info_task_updated), Toast.LENGTH_SHORT).show();
     }
 
+
+
     public void onDatabaseError(String message) {
         Snackbar.make(parent, message, Snackbar.LENGTH_SHORT).show();
     }
 
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
+    }
+
+
+    @Override
+    public String getViewModelTag() {
+        return AlarmViewModel.TAG;
+    }
 }

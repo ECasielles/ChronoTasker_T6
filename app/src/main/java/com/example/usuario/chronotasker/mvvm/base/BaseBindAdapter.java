@@ -18,9 +18,11 @@ public abstract class BaseBindAdapter<T, DB extends ViewDataBinding>
 
     protected DB mBinding;
 
+
     public BaseBindAdapter(@LayoutRes int layoutResId, @Nullable List<T> data) {
         super(layoutResId, data);
     }
+
 
     @Override
     protected View getItemView(int layoutResId, ViewGroup parent) {

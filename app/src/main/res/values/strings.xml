@@ -56,5 +56,10 @@
     <string name="login_title">ChronoTasker</string>
     <string name="action_game">Mi pecera</string>
     <string name="action_calendar">Calendario</string>
+    <string name="error_email_length_invalid">Longitud no válida de email</string>
+    <string name="dpk_start_date">Fecha de inicio</string>
+    <string name="dpk_end_date">Fecha de fin</string>
+    <string name="error_date_range">Rango de fechas no válido</string>
+    <string name="error_title_empty">Necesita un título</string>
 
 </resources>

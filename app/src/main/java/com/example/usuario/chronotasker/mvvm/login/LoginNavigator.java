@@ -4,9 +4,13 @@ import com.example.usuario.chronotasker.mvvm.base.navigator.INavigator;
 
 public interface LoginNavigator extends INavigator {
 
+    void openSignup();
+
     void errorEmptyField();
 
     void errorNameLengthInvalid();
+
+    void errorEmailLengthInvalid();
 
     void errorPasswordLengthInvalid();
 
@@ -15,5 +19,7 @@ public interface LoginNavigator extends INavigator {
     void onUserFound();
 
     void onUserNotFound();
+
+    void errorEmailFormatInvalid();
 
 }

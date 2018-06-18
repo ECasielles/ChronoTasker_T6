@@ -7,6 +7,7 @@ import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
 import io.objectbox.relation.ToMany;
 
+
 /**
  * Representa al usuario que accede a la app desde login
  * o desde token de sesión

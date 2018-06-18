@@ -1,7 +1,5 @@
 package com.example.usuario.chronotasker.data.repository;
 
-import android.arch.lifecycle.MutableLiveData;
-
 import com.example.usuario.chronotasker.data.db.dao.TaskDao;
 import com.example.usuario.chronotasker.data.model.Task;
 
@@ -31,11 +29,9 @@ public class TaskRepository {
         taskDao.insertTasks(tasks);
     }
 
-    public void updateTask(Task task, MutableLiveData<Task> liveResponse) {
-        if (task != null){
-            liveResponse.postValue(task);
+    public void upsertTask(Task task) {
+        if (task != null)
             taskDao.insertTask(task);
-        }
     }
 
     public List<Task> getAllTasks() {

@@ -3,6 +3,7 @@ package com.example.usuario.chronotasker.data.db.dao;
 import com.example.usuario.chronotasker.data.App;
 import com.example.usuario.chronotasker.data.model.Task;
 import com.example.usuario.chronotasker.data.model.Task_;
+import com.example.usuario.chronotasker.data.model.User;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +33,13 @@ public class TaskDao extends BaseDao<Task> {
     }
 
     public void insertTask(Task task) {
-        getBox().put(task);
+        if(!findCurrentUserTaskList().contains(task)) {
+            User current = UserDao.getInstance().findCurrentUser();
+            current.tasks.add(task);
+            current.tasks.applyChangesToDb();
+        } else {
+            getBox().put(task);
+        }
     }
     public void insertTasks(Collection<Task> tasks) {
         getBox().put(tasks);
@@ -58,7 +65,6 @@ public class TaskDao extends BaseDao<Task> {
 
     //TODO: Find if fix is needed
     public List<Task> findCurrentUserTaskList() {
-        //return UserDao.getInstance().findCurrentUser().tasks;
         Query<Task> query = getBox().query().equal(
                 Task_.userId,
                 App.getApp().getPreferencesHelper().getCurrentUserId()

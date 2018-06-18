@@ -46,12 +46,13 @@ dependencies {
     implementation 'android.arch.paging:runtime:1.0.0'
     //Enables DataBinding debug
     annotationProcessor "androidx.databinding:databinding-compiler:$android_plugin_version"
+    annotationProcessor 'com.android.databinding:compiler:3.1.3'
     //Utilities
     implementation 'com.github.medyo:android-about-page:1.2.1'
     implementation 'joda-time:joda-time:2.9.9'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.34'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-    implementation  'com.squareup:android-times-square:1.6.5@aar'
+    implementation 'com.squareup:android-times-square:1.6.5@aar'
     implementation 'com.google.code.gson:gson:2.8.2'
     //Processing
     implementation files('libs/android-core.jar')

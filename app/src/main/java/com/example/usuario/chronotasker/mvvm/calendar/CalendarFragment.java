@@ -3,8 +3,6 @@ package com.example.usuario.chronotasker.mvvm.calendar;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,40 +22,9 @@ public class CalendarFragment extends BaseFragment<FragmentCalendarBinding, Cale
 
     public static String TAG = CalendarFragment.class.getSimpleName();
 
-    private ViewGroup parent;
 
-
-    public static CalendarFragment newInstance() {
+    public static CalendarFragment getInstance() {
         return new CalendarFragment();
-    }
-
-    public static CalendarFragment getInstance(AppCompatActivity appCompatActivity) {
-        CalendarFragment calendarFragment = (CalendarFragment)
-                appCompatActivity.getSupportFragmentManager().findFragmentByTag(TAG);
-        return calendarFragment == null ?
-                new CalendarFragment() :
-                calendarFragment;
-    }
-
-
-
-    /**
-     * Inicializa los parámetros del Fragment
-     */
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        setRetainInstance(true);
-
-        fragmentEventHandler = (FragmentEventHandler) getActivity();
-
-        mViewModel.setNavigator(this);
-    }
-
-    @Override
-    public CalendarViewModel makeViewModel() {
-        return new CalendarViewModel();
     }
 
 
@@ -79,21 +46,6 @@ public class CalendarFragment extends BaseFragment<FragmentCalendarBinding, Cale
 
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        //Guarda vista para Snackbar
-        parent = (ViewGroup) view.getParent();
-    }
-
-
-
-    @Override
-    public boolean onBackPressed() {
-        return false;
-    }
-
-    @Override
     public void onStartDateSelected(DateTime startDate) {
 
     }
@@ -106,6 +58,24 @@ public class CalendarFragment extends BaseFragment<FragmentCalendarBinding, Cale
     @Override
     public void onDateRangeSelected(DateTime startDate, DateTime endDate) {
 
+    }
+
+
+    @Override
+    public CalendarViewModel makeViewModel() {
+        return new CalendarViewModel();
+    }
+
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
+    }
+
+
+    @Override
+    public String getViewModelTag() {
+        return CalendarViewModel.TAG;
     }
 
 }

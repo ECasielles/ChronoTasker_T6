@@ -8,6 +8,7 @@ import com.example.usuario.chronotasker.R;
 
 import mehdi.sakout.aboutpage.AboutPage;
 
+
 public class AboutActivity extends AppCompatActivity {
 
     @Override

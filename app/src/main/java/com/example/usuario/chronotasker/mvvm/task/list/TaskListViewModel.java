@@ -93,8 +93,10 @@ public class TaskListViewModel extends NavigatorViewModel {
         tempDisplayArray = null;
     }
 
+
     @Override
-    public String getTag() {
-        return TAG;
+    public void reset() {
+
     }
+
 }
